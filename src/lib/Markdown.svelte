@@ -5,20 +5,13 @@
 	export let title = '';
 	export let id = '';
 	let error = '';
-	let userEmail;
 	export let type = 'create';
 	$: markdown = marked(source);
 	import { user, blog } from './store/store';
-	import { filter } from 'rxjs/internal/operators/filter.js';
-	import { take } from 'rxjs/internal/operators/take.js';
 	import { enhance } from './form';
-
-	user.pipe(filter(Boolean), take(1)).subscribe((user) => {
-		userEmail = user && user.email ? user.email : '';
-	});
 </script>
 
-{#if userEmail }
+{#if $user?.email }
 	<form
 		class="new"
 		action={'/blogs/' + type + '.json' + (type === 'update' ? '?_method=patch' : '')}
@@ -41,7 +34,7 @@
 			<h1 class="header-title">Add blog</h1>
 			<div class="header-cta">
 				<input type="text" name="title" bind:value={title} placeholder="Title" />
-				<input type="hidden" name="author" value={userEmail} />
+				<input type="hidden" name="author" value={$user.email} />
 				<input type="hidden" name="id" value={id} />
 
 				<button class="btn submit" disabled={!title || !source}> Save</button>

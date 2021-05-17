@@ -1,4 +1,3 @@
-import sirv from 'sirv';
 import express from 'express';
 import { auth } from 'express-openid-connect';
 import compression from 'compression';
@@ -14,7 +13,6 @@ dotenv.config();
 
 import connectKnexSession from 'connect-session-knex';
 const KnexSessionStore = connectKnexSession(session);
-
 
 const connection = knex({
 	client: 'sqlite3',
@@ -58,14 +56,16 @@ const dev = NODE_ENV === 'development';
 const portServer = PORT || 4000;
 
 express()
-	.use(session({ 
-		secret: process.env.cookieSecret, 
-		name: process.env.cookieName,
-		resave: true,
-		saveUninitialized: true,
-		store: new KnexSessionStore,
-		cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000 }
-	}))
+	.use(
+		session({
+			secret: process.env.cookieSecret,
+			name: process.env.cookieName,
+			resave: true,
+			saveUninitialized: true,
+			store: new KnexSessionStore(),
+			cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000 }
+		})
+	)
 	.use(urlencoded({ extended: true }))
 	.use(
 		cors({
@@ -76,12 +76,11 @@ express()
 	.use(json({ limit: '10mb' }))
 	.use(
 		compression({ threshold: 0 }),
-		sirv('static', { dev }),
 		auth({
 			required: false,
 			auth0Logout: true,
 			baseURL: process.env.baseURL,
-			issuerBaseURL: 'https://pararel.eu.auth0.com',
+			issuerBaseURL: process.env.openIDIssuerBaseURL,
 			clientID: process.env.openIDClientID,
 			appSession: { secret: process.env.openIDSecret },
 			async handleCallback(req, res, next) {
@@ -89,7 +88,7 @@ express()
 				req.session.user = req.openid.user;
 				req.session.userIdentity = req.openidTokens.claims();
 				next();
-			},
+			}
 		})
 	)
 	.get('/api/user', async (req, res) => {
@@ -122,7 +121,7 @@ express()
 			.update({ ...req.body });
 
 		const blog = await connection.select('*').from('blogs').where('id', req.body.id).first();
-		
+
 		try {
 			res.end(JSON.stringify(blog));
 		} catch {
@@ -145,6 +144,9 @@ express()
 		} catch {
 			res.end(JSON.stringify({ message: `There was an error retrieving blogs` }));
 		}
+	})
+	.get('/api/config', async (req, res) => {
+		res.end(JSON.stringify({ disqusSrc: process.env.disqusSrc }));
 	})
 	.post('/api/contact', async (req, res) => {
 		let mailTransport = nodemailer.createTransport({

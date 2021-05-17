@@ -1,9 +1,10 @@
 <script>
 	import Header from '$lib/Header/index.svelte';
-	import { fetchUser } from '$lib/store/store';
+	import { fetchUser, fetchConfig } from '$lib/store/store';
 	import '../app.css';
 
 	fetchUser();
+	fetchConfig();
 </script>
 
 <Header />

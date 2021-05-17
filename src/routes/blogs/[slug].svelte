@@ -1,5 +1,5 @@
 <script context="module">
-	import { blog } from '$lib/store/store';
+	import { blog, config } from '$lib/store/store';
 
 	export const load = async ({ fetch, page }) => {
 		const res = await fetch(`/blogs/${page.params.slug}.json`);
@@ -7,7 +7,7 @@
 		if (res.ok) {
 			const blogFromApi = await res.json();
 			blog.next(blogFromApi);
-			return { props: {} };
+			return { props: { page } };
 		}
 
 		const { message } = await res.json();
@@ -21,6 +21,32 @@
 <script>
 	import marked from 'marked';
 	import Markdown from '$lib/Markdown.svelte';
+	import { onMount } from 'svelte';
+	import { filter } from 'rxjs/internal/operators/filter.js';
+	import { take } from 'rxjs/internal/operators/take.js';
+	export let page;
+
+	onMount(() => {
+		config
+			.pipe(
+				filter((config) => config && config.disqusSrc),
+				take(1)
+			)
+			.subscribe((config) => {
+				var d = document,
+					s = d.createElement('script');
+				s.src = config.disqusSrc;
+
+				s.setAttribute('data-timestamp', +new Date());
+				(d.head || d.body).appendChild(s);
+
+				window.disqus_config = function () {
+					this.language = 'en';
+					this.page.url = page.host + '/blogs/' + page.params.slug;
+					this.page.identifier = page.params.slug;
+				};
+			});
+	});
 </script>
 
 <svelte:head>
@@ -39,8 +65,6 @@
 
 	<Markdown type={'update'} title={$blog.title} source={$blog.content} id={$blog.id} />
 {/if}
-
-
 
 <style>
 	h1 {
