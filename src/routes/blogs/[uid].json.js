@@ -40,7 +40,5 @@ export const patch = async (request) => {
 
 // DELETE /blogs/:uid.json
 export const del = async (request) => {
-	return api(`api/blogs/delete`, request, {
-		id: parseFloat(request.body.get('id'))
-	});
+	return api(`api/blogs/delete/` + request.body.get('id'), request);
 };

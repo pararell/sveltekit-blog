@@ -14,7 +14,7 @@
 </main>
 
 <footer>
-<p></p>
+	<p />
 </footer>
 
 <style>

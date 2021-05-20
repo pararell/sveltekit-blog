@@ -1,6 +1,6 @@
 <script context="module">
-	import { blog, config } from '$lib/store/store';
-
+	import { blog, config, disqusLoaded } from '$lib/store/store';
+	import { setDisqus, resetDisqus } from '$lib/utils';
 	export const load = async ({ fetch, page }) => {
 		const res = await fetch(`/blogs/${page.params.slug}.json`);
 
@@ -24,28 +24,33 @@
 	import { onMount } from 'svelte';
 	import { filter } from 'rxjs/internal/operators/filter.js';
 	import { take } from 'rxjs/internal/operators/take.js';
+	import { map } from 'rxjs/internal/operators/map.js';
+	import { mergeMap } from 'rxjs/internal/operators/mergeMap.js';
 	export let page;
 
 	onMount(() => {
 		config
 			.pipe(
+				mergeMap((config) =>
+					disqusLoaded.pipe(
+						filter((disqusLoaded) => !disqusLoaded),
+						map(() => config)
+					)
+				),
 				filter((config) => config && config.disqusSrc),
 				take(1)
 			)
 			.subscribe((config) => {
-				var d = document,
-					s = d.createElement('script');
-				s.src = config.disqusSrc;
-
-				s.setAttribute('data-timestamp', +new Date());
-				(d.head || d.body).appendChild(s);
-
-				window.disqus_config = function () {
-					this.language = 'en';
-					this.page.url = page.host + '/blogs/' + page.params.slug;
-					this.page.identifier = page.params.slug;
-				};
+				setDisqus(config)
+					.pipe(take(1))
+					.subscribe(() => {
+						disqusLoaded.next(true);
+					});
 			});
+
+		disqusLoaded.pipe(filter(Boolean), take(1)).subscribe(() => {
+			resetDisqus(page);
+		});
 	});
 </script>
 

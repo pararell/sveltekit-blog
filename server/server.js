@@ -137,10 +137,11 @@ express()
 			res.end(JSON.stringify({ message: `There was an error retrieving blogs` }));
 		}
 	})
-	.delete('/api/blogs/delete', async (req, res) => {
-		const blogs = await connection('blogs').where('id', req.body.id).del();
+	.delete('/api/blogs/delete/:id', async (req, res) => {
+		const id = req.params['id'];
+		const blogs = await connection('blogs').where('id', id).del();
 		try {
-			res.end(JSON.stringify(blogs));
+			res.end(JSON.stringify({}));
 		} catch {
 			res.end(JSON.stringify({ message: `There was an error retrieving blogs` }));
 		}
