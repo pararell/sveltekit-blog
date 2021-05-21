@@ -1,6 +1,42 @@
 <script>
 	import { page } from '$app/stores';
 	import logo from './svelte-logo.svg';
+	import { _, locale,dictionary } from 'svelte-i18n';
+	import Cookie from 'cookie-universal';
+	import { languages } from '$lib/constants';
+	import { filter } from 'rxjs/internal/operators/filter';
+	import { take } from 'rxjs/internal/operators/take';
+	import { lang, translations, blogs } from '$lib/store/store';
+	const cookies = Cookie();
+
+	let selected = 'sk'
+	lang.pipe(filter(value => !!value), take(1))
+		.subscribe((value) => {
+			selected = value;
+		});
+
+	const handleSubmit = async () => {
+		lang.next(selected);
+		cookies.set('blog_lang', selected);
+		locale.set(selected);
+		const resTranslations = await fetch('/translations.json');
+		const resBlogs = await fetch('/blogs.json');
+		if (resTranslations.ok && resBlogs.ok) {
+			const translationsFromApi = await resTranslations.json();
+			const blogsFromApi = await resBlogs.json();
+			translations.next(translationsFromApi);
+			blogs.next(blogsFromApi);
+			dictionary.set({
+				[lang.value]: translationsFromApi
+			});
+			return;
+		}
+
+
+		return {
+			error: new Error(message)
+		};
+	}
 </script>
 
 <header>
@@ -15,8 +51,8 @@
 			<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
 		</svg>
 		<ul>
-			<li class:active={$page.path === '/'}><a sveltekit:prefetch href="/">Home</a></li>
-			<li class:active={$page.path === '/about'}><a sveltekit:prefetch href="/about">About</a></li>
+			<li class:active={$page.path === '/'}><a sveltekit:prefetch href="/">{$_('home')}</a></li>
+			<li class:active={$page.path === '/about'}><a sveltekit:prefetch href="/about">{$_('about')}</a></li>
 			<li class:active={$page.path === '/blogs'}><a sveltekit:prefetch href="/blogs">Blogs</a></li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
@@ -25,7 +61,13 @@
 	</nav>
 
 	<div class="corner">
-		<!-- TODO put something else here? github link? -->
+			<select bind:value={selected} on:change={handleSubmit}>
+				{#each languages as language}
+					<option value={language}>
+						{language}
+					</option>
+				{/each}
+			</select>
 	</div>
 </header>
 

@@ -7,7 +7,7 @@
 	let error = '';
 	export let type = 'create';
 	$: markdown = marked(source);
-	import { user, blog } from './store/store';
+	import { user, blog, lang } from './store/store';
 	import { enhance } from './form';
 </script>
 
@@ -36,7 +36,7 @@
 				<input type="text" name="title" bind:value={title} placeholder="Title" />
 				<input type="hidden" name="author" value={$user.email} />
 				<input type="hidden" name="id" value={id} />
-
+				<input type="hidden" name="lang" value={$lang} />
 				<button class="btn submit" disabled={!title || !source}> Save</button>
 			</div>
 			{#if error}
@@ -66,7 +66,7 @@
 			}}
 		>
 			<input type="hidden" name="id" value={id} />
-			<button class="delete" aria-label="Delete todo"> Delete </button>
+			<button class="btn delete" aria-label="Delete blog"> Delete Blog</button>
 		</form>
 	{/if}
 {/if}

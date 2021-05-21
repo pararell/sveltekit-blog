@@ -19,10 +19,11 @@ export const setDisqus = (config) => {
 export const resetDisqus = (page) => {
     const DISQUS = window.DISQUS || {reset: () => {}};
     const host = page.host;
+    
     DISQUS.reset({
         reload: true,
         config: function () {
-            this.page.url = host + '/blogs/' + page.params.slug;
+            this.page.url = 'https://' + host + '/blogs/' + page.params.slug;
             this.page.identifier = page.params.slug;
             this.language = 'en';
         }

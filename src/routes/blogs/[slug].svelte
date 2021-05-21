@@ -1,6 +1,7 @@
 <script context="module">
 	import { blog, config, disqusLoaded } from '$lib/store/store';
 	import { setDisqus, resetDisqus } from '$lib/utils';
+	
 	export const load = async ({ fetch, page }) => {
 		const res = await fetch(`/blogs/${page.params.slug}.json`);
 
@@ -66,10 +67,10 @@
 		{@html marked($blog.content)}
 	</div>
 
-	<div id="disqus_thread" />
-
 	<Markdown type={'update'} title={$blog.title} source={$blog.content} id={$blog.id} />
 {/if}
+
+<div id="disqus_thread" />
 
 <style>
 	h1 {
