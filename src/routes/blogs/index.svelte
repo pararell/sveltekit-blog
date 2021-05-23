@@ -1,25 +1,5 @@
-<script context="module">
+<script>
 	import { blogs } from '$lib/store/store';
-
-	export const load = async ({ fetch }) => {
-		const res = await fetch('/blogs.json');
-
-		if (res.ok) {
-			const blogsFromApi = await res.json();
-			blogs.next(blogsFromApi);
-
-			return {
-				props: { blogsFromApi },
-				maxage: 0
-			};
-		}
-
-		const { message } = await res.json();
-
-		return {
-			error: new Error(message)
-		};
-	};
 </script>
 
 <svelte:head>

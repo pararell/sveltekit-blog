@@ -1,6 +1,6 @@
 <script context="module">
 	import { api } from '$lib/api';
-	import { user, config } from '$lib/store/store';
+	import { user, config, blogs } from '$lib/store/store';
 	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
 	import { filter } from 'rxjs/internal/operators/filter.js';
 	import { take } from 'rxjs/internal/operators/take.js';
@@ -20,25 +20,28 @@
 		}
 	});
 
-	export const load = async ({ fetch }) => {
-		if (user.value && config.value) {
+	export const load = async ({ fetch, page }) => {
+		if (user.value && config.value && blogs.value) {
 			return {
-				props: { user: user.value, config: config.value },
-				context: { user: user.value, config: config.value },
+				props: {},
 				maxage: 0
 			};
 		}
 
+		const blogsPath = page.path.includes('blogs/') ? 'blogs.json' : 'blogs/blogs.json';
+
 		const resUser = await api('api/user', null, null, fetch);
 		const resConfig = await api('api/config', null, null, fetch);
+		const resBlogs = await fetch(blogsPath);
 
-		if (resUser && resConfig) {
+		if (resUser && resConfig && resBlogs.ok) {
+			const blogsFromApi = await resBlogs.json();
 			user.next(resUser.body);
 			config.next(resConfig.body);
+			blogs.next(blogsFromApi);
 
 			return {
-				props: { user: resUser.body, config: resConfig.body },
-				context: { user: resUser.body, config: resConfig.body },
+				props: {},
 				maxage: 0
 			};
 		}
@@ -57,11 +60,12 @@
 {#if $isLoading}
 	Loading...
 {:else}
-	<Header />
-
-	<main>
-		<slot />
-	</main>
+	<div class="hero">
+		<Header />
+	</div>
+		<main>
+			<slot />
+		</main>
 
 	<footer>
 		<p />

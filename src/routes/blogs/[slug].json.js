@@ -3,16 +3,16 @@ import { api } from '$lib/api';
 
 // GET /blogs.json
 export const get = async (request) => {
-	const response = await api(`api/blogs/${request.params.uid}`, request);
+	const response = await api(`api/blogs/${request.params.slug}`, request);
 
 	if (response.status === 404) {
-		return { body: [] };
+		return { body: {} };
 	}
 
 	return response;
 };
 
-// POST /blogs/:uid.json
+// POST /blogs/create.json
 export const post = async (request) => {
 	const data = {
 		title: request.body.get('title'),
@@ -26,7 +26,7 @@ export const post = async (request) => {
 	return api(`api/blogs/create`, request, data);
 };
 
-// PATCH /blogs/:uid.json
+// PATCH /blogs/update.json
 export const patch = async (request) => {
 	return api(`api/blogs/update`, request, {
 		id: parseFloat(request.body.get('id')),

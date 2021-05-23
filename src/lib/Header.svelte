@@ -1,27 +1,36 @@
 <script>
 	import { page } from '$app/stores';
 	import { api } from '$lib/api';
-	// import logo from './svelte-logo.svg';
 	import { _, locale, locales } from 'svelte-i18n';
 	import { blogs } from '$lib/store/store';
-    import { goto } from '$app/navigation';
-
+	import { goto } from '$app/navigation';
+	// import logo from './svelte-logo.svg';
 
 	let selected;
+	let open = '';
+
 	locale.subscribe((value) => {
 		selected = value;
 	});
 
-	const handleSubmit = async () => {
+	const toggleMenu = async () => {
+		if (open === 'is-active') {
+			open = '';
+		} else {
+			open = 'is-active';
+		}
+	};
+
+	const handleSubmit = async (pageObj) => {
 		locale.set(selected);
 		const langSet = await api('api/lang', { method: 'POST' }, { lang: selected });
-
+        const blogsPath = pageObj.path.includes('blogs/') ? 'blogs.json' : 'blogs/blogs.json';
 		if (langSet) {
-			const resBlogs = await fetch('/blogs.json');
+			const resBlogs = await fetch(blogsPath);
 			if (resBlogs.ok) {
 				const blogsFromApi = await resBlogs.json();
 				blogs.next(blogsFromApi);
-                goto('/blogs')
+				goto('/blogs');
 				return;
 			}
 			return;
@@ -33,111 +42,77 @@
 	};
 </script>
 
-<header>
-	<div class="corner">
-		<!-- <a href="https://kit.svelte.dev">
-			<img src={logo} alt="SvelteKit" />
-		</a> -->
-	</div>
+<header id="masthead" role="banner" class={open}>
+	<div class="container">
+		<button class="hamburger hamburger--boring {open}" on:click={toggleMenu} type="button">
+			<span class="hamburger-box">
+				<span class="hamburger-inner" />
+			</span>
+			<span class="hamburger-label">Menu</span>
+		</button>
+		<form id="masthead-search">
+			<input
+				type="search"
+				name="s"
+				aria-labelledby="search-label"
+				placeholder="Search&hellip;"
+				class="draw"
+			/>
+			<button type="submit">&rarr;</button>
+		</form>
+		<nav id="site-nav" role="navigation" class={open}>
+			<div class="col">
+				<h4>Navigation</h4>
+				<ul>
+					<li class:active={$page.path === '/'}><a sveltekit:prefetch href="/">{$_('home')}</a></li>
+					<li class:active={$page.path === '/about'}>
+						<a sveltekit:prefetch href="/about">{$_('about')}</a>
+					</li>
+					<li class:active={$page.path === '/blogs'}>
+						<a sveltekit:prefetch href="/blogs">Blogs</a>
+					</li>
+				</ul>
+			</div>
+			<div class="col">
+				<h4>Languages</h4>
 
-	<nav>
-		<svg viewBox="0 0 2 3" aria-hidden="true">
-			<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
-		</svg>
-		<ul>
-			<li class:active={$page.path === '/'}><a sveltekit:prefetch href="/">{$_('home')}</a></li>
-			<li class:active={$page.path === '/about'}>
-				<a sveltekit:prefetch href="/about">{$_('about')}</a>
-			</li>
-			<li class:active={$page.path === '/blogs'}><a sveltekit:prefetch href="/blogs">Blogs</a></li>
-		</ul>
-		<svg viewBox="0 0 2 3" aria-hidden="true">
-			<path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
-		</svg>
-	</nav>
-
-	<div class="corner">
-		<select bind:value={selected} on:change={handleSubmit}>
-			{#each $locales as language}
-				<option value={language}>
-					{language}
-				</option>
-			{/each}
-		</select>
+				<div class="corner">
+					<select bind:value={selected} on:change={() => handleSubmit($page)}>
+						{#each $locales as language}
+							<option value={language}>
+								{language}
+							</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+			<div class="col">
+				<h4>Blogs</h4>
+				<ul>
+                    {#each $blogs as blog}
+                    <li><a href="blogs/{blog.slug}">{blog.title}</a></li>
+                    {/each}
+	
+				</ul>
+			</div>
+			<div class="col">
+				<h4>Contact</h4>
+				<ul>
+					<li><a href="#">Contact</a></li>
+				</ul>
+			</div>
+			<div class="col">
+				<ul class="social">
+					<li><a href=""><svg title="Facebook"><use xlink:href="#icon-facebook" /></svg></a></li>
+					<li><a href=""><svg title="Twitter"><use xlink:href="#icon-twitter" /></svg></a></li>
+					<li><a href=""><svg title="LinkedIn"><use xlink:href="#icon-linkedin" /></svg></a></li>
+				</ul>
+			</div>
+		</nav>
 	</div>
 </header>
 
 <style>
-	header {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.corner {
-		width: 3em;
-		height: 3em;
-	}
-
-	.corner a {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-		height: 100%;
-	}
-
-	.corner img {
-		width: 2em;
-		height: 2em;
-		object-fit: contain;
-	}
-
-	nav {
-		display: flex;
-		justify-content: center;
-		--background: rgba(255, 255, 255, 0.7);
-	}
-
-	svg {
-		width: 2em;
-		height: 3em;
-		display: block;
-	}
-
-	path {
-		fill: var(--background);
-	}
-
-	ul {
-		position: relative;
-		padding: 0;
-		margin: 0;
-		height: 3em;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		list-style: none;
-		background: var(--background);
-		background-size: contain;
-	}
-
-	li {
-		position: relative;
-		height: 100%;
-	}
-
-	li.active::before {
-		--size: 6px;
-		content: '';
-		width: 0;
-		height: 0;
-		position: absolute;
-		top: 0;
-		left: calc(50% - var(--size));
-		border: var(--size) solid transparent;
-		border-top: var(--size) solid var(--accent-color);
-	}
-
 	nav a {
 		display: flex;
 		height: 100%;
