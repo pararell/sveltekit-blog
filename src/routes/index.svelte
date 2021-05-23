@@ -1,7 +1,3 @@
-<script context="module">
-	export const prerender = true;
-</script>
-
 <script>
 	import Markdown from '$lib/Markdown.svelte';
 </script>

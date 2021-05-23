@@ -10,7 +10,6 @@ import cors from 'cors';
 import session from 'express-session';
 import dotenv from 'dotenv';
 dotenv.config();
-import Cookie from 'cookie-universal';
 
 import connectKnexSession from 'connect-session-knex';
 const KnexSessionStore = connectKnexSession(session);
@@ -53,7 +52,7 @@ connection.schema
 		console.error(`There was an error setting up the database: ${error}`);
 	});
 
-const { PORT, NODE_ENV } = process.env;
+const { PORT } = process.env;
 const portServer = PORT || 4000;
 
 express()
@@ -64,7 +63,7 @@ express()
 			resave: true,
 			saveUninitialized: true,
 			store: new KnexSessionStore(),
-			cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000 }
+			cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000, httpOnly: false }
 		})
 	)
 	.use(urlencoded({ extended: true }))
@@ -96,19 +95,18 @@ express()
 		res.redirect(process.env.ORIGIN);
 	})
 	.get('/api/user', async (req, res) => {
+		console.log('user')
 		res.end(JSON.stringify(req.session.userIdentity || {}));
 	})
 	.get('/api/config', async (req, res) => {
-		res.end(JSON.stringify({ disqusSrc: process.env.disqusSrc }));
+		res.end(JSON.stringify({ disqusSrc: process.env.disqusSrc, lang: req.session.lang }));
 	})
-	.get('/api/translations', async (req, res) => {
-		const cookies = Cookie(req, res);
-		const lang = cookies.get('blog_lang');
-		res.sendFile(path.join(process.cwd(), '/translations', lang + '.json'));
+	.post('/api/lang', async (req, res) => {
+		req.session.lang = req.body.lang;
+		res.end(JSON.stringify({ lang: req.body.lang }));
 	})
 	.get('/api/blogs', async (req, res) => {
-		const cookies = Cookie(req, res);
-		const lang = cookies.get('blog_lang');
+		const lang = req.session.lang || 'en';
 		const blogs = await connection.select('*').from('blogs').where({lang});
 		try {
 			res.end(JSON.stringify(blogs));
@@ -117,13 +115,12 @@ express()
 		}
 	})
 	.post('/api/blogs/create', async (req, res) => {
-		console.log(req.body)
 		const ifExist = await connection('blogs').where({ slug: req.body.slug });
 		if (ifExist && !!ifExist.length) {
 			res.end(JSON.stringify({ message: `Blog already exist` }));
 			return;
 		}
-		const blogs = await connection('blogs').insert({ ...req.body });
+		const blogs = await connection('blogs').insert({ ...req.body, lang: req.session.lang || 'en' });
 		try {
 			res.end(JSON.stringify(blogs));
 		} catch {

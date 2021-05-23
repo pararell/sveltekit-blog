@@ -1,14 +1,15 @@
 import { dev } from '$app/env';
 
-const base = dev ? 'http://localhost:4000' : '';
+const base = dev ? 'http://localhost:4000' : 'http://localhost:4000';
 
-export async function api(resource, request, data) {
+export async function api(resource, request, data, serverFetch) {
 	const req = request || {method: 'GET'};
-	const res = await fetch(`${base}/${resource}`, {
+	const res = await (serverFetch || fetch)(`${base}/${resource}`, {
+		...req,
 		method: req.method,
 		headers: {
 			'Content-Type': 'application/json',
-			cookie: req.headers.cookie
+			cookie: req.headers ? req.headers.cookie : ''
 		},
 		credentials: 'include',
 		body: data && JSON.stringify(data)

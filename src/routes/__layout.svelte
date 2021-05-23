@@ -1,67 +1,72 @@
 <script context="module">
-	import Cookie from 'cookie-universal';
-	import { user, config, lang, translations } from '$lib/store/store';
-	import { locale, dictionary } from 'svelte-i18n';
+	import { api } from '$lib/api';
+	import { user, config } from '$lib/store/store';
+	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
+	import { filter } from 'rxjs/internal/operators/filter.js';
+	import { take } from 'rxjs/internal/operators/take.js';
 
-	const cookies = Cookie();
-	const cookieLang = cookies.get('blog_lang') || 'en';
-	lang.next(cookieLang);
-	locale.set(cookieLang);
-	
+	register('en', () => import('../translations/en.json'));
+	register('sk', () => import('../translations/sk.json'));
+
+	config.pipe(filter((config) => !!config, take(1))).subscribe((config) => {
+		const lang = config.lang || getLocaleFromNavigator();
+		init({
+			fallbackLocale: 'sk',
+			initialLocale: config.lang || getLocaleFromNavigator()
+		});
+
+		if (!config.lang) {
+			api('api/lang', { method: 'POST' }, { lang });
+		}
+	});
 
 	export const load = async ({ fetch }) => {
-		if (user.value && config.value && translations.value) {
+		if (user.value && config.value) {
 			return {
 				props: { user: user.value, config: config.value },
-				context: { user: user.value, config: config.value }
+				context: { user: user.value, config: config.value },
+				maxage: 0
 			};
 		}
 
-		const resUser = await fetch('/user.json');
-		const resConfig = await fetch('/config.json');
-		const resTranslations = await fetch('/translations.json');
+		const resUser = await api('api/user', null, null, fetch);
+		const resConfig = await api('api/config', null, null, fetch);
 
-		if (resUser.ok && resConfig.ok && resTranslations.ok) {
-			const userFromApi = await resUser.json();
-			const configFromApi = await resConfig.json();
-			const translationsFromApi = await resTranslations.json();
-			user.next(userFromApi);
-			config.next(configFromApi);
-			translations.next(translationsFromApi);
-
-			dictionary.set({
-				[lang.value]: translationsFromApi
-			});
+		if (resUser && resConfig) {
+			user.next(resUser.body);
+			config.next(resConfig.body);
 
 			return {
-				props: { user: userFromApi, config: configFromApi },
-				context: { user: userFromApi, config: configFromApi }
+				props: { user: resUser.body, config: resConfig.body },
+				context: { user: resUser.body, config: resConfig.body },
+				maxage: 0
 			};
 		}
 
-		const { message } = await resUser.json();
-
 		return {
-			error: new Error(message)
+			error: new Error()
 		};
 	};
-
 </script>
 
 <script>
-	import Header from '$lib/Header/index.svelte';
+	import Header from '$lib/Header.svelte';
 	import '../app.css';
 </script>
 
-<Header />
+{#if $isLoading}
+	Loading...
+{:else}
+	<Header />
 
-<main>
-	<slot />
-</main>
+	<main>
+		<slot />
+	</main>
 
-<footer>
-	<p />
-</footer>
+	<footer>
+		<p />
+	</footer>
+{/if}
 
 <style>
 	main {

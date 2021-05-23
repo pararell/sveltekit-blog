@@ -9,7 +9,7 @@
     "format": "prettier --write --plugin-search-dir=. ."
   },
   "devDependencies": {
-    "@sveltejs/adapter-node": "^1.0.0-next.21",
+    "@sveltejs/adapter-node": "next",
     "@sveltejs/kit": "next",
     "cookie-universal": "^2.1.4",
     "eslint": "^7.22.0",

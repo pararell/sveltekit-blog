@@ -1,49 +1,43 @@
 <script>
 	import { page } from '$app/stores';
-	import logo from './svelte-logo.svg';
-	import { _, locale,dictionary } from 'svelte-i18n';
-	import Cookie from 'cookie-universal';
-	import { languages } from '$lib/constants';
-	import { filter } from 'rxjs/internal/operators/filter';
-	import { take } from 'rxjs/internal/operators/take';
-	import { lang, translations, blogs } from '$lib/store/store';
-	const cookies = Cookie();
+	import { api } from '$lib/api';
+	// import logo from './svelte-logo.svg';
+	import { _, locale, locales } from 'svelte-i18n';
+	import { blogs } from '$lib/store/store';
+    import { goto } from '$app/navigation';
 
-	let selected = 'sk'
-	lang.pipe(filter(value => !!value), take(1))
-		.subscribe((value) => {
-			selected = value;
-		});
+
+	let selected;
+	locale.subscribe((value) => {
+		selected = value;
+	});
 
 	const handleSubmit = async () => {
-		lang.next(selected);
-		cookies.set('blog_lang', selected);
 		locale.set(selected);
-		const resTranslations = await fetch('/translations.json');
-		const resBlogs = await fetch('/blogs.json');
-		if (resTranslations.ok && resBlogs.ok) {
-			const translationsFromApi = await resTranslations.json();
-			const blogsFromApi = await resBlogs.json();
-			translations.next(translationsFromApi);
-			blogs.next(blogsFromApi);
-			dictionary.set({
-				[lang.value]: translationsFromApi
-			});
+		const langSet = await api('api/lang', { method: 'POST' }, { lang: selected });
+
+		if (langSet) {
+			const resBlogs = await fetch('/blogs.json');
+			if (resBlogs.ok) {
+				const blogsFromApi = await resBlogs.json();
+				blogs.next(blogsFromApi);
+                goto('/blogs')
+				return;
+			}
 			return;
 		}
 
-
 		return {
-			error: new Error(message)
+			error: new Error()
 		};
-	}
+	};
 </script>
 
 <header>
 	<div class="corner">
-		<a href="https://kit.svelte.dev">
+		<!-- <a href="https://kit.svelte.dev">
 			<img src={logo} alt="SvelteKit" />
-		</a>
+		</a> -->
 	</div>
 
 	<nav>
@@ -52,7 +46,9 @@
 		</svg>
 		<ul>
 			<li class:active={$page.path === '/'}><a sveltekit:prefetch href="/">{$_('home')}</a></li>
-			<li class:active={$page.path === '/about'}><a sveltekit:prefetch href="/about">{$_('about')}</a></li>
+			<li class:active={$page.path === '/about'}>
+				<a sveltekit:prefetch href="/about">{$_('about')}</a>
+			</li>
 			<li class:active={$page.path === '/blogs'}><a sveltekit:prefetch href="/blogs">Blogs</a></li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
@@ -61,13 +57,13 @@
 	</nav>
 
 	<div class="corner">
-			<select bind:value={selected} on:change={handleSubmit}>
-				{#each languages as language}
-					<option value={language}>
-						{language}
-					</option>
-				{/each}
-			</select>
+		<select bind:value={selected} on:change={handleSubmit}>
+			{#each $locales as language}
+				<option value={language}>
+					{language}
+				</option>
+			{/each}
+		</select>
 	</div>
 </header>
 

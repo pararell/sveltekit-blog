@@ -9,7 +9,8 @@
 			blogs.next(blogsFromApi);
 
 			return {
-				props: { blogsFromApi }
+				props: { blogsFromApi },
+				maxage: 0
 			};
 		}
 
@@ -19,10 +20,6 @@
 			error: new Error(message)
 		};
 	};
-</script>
-
-<script>
-	export let blogsFromApi;
 </script>
 
 <svelte:head>
