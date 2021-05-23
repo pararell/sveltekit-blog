@@ -82,6 +82,7 @@
 		max-width: 1024px;
 		margin: 0 auto;
 		box-sizing: border-box;
+		margin-top: var(--header-height);
 	}
 
 	footer {
