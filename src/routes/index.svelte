@@ -1,5 +1,5 @@
 <script>
-	import Markdown from '$lib/Markdown.svelte';
+	import Blog from '$lib/Blog.svelte';
 </script>
 
 <svelte:head>
@@ -7,24 +7,14 @@
 </svelte:head>
 
 <section>
-	<h1>Markdown
-	</h1>
+	<h1>Blog</h1>
 
-	<Markdown />
+	<Blog />
 </section>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 1;
-	}
-
 	h1 {
-		width: 100%;
+		font-family: 'Josefin Sans', cwtexyen, sans-serif;
+		margin-bottom: 20px;
 	}
-
-
 </style>

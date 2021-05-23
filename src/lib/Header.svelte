@@ -13,6 +13,10 @@
 		selected = value;
 	});
 
+    page.subscribe(() => {
+        open = '';
+    });
+
 	const toggleMenu = async () => {
 		if (open === 'is-active') {
 			open = '';
@@ -64,7 +68,9 @@
 			<div class="col">
 				<h4>Navigation</h4>
 				<ul>
-					<li class:active={$page.path === '/'}><a sveltekit:prefetch href="/">{$_('home')}</a></li>
+					<li class:active={$page.path === '/'}>
+                        <a sveltekit:prefetch href="/">{$_('home')}</a>
+                    </li>
 					<li class:active={$page.path === '/about'}>
 						<a sveltekit:prefetch href="/about">{$_('about')}</a>
 					</li>
