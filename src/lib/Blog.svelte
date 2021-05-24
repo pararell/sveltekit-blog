@@ -4,7 +4,7 @@
 
 <div class="row">
 	{#each $blogs as blog (blog.id)}
-		<a class="post" rel="prefetch" href="blogs/{blog.slug}">
+		<a class="post" rel="prefetch" href="/blogs/{blog.slug}">
 			<h2 class="blog-title">{blog.title}</h2>
 			<span class="date">{new Date(blog.date).toLocaleDateString()}</span>
 		</a>

@@ -83,6 +83,7 @@ express()
 			issuerBaseURL: process.env.openIDIssuerBaseURL,
 			clientID: process.env.openIDClientID,
 			appSession: { secret: process.env.openIDSecret },
+			callbackURL: process.env.openIDIssuerBaseURL + '/callback',
 			async handleCallback(req, res, next) {
 				req.session.openidTokens = req.openidTokens;
 				req.session.user = req.openid.user;
@@ -95,7 +96,6 @@ express()
 		res.redirect(process.env.ORIGIN);
 	})
 	.get('/api/user', async (req, res) => {
-		console.log('user')
 		res.end(JSON.stringify(req.session.userIdentity || {}));
 	})
 	.get('/api/config', async (req, res) => {
