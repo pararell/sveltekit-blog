@@ -96,7 +96,7 @@
 				<h4>Blogs</h4>
 				<ul>
                     {#each $blogs as blog}
-                    <li><a href="blogs/{blog.slug}">{blog.title}</a></li>
+                    <li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
                     {/each}
 	
 				</ul>
