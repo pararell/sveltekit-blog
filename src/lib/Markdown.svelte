@@ -1,6 +1,8 @@
 <script>
 	import marked from 'marked';
 	import { goto } from '$app/navigation';
+	import { createEventDispatcher } from 'svelte';
+	const dispatch = createEventDispatcher();
 	export let source = '# Subtitle';
 	export let title = '';
 	export let id = '';
@@ -20,6 +22,10 @@
 			result: async (res, form) => {
 				const created = await res.json();
 				blog.next(created);
+				dispatch('redirectAction', {
+					text: 'blogs'
+				});
+				
 				if (type === 'create') {
 					goto('/blogs');
                     form.reset();
@@ -61,6 +67,9 @@
 			method="post"
 			use:enhance={{
 				result: () => {
+					dispatch('redirectAction', {
+					text: 'blogs'
+				});
 					goto('/blogs');
 				}
 			}}

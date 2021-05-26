@@ -1,4 +1,6 @@
 import node from '@sveltejs/adapter-node';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const config = {
 	kit: {
@@ -11,6 +13,11 @@ const config = {
 			routes: 'src/routes',
 			template: 'src/app.html'
 		},
+		vite: () => ({
+			server: {
+				cors: false
+			}
+		})
 	}
 };
 

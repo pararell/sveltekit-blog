@@ -28,12 +28,10 @@
 	const handleSubmit = async (pageObj) => {
 		locale.set(selected);
 		const langSet = await api('api/lang', { method: 'POST' }, { lang: selected });
-        const blogsPath = pageObj.path.includes('blogs/') ? 'blogs.json' : 'blogs/blogs.json';
 		if (langSet) {
-			const resBlogs = await fetch(blogsPath);
-			if (resBlogs.ok) {
-				const blogsFromApi = await resBlogs.json();
-				blogs.next(blogsFromApi);
+			const resBlogs = await api('api/blogs');
+			if (resBlogs) {
+				blogs.next(resBlogs.body);
 				goto('/blogs');
 				return;
 			}

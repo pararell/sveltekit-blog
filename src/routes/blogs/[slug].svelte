@@ -1,5 +1,5 @@
 <script context="module">
-	import { blog, config, disqusLoaded } from '$lib/store/store';
+	import { blog, blogs, config, disqusLoaded } from '$lib/store/store';
 	import { setDisqus, resetDisqus } from '$lib/utils';
 	
 	export const load = async ({ fetch, page }) => {
@@ -22,6 +22,7 @@
 <script>
 	import marked from 'marked';
 	import Markdown from '$lib/Markdown.svelte';
+	import { api } from '$lib/api';
 	import { onMount } from 'svelte';
 	import { filter } from 'rxjs/internal/operators/filter.js';
 	import { take } from 'rxjs/internal/operators/take.js';
@@ -53,6 +54,14 @@
 			resetDisqus(page);
 		});
 	});
+
+	const handleRedirect = async (event) => {
+		const resBlogs = await api('api/blogs', null, null, fetch);
+		if (resBlogs) {
+			blogs.next(resBlogs.body)
+		}
+	}
+
 </script>
 
 <svelte:head>
@@ -67,7 +76,12 @@
 		{@html marked($blog.content)}
 	</div>
 
-	<Markdown type={'update'} title={$blog.title} source={$blog.content} id={$blog.id} />
+	<Markdown 
+		type={'update'} 
+		title={$blog.title} source={$blog.content} 
+		id={$blog.id} 
+		on:redirectAction={handleRedirect}
+		/>
 {/if}
 
 <div id="disqus_thread" />

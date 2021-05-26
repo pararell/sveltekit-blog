@@ -1,10 +1,10 @@
-import { dev } from '$app/env';
+import { API_URL } from './constants';
 
-const base = dev ? 'http://localhost:4000' : 'http://localhost:4000';
+const baseUrl = API_URL;
 
 export async function api(resource, request, data, serverFetch) {
 	const req = request || {method: 'GET'};
-	const res = await (serverFetch || fetch)(`${base}/${resource}`, {
+	const res = await (serverFetch || fetch)(`${baseUrl}/${resource}`, {
 		...req,
 		method: req.method,
 		headers: {
@@ -14,6 +14,7 @@ export async function api(resource, request, data, serverFetch) {
 		credentials: 'include',
 		body: data && JSON.stringify(data)
 	});
+
 
 	// if the request came from a <form> submission, the browser's default
 	// behaviour is to show the URL corresponding to the form's "action"

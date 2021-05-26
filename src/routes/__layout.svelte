@@ -32,13 +32,12 @@
 
 		const resUser = await api('api/user', null, null, fetch);
 		const resConfig = await api('api/config', null, null, fetch);
-		const resBlogs = await fetch(blogsPath);
+		const resBlogs = await api('api/blogs', null, null, fetch);
 
-		if (resUser && resConfig && resBlogs.ok) {
-			const blogsFromApi = await resBlogs.json();
+		if (resUser && resConfig && resBlogs) {
 			user.next(resUser.body);
 			config.next(resConfig.body);
-			blogs.next(blogsFromApi);
+			blogs.next(resBlogs.body);
 
 			return {
 				props: {},
