@@ -9,7 +9,8 @@
 	let error = '';
 	export let type = 'create';
 	$: markdown = marked(source);
-	import { user, blog, lang } from './store/store';
+	import { user, blog } from './store/store';
+		import { _, locale } from 'svelte-i18n';
 	import { enhance } from './form';
 </script>
 
@@ -42,7 +43,7 @@
 				<input type="text" name="title" bind:value={title} placeholder="Title" />
 				<input type="hidden" name="author" value={$user.email} />
 				<input type="hidden" name="id" value={id} />
-				<input type="hidden" name="lang" value={$lang} />
+				<input type="hidden" name="lang" value={$locale} />
 				<button class="btn submit" disabled={!title || !source}> Save</button>
 			</div>
 			{#if error}

@@ -106,6 +106,7 @@ express()
 	})
 	.get('/api/blogs', async (req, res) => {
 		const lang = req.session.lang || 'en';
+	console.log(lang, 'lang')
 		const blogs = await connection.select('*').from('blogs').where({lang});
 		try {
 			res.end(JSON.stringify(blogs));
@@ -119,7 +120,7 @@ express()
 			res.end(JSON.stringify({ message: `Blog already exist` }));
 			return;
 		}
-		const blogs = await connection('blogs').insert({ ...req.body, lang: req.session.lang || 'en' });
+		const blogs = await connection('blogs').insert({ ...req.body });
 		try {
 			res.end(JSON.stringify(blogs));
 		} catch {
