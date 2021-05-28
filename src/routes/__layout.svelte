@@ -108,5 +108,7 @@
 		justify-content: center;
 		align-items: center;
 		padding: 40px;
+		min-height: 100px;
+		background: var(--secondary-color);
 	}
 </style>

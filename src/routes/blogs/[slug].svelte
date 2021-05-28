@@ -69,11 +69,12 @@
 
 {#if $blog}
 	<h1>{$blog.title}</h1>
-	<span class="date">{new Date($blog.date).toLocaleDateString()}</span>
 
 	<div class="content">
 		{@html marked($blog.content)}
 	</div>
+
+	<span class="date">{new Date($blog.date).toLocaleDateString()}</span>
 
 	<Markdown
 		type={'update'}
@@ -87,11 +88,6 @@
 <div id="disqus_thread" />
 
 <style>
-	h1 {
-		margin: 5px 0;
-		color: #000;
-	}
-
 	.content {
 		margin: 2em 0 4em 0;
 	}
@@ -126,5 +122,13 @@
 	.content :global(li) {
 		margin: 0 0 0.5em 0;
 		font-size: 1.2em;
+	}
+
+	.date {
+		text-align: right;
+		margin-right: 0;
+		margin-left: auto;
+		display: block;
+		color: var(--secondary-color);
 	}
 </style>

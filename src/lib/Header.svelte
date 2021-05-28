@@ -8,7 +8,6 @@
 	import { fromEvent } from 'rxjs';
 
 	const dispatch = createEventDispatcher();
-	// import logo from './svelte-logo.svg';
 
 	let selected;
 	export let active = '';
@@ -21,7 +20,7 @@
 		dispatch('toggle');
 	};
 
-	const handleSubmit = async () => {
+	const handleLanguageChange = async () => {
 		locale.set(selected);
 		const langSet = await api('api/lang', { method: 'POST' }, { lang: selected });
 		if (langSet) {
@@ -42,27 +41,28 @@
 	onMount(() => {
 		fromEvent(document.getElementById('main'), 'click').subscribe(() => {
 			dispatch('toggle', {
-					action: 'close'
-				});
-		})
+				action: 'close'
+			});
+		});
 	});
 </script>
 
 <header id="header" role="banner" class={active}>
 	<div class="container">
 		<div class="header-menu">
-			<button class="hamburger hamburger--boring {active}" on:click={toggleMenu} type="button">
-				<span class="hamburger-box">
-					<span class="hamburger-inner" />
-				</span>
-				<span class="hamburger-label">Menu</span>
-			</button>
+			<a sveltekit:prefetch href="/" class="logo">T</a>
+			<a class="menu-link" class:active={$page.path === '/blogs'} sveltekit:prefetch href="/blogs"
+			>Blog</a
+		>
 			<div class="menu-links">
-				<a class="menu-link" class:active={$page.path === '/blogs'} sveltekit:prefetch href="/blogs"
-					>Blog</a
-				>
+				<button class="hamburger hamburger--boring {active}" on:click={toggleMenu} type="button">
+					<span class="hamburger-box">
+						<span class="hamburger-inner" />
+					</span>
+					<span class="hamburger-label">Menu</span>
+				</button>
 			</div>
-			<form id="header-search">
+			<form id="header-search" style="opacity: 0;width:1px;">
 				<input
 					type="search"
 					name="s"
@@ -93,11 +93,17 @@
 				</ul>
 			</div>
 			<div class="col">
-				<h4>Languages</h4>
-
-				<div class="corner">
+				<h4>Blog</h4>
+				<ul>
+					{#each $blogs as blog}
+						<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
+					{/each}
+				</ul>
+			</div>
+			<div class="col">
+				<div class="switcher">
 					<!-- svelte-ignore a11y-no-onchange -->
-					<select bind:value={selected} on:change={handleSubmit}>
+					<select bind:value={selected} on:change={handleLanguageChange}>
 						{#each $locales as language}
 							<option value={language}>
 								{language}
@@ -106,19 +112,30 @@
 					</select>
 				</div>
 			</div>
-			<div class="col">
-				<h4>Blogs</h4>
-				<ul>
-					{#each $blogs as blog}
-						<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
-					{/each}
-				</ul>
-			</div>
 		</nav>
 	</div>
 </header>
 
 <style>
+
+	.logo {
+		color: #FFF;
+		font-weight: 700;
+		font-size: 69px;
+		line-height: 1;
+		border-radius: 50%;
+		width: 30px;
+		height: 30px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding-top: 20px;
+	}
+
+	.logo:hover {
+		text-decoration: none;
+	}
+
 	.header-menu {
 		margin: 0 0 0 auto;
 		display: flex;
@@ -155,6 +172,24 @@
 		.menu-link {
 			display: none;
 		}
+	}
+
+	.switcher {
+		margin: auto;
+	}
+
+	.switcher select {
+		appearance: none;
+		background-color: transparent;
+		border: none;
+		padding: 0 1em 0 0;
+		margin: 0;
+		width: 100%;
+		font-family: inherit;
+		font-size: inherit;
+		cursor: inherit;
+		line-height: inherit;
+		text-transform: uppercase;
 	}
 
 	#header {
@@ -385,6 +420,7 @@
 		background: transparent;
 		border: none;
 		border-color: #fff;
+		color: #fff;
 		border-style: solid;
 		border-width: 1px;
 		border-radius: 50px;
@@ -395,6 +431,10 @@
 		-webkit-appearance: none;
 		line-height: 1;
 		font-size: 14px;
+	}
+
+	#header-search input::-webkit-search-cancel-button {
+		display: none;
 	}
 
 	#header-search button {

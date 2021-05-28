@@ -36,7 +36,6 @@
 		background-color: #fff;
 		box-shadow: 1px 1px 20px 0px rgb(0 0 0 / 15%);
 		cursor: pointer;
-		/* background: #b1bbbc; */
 	}
 
 	.thumbnail {
@@ -67,7 +66,7 @@
 
 	.card-left {
 		flex: 1;
-		min-width: 300px;
+		min-width: 250px;
 	}
 
 	.card-left-bottom {
@@ -79,17 +78,17 @@
 		flex: 1;
 		margin-left: 20px;
 		margin-right: 20px;
-		min-width: 300px;
+		min-width: 250px;
 	}
 
 	h2 {
 		padding-top: 15px;
 		font-size: 1.3rem;
-		color: #4b4b4b;
+		color: var(--text-color);
 	}
 	.separator {
 		margin-top: 10px;
-		border: 1px solid #c3c3c3;
+		border: 1px solid var(--secondary-color);
 	}
 
 	p {
@@ -97,12 +96,12 @@
 		padding-top: 10px;
 		font-size: 0.95rem;
 		line-height: 150%;
-		color: #4b4b4b;
+		color: var(--text-color);
 	}
 
 	h6 {
 		font-size: 1rem;
 		line-height: 1.2;
-		color: #c3c3c3;
+		color: var(--secondary-color);
 	}
 </style>

@@ -10,9 +10,3 @@
 
 <Blog />
 
-<style>
-	h1 {
-		font-family: 'Josefin Sans', cwtexyen, sans-serif;
-		margin-bottom: 20px;
-	}
-</style>
