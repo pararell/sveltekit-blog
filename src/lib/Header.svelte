@@ -76,7 +76,7 @@
 
 		<nav id="site-nav" role="navigation" class={active}>
 			<div class="col">
-				<h4>Navigation</h4>
+				<h4>T</h4>
 				<ul>
 					<li class:active={$page.path === '/'}>
 						<a sveltekit:prefetch href="/">{$_('home')}</a>
