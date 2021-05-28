@@ -17,6 +17,8 @@ export const post = async (request) => {
 	const data = {
 		title: request.body.get('title'),
 		slug: request.body.get('title').toLowerCase().replace(/[^\w]/gi, '_'),
+		description: request.body.get('description'),
+		imgLink: request.body.get('imgLink'),
 		content: request.body.get('content'),
 		date: new Date(),
 		author: request.body.get('author'),

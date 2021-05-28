@@ -28,8 +28,6 @@
 			};
 		}
 
-		const blogsPath = page.path.includes('blogs/') ? 'blogs.json' : 'blogs/blogs.json';
-
 		const resUser = await api('api/user', null, null, fetch);
 		const resConfig = await api('api/config', null, null, fetch);
 		const resBlogs = await api('api/blogs', null, null, fetch);
@@ -53,18 +51,39 @@
 
 <script>
 	import Header from '$lib/Header.svelte';
+	import { page } from '$app/stores';
 	import '../app.css';
+	export let openHeader = '';
+
+	page.subscribe(() => {
+        openHeader = '';
+    });
+
+	const toggleMenu = (event) => {
+		if (event && event.detail && event.detail.action === 'close') {
+			openHeader = '';
+			return;
+		}
+		if (openHeader === 'is-active') {
+			openHeader = '';
+		} else {
+			openHeader = 'is-active';
+		}
+	};
+
 </script>
 
 {#if $isLoading}
 	Loading...
 {:else}
 	<div class="hero">
-		<Header />
+		<Header on:toggle={toggleMenu} active={openHeader} />
 	</div>
-		<main>
+	<main id="main">
+		<div class="container">
 			<slot />
-		</main>
+		</div>
+	</main>
 
 	<footer>
 		<p />
@@ -76,9 +95,8 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		padding: 1rem;
+		padding: 1rem 0;
 		width: 100%;
-		max-width: 1024px;
 		margin: 0 auto;
 		box-sizing: border-box;
 		margin-top: var(--header-height);
@@ -90,15 +108,5 @@
 		justify-content: center;
 		align-items: center;
 		padding: 40px;
-	}
-
-	footer a {
-		font-weight: bold;
-	}
-
-	@media (min-width: 480px) {
-		footer {
-			padding: 40px 0;
-		}
 	}
 </style>

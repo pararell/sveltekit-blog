@@ -32,8 +32,11 @@ connection.schema
 					table.integer('author');
 					table.string('title');
 					table.string('slug');
+					table.string('description');
+					table.string('imgLink');
 					table.date('date');
 					table.string('content');
+					table.json('categories');
 					table.json('comments');
 					table.string('lang');
 				})
@@ -106,8 +109,7 @@ express()
 	})
 	.get('/api/blogs', async (req, res) => {
 		const lang = req.session.lang || 'en';
-	console.log(lang, 'lang')
-		const blogs = await connection.select('*').from('blogs').where({lang});
+		const blogs = await connection.select('*').from('blogs').where({ lang });
 		try {
 			res.end(JSON.stringify(blogs));
 		} catch {
@@ -115,6 +117,13 @@ express()
 		}
 	})
 	.post('/api/blogs/create', async (req, res) => {
+		const admin =
+			req.session &&
+			req.session.userIdentity &&
+			req.session.userIdentity.email === process.env.adminEmail;
+		if (!admin) {
+			res.end(JSON.stringify({ message: `Authentification error` }));
+		}
 		const ifExist = await connection('blogs').where({ slug: req.body.slug });
 		if (ifExist && !!ifExist.length) {
 			res.end(JSON.stringify({ message: `Blog already exist` }));
@@ -128,6 +137,13 @@ express()
 		}
 	})
 	.patch('/api/blogs/update', async (req, res) => {
+		const admin =
+			req.session &&
+			req.session.userIdentity &&
+			req.session.userIdentity.email === process.env.adminEmail;
+		if (!admin) {
+			res.end(JSON.stringify({ message: `Authentification error` }));
+		}
 		const blogs = await connection('blogs')
 			.where({ id: req.body.id })
 			.update({ ...req.body });
@@ -150,6 +166,13 @@ express()
 		}
 	})
 	.delete('/api/blogs/delete/:id', async (req, res) => {
+		const admin =
+			req.session &&
+			req.session.userIdentity &&
+			req.session.userIdentity.email === process.env.adminEmail;
+		if (!admin) {
+			res.end(JSON.stringify({ message: `Authentification error` }));
+		}
 		const id = req.params['id'];
 		const blogs = await connection('blogs').where('id', id).del();
 		try {

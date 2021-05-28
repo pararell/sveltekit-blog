@@ -2,19 +2,22 @@
 	import marked from 'marked';
 	import { goto } from '$app/navigation';
 	import { createEventDispatcher } from 'svelte';
+	import { user, blog } from './store/store';
+	import { _, locale } from 'svelte-i18n';
+	import { enhance } from './form';
+
 	const dispatch = createEventDispatcher();
 	export let source = '# Subtitle';
 	export let title = '';
+	export let imgLink = '';
+	export let description = '';
 	export let id = '';
-	let error = '';
 	export let type = 'create';
+	let error = '';
 	$: markdown = marked(source);
-	import { user, blog } from './store/store';
-		import { _, locale } from 'svelte-i18n';
-	import { enhance } from './form';
 </script>
 
-{#if $user?.email }
+{#if $user?.email}
 	<form
 		class="new"
 		action={'/blogs/' + type + '.json' + (type === 'update' ? '?_method=patch' : '')}
@@ -26,10 +29,10 @@
 				dispatch('redirectAction', {
 					text: 'blogs'
 				});
-				
+
 				if (type === 'create') {
 					goto('/blogs');
-                    form.reset();
+					form.reset();
 				}
 				if (type === 'update') {
 					goto('/blogs/' + created.slug);
@@ -41,6 +44,8 @@
 			<h1 class="header-title">Add blog</h1>
 			<div class="header-cta">
 				<input type="text" name="title" bind:value={title} placeholder="Title" />
+				<input type="text" name="imgLink" bind:value={imgLink} placeholder="Image link" />
+				<input type="text" name="description" bind:value={description} placeholder="Description" />
 				<input type="hidden" name="author" value={$user.email} />
 				<input type="hidden" name="id" value={id} />
 				<input type="hidden" name="lang" value={$locale} />
@@ -69,8 +74,8 @@
 			use:enhance={{
 				result: () => {
 					dispatch('redirectAction', {
-					text: 'blogs'
-				});
+						text: 'blogs'
+					});
 					goto('/blogs');
 				}
 			}}
@@ -94,7 +99,7 @@
 	.header-cta {
 		display: flex;
 		align-items: center;
-		flex-wrap: nowrap;
+		flex-wrap: wrap;
 		justify-content: center;
 		width: 100%;
 		position: relative;

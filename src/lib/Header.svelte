@@ -4,28 +4,24 @@
 	import { _, locale, locales } from 'svelte-i18n';
 	import { blogs } from '$lib/store/store';
 	import { goto } from '$app/navigation';
+	import { createEventDispatcher, onMount } from 'svelte';
+	import { fromEvent } from 'rxjs';
+
+	const dispatch = createEventDispatcher();
 	// import logo from './svelte-logo.svg';
 
 	let selected;
-	let open = '';
+	export let active = '';
 
 	locale.subscribe((value) => {
 		selected = value;
 	});
 
-    page.subscribe(() => {
-        open = '';
-    });
-
-	const toggleMenu = async () => {
-		if (open === 'is-active') {
-			open = '';
-		} else {
-			open = 'is-active';
-		}
+	const toggleMenu = () => {
+		dispatch('toggle');
 	};
 
-	const handleSubmit = async (pageObj) => {
+	const handleSubmit = async () => {
 		locale.set(selected);
 		const langSet = await api('api/lang', { method: 'POST' }, { lang: selected });
 		if (langSet) {
@@ -42,38 +38,57 @@
 			error: new Error()
 		};
 	};
+
+	onMount(() => {
+		fromEvent(document.getElementById('main'), 'click').subscribe(() => {
+			dispatch('toggle', {
+					action: 'close'
+				});
+		})
+	});
 </script>
 
-<header id="masthead" role="banner" class={open}>
+<header id="header" role="banner" class={active}>
 	<div class="container">
-		<button class="hamburger hamburger--boring {open}" on:click={toggleMenu} type="button">
-			<span class="hamburger-box">
-				<span class="hamburger-inner" />
-			</span>
-			<span class="hamburger-label">Menu</span>
-		</button>
-		<form id="masthead-search">
-			<input
-				type="search"
-				name="s"
-				aria-labelledby="search-label"
-				placeholder="Search&hellip;"
-				class="draw"
-			/>
-			<button type="submit">&rarr;</button>
-		</form>
-		<nav id="site-nav" role="navigation" class={open}>
+		<div class="header-menu">
+			<button class="hamburger hamburger--boring {active}" on:click={toggleMenu} type="button">
+				<span class="hamburger-box">
+					<span class="hamburger-inner" />
+				</span>
+				<span class="hamburger-label">Menu</span>
+			</button>
+			<div class="menu-links">
+				<a class="menu-link" class:active={$page.path === '/blogs'} sveltekit:prefetch href="/blogs"
+					>Blog</a
+				>
+			</div>
+			<form id="header-search">
+				<input
+					type="search"
+					name="s"
+					aria-labelledby="search-label"
+					placeholder="{$_('search')}&hellip;"
+					class="draw"
+				/>
+				<button type="submit">&rarr;</button>
+			</form>
+		</div>
+
+		<nav id="site-nav" role="navigation" class={active}>
 			<div class="col">
 				<h4>Navigation</h4>
 				<ul>
 					<li class:active={$page.path === '/'}>
-                        <a sveltekit:prefetch href="/">{$_('home')}</a>
-                    </li>
+						<a sveltekit:prefetch href="/">{$_('home')}</a>
+					</li>
 					<li class:active={$page.path === '/about'}>
 						<a sveltekit:prefetch href="/about">{$_('about')}</a>
 					</li>
 					<li class:active={$page.path === '/blogs'}>
-						<a sveltekit:prefetch href="/blogs">Blogs</a>
+						<a sveltekit:prefetch href="/blogs">Blog</a>
+					</li>
+					<li class:active={$page.path === '/contact'}>
+						<a sveltekit:prefetch href="/contact">{$_('contact')}</a>
 					</li>
 				</ul>
 			</div>
@@ -81,7 +96,8 @@
 				<h4>Languages</h4>
 
 				<div class="corner">
-					<select bind:value={selected} on:change={() => handleSubmit($page)}>
+					<!-- svelte-ignore a11y-no-onchange -->
+					<select bind:value={selected} on:change={handleSubmit}>
 						{#each $locales as language}
 							<option value={language}>
 								{language}
@@ -93,23 +109,9 @@
 			<div class="col">
 				<h4>Blogs</h4>
 				<ul>
-                    {#each $blogs as blog}
-                    <li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
-                    {/each}
-	
-				</ul>
-			</div>
-			<div class="col">
-				<h4>Contact</h4>
-				<ul>
-					<li><a href="#">Contact</a></li>
-				</ul>
-			</div>
-			<div class="col">
-				<ul class="social">
-					<li><a href=""><svg title="Facebook"><use xlink:href="#icon-facebook" /></svg></a></li>
-					<li><a href=""><svg title="Twitter"><use xlink:href="#icon-twitter" /></svg></a></li>
-					<li><a href=""><svg title="LinkedIn"><use xlink:href="#icon-linkedin" /></svg></a></li>
+					{#each $blogs as blog}
+						<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
+					{/each}
 				</ul>
 			</div>
 		</nav>
@@ -117,11 +119,29 @@
 </header>
 
 <style>
+	.header-menu {
+		margin: 0 0 0 auto;
+		display: flex;
+		align-items: center;
+	}
+
+	.menu-links {
+		margin-left: auto;
+		margin-right: 0;
+	}
+
+	.menu-link {
+		color: #fff;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		line-height: 1;
+		padding: 0 1em;
+		display: inline-block;
+	}
 	nav a {
 		display: flex;
 		height: 100%;
 		align-items: center;
-		padding: 0 1em;
 		color: var(--heading-color);
 		font-weight: 700;
 		font-size: 0.8rem;
@@ -131,7 +151,343 @@
 		transition: color 0.2s linear;
 	}
 
-	a:hover {
-		color: var(--accent-color);
+	@media screen and (max-width: 960px) {
+		.menu-link {
+			display: none;
+		}
+	}
+
+	#header {
+		position: relative;
+	}
+
+	#header.is-active {
+		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+		background: #fff;
+		overflow: auto;
+		min-height: 300px;
+	}
+
+	@media screen and (max-width: 768px) {
+		#header.is-active {
+			height: 100vh;
+		}
+	}
+
+	#header:after {
+		content: '';
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: #fff;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	#header.is-active:after {
+		opacity: 1;
+	}
+
+	/*!
+ * Hamburgers
+ * @description Tasty CSS-animated hamburgers
+ * @author Jonathan Suh @jonsuh
+ * @site https://jonsuh.com/hamburgers
+ * @link https://github.com/jonsuh/hamburgers
+ */
+	.hamburger {
+		background-color: transparent;
+		border: 0;
+		color: inherit;
+		cursor: pointer;
+		display: inline-block;
+		overflow: visible;
+		outline: none;
+		padding: 0;
+		text-transform: none;
+		transition: opacity 0.15s;
+		-webkit-appearance: none;
+	}
+
+	.hamburger:hover {
+		opacity: 0.7;
+	}
+
+	.hamburger-box {
+		width: 30px;
+		height: 24px;
+		display: inline-block;
+		position: relative;
+	}
+
+	.hamburger-inner {
+		display: block;
+		top: 50%;
+		margin-top: -2px;
+	}
+
+	.hamburger-inner,
+	.hamburger-inner::before,
+	.hamburger-inner::after {
+		width: 30px;
+		height: 2px;
+		background-color: #fff;
+		border-radius: 4px;
+		position: absolute;
+		transition-property: -webkit-transform;
+		transition-property: transform;
+		transition-property: transform, -webkit-transform;
+		transition-duration: 0.15s;
+		transition-timing-function: ease;
+	}
+
+	#header.is-active .hamburger-inner,
+	#header.is-active .hamburger-inner::before,
+	#header.is-active .hamburger-inner::after {
+		background-color: #000;
+	}
+
+	.hamburger-inner::before,
+	.hamburger-inner::after {
+		content: '';
+		display: block;
+	}
+
+	.hamburger-inner::before {
+		top: -6px;
+	}
+
+	.hamburger-inner::after {
+		bottom: -6px;
+	}
+
+	.hamburger--boring .hamburger-inner,
+	.hamburger--boring .hamburger-inner::before,
+	.hamburger--boring .hamburger-inner::after {
+		transition-property: none;
+	}
+
+	.hamburger--boring.is-active .hamburger-inner {
+		-webkit-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
+
+	.hamburger--boring.is-active .hamburger-inner::before {
+		top: 0;
+		opacity: 0;
+	}
+
+	.hamburger--boring.is-active .hamburger-inner::after {
+		bottom: 0;
+		-webkit-transform: rotate(-90deg);
+		transform: rotate(-90deg);
+	}
+
+	.hamburger-label {
+		color: #fff;
+		display: inline-block;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		line-height: 1;
+		margin-left: 0.3125em;
+		text-transform: uppercase;
+	}
+
+	#header.is-active .hamburger-label {
+		color: #000;
+	}
+
+	.hamburger-box,
+	.hamburger-label {
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	#site-nav {
+		clear: both;
+		display: flex;
+		flex-direction: column;
+		height: 0;
+		overflow: hidden;
+		padding-top: 1em;
+	}
+
+	#site-nav.is-active {
+		height: auto;
+		overflow: visible;
+	}
+
+	#site-nav .col {
+		padding-bottom: 1em;
+	}
+
+	@media screen and (min-width: 550px) {
+		#site-nav {
+			flex-direction: row;
+			flex-wrap: wrap;
+		}
+
+		#site-nav .col {
+			flex: 0 0 50%;
+		}
+	}
+
+	@media screen and (min-width: 768px) {
+		#site-nav .col {
+			flex: 0 0 33.333333333%;
+		}
+	}
+
+	@media screen and (min-width: 960px) {
+		#site-nav {
+			flex-wrap: nowrap;
+		}
+
+		#site-nav .col {
+			flex: 0 0 20%;
+		}
+	}
+
+	#site-nav h4 {
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	#site-nav ul {
+		list-style-type: none;
+		margin-top: 1em;
+	}
+
+	#site-nav li {
+		margin-bottom: 0.3125em;
+	}
+
+	#site-nav li a {
+		color: #b4b9ba;
+		text-decoration: none;
+		transition: color 0.3s ease;
+	}
+
+	#site-nav li a:hover,
+	#site-nav li a:focus {
+		color: #686d6e;
+	}
+
+	#header-search {
+		margin: 0.6em 0 0.6em 2em;
+		max-width: 10em;
+		position: relative;
+		-webkit-appearance: none;
+	}
+
+	#header-search input {
+		background: transparent;
+		border: none;
+		border-color: #fff;
+		border-style: solid;
+		border-width: 1px;
+		border-radius: 50px;
+		outline: none;
+		width: 100%;
+		padding: 0.5em 1em 0.4em 1em;
+		transition: border-color 0.3s ease;
+		-webkit-appearance: none;
+		line-height: 1;
+		font-size: 14px;
+	}
+
+	#header-search button {
+		background: none;
+		border: none;
+		color: #fff;
+		font-size: 1em;
+		padding: 0;
+		position: absolute;
+		top: 50%;
+		right: 0.75em;
+		transform: translateY(-50%);
+		-webkit-appearance: none;
+	}
+
+	#header.is-active #header-search button {
+		color: #b4b9ba;
+	}
+
+	#header.is-active #header-search input {
+		border-color: #b4b9ba;
+	}
+
+	#header-search ::-webkit-input-placeholder {
+		color: #fff;
+	}
+
+	#header-search :-moz-placeholder {
+		color: #fff;
+		opacity: 1;
+	}
+
+	#header-search ::-moz-placeholder {
+		color: #fff;
+		opacity: 1;
+	}
+
+	#header-search :-ms-input-placeholder {
+		color: #fff;
+	}
+
+	#header.is-active #header-search ::-webkit-input-placeholder {
+		color: #b4b9ba;
+	}
+
+	#header.is-active #header-search :-moz-placeholder {
+		color: #b4b9ba;
+		opacity: 1;
+	}
+
+	#header.is-active #header-search ::-moz-placeholder {
+		color: #b4b9ba;
+		opacity: 1;
+	}
+
+	#header.is-active #header-search :-ms-input-placeholder {
+		color: #b4b9ba;
+	}
+
+	#header .col {
+		opacity: 0;
+	}
+
+	#header.is-active .col {
+		transform: translateY(40px);
+		transition: opacity 0.3s ease;
+		animation: fade-in-stagger 0.8s ease forwards;
+	}
+
+	#header.is-active .col:nth-child(1) {
+		-webkit-animation-delay: 0;
+	}
+
+	#header.is-active .col:nth-child(2) {
+		-webkit-animation-delay: 0.1s;
+	}
+
+	#header.is-active .col:nth-child(3) {
+		-webkit-animation-delay: 0.2s;
+	}
+
+	#header.is-active .col:nth-child(4) {
+		-webkit-animation-delay: 0.3s;
+	}
+
+	#header.is-active .col:nth-child(5) {
+		-webkit-animation-delay: 0.4s;
+	}
+
+	@keyframes fade-in-stagger {
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 </style>

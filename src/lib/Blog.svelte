@@ -2,65 +2,107 @@
 	import { blogs } from '$lib/store/store';
 </script>
 
-<div class="row">
-	{#each $blogs as blog (blog.id)}
-		<a class="post" rel="prefetch" href="/blogs/{blog.slug}">
-			<h2 class="blog-title">{blog.title}</h2>
-			<span class="date">{new Date(blog.date).toLocaleDateString()}</span>
-		</a>
-	{/each}
-</div>
+{#each $blogs as blog (blog.id)}
+	<a class="card" rel="prefetch" href="/blogs/{blog.slug}">
+		<div class="card-left">
+			<div class="card-left-top">
+				<div class="thumbnail">
+					<img class="card-left-img" alt="img" src={blog.imgLink} />
+				</div>
+			</div>
+			<div class="card-left-bottom">
+				<h6>{new Date(blog.date).toLocaleDateString()} </h6>
+			</div>
+		</div>
+
+		<div class="card-right">
+			<h2>{blog.title}</h2>
+			<div class="separator" />
+			<p>
+				{blog.description}
+			</p>
+		</div>
+	</a>
+{/each}
 
 <style>
-	.row {
+	.card {
+		position: relative;
+		font-family: 'Josefin Sans', cwtexyen, sans-serif;
 		display: flex;
 		flex-wrap: wrap;
-		position: relative;
 		width: 100%;
-		margin: 0 0 0 -1em;
+		margin: 80px auto;
+		background-color: #fff;
+		box-shadow: 1px 1px 20px 0px rgb(0 0 0 / 15%);
+		cursor: pointer;
+		/* background: #b1bbbc; */
 	}
 
-	.post {
-		margin: 0 0 25px 2em;
-		transition: all 0.1s ease-out;
-		font-family: 'Josefin Sans', cwtexyen, sans-serif;
-		width: 16em;
-		text-decoration: none;
+	.thumbnail {
+		position: relative;
+		display: flex;
+		top: -30px;
+		height: 320px;
 		overflow: hidden;
-		border: 1px solid rgba(0, 0, 0, 0.1);
-		padding: 15px;
-		border-radius: 6px;
-		background: #13293d;
+		box-shadow: 1px 1px 20px 0px rgb(0 0 0 / 15%);
+		transition: all 0.1s ease-out;
 	}
 
-	.post:hover {
+	.card:hover {
+		opacity: 1;
+		text-decoration: none;
+	}
+
+	.card:hover .thumbnail {
 		transform: translateX(10px);
 	}
 
-	.blog-title {
-		text-decoration: none;
-		font-family: 'Josefin Sans', cwtexyen, sans-serif;
-		font-size: 20px;
-		line-height: 1.2;
-		color: #fff;
-	}
-
-	.date {
-		color: #222;
-		display: block;
-		font-weight: 300;
-		font-size: 16px;
-		color: #e8f1f2;
-	}
-
-	img {
+	.card-left-img {
 		object-fit: cover;
-		border-radius: 50%;
-		overflow: hidden;
-		height: 150px;
-		width: 150px;
-		border: 1px solid rgba(0, 0, 0, 0.1);
+		object-position: center;
 		display: block;
-		margin: 0 auto 10px auto;
+		width: 100%;
+	}
+
+	.card-left {
+		flex: 1;
+		min-width: 300px;
+	}
+
+	.card-left-bottom {
+		margin-top: -25px;
+    	padding-left: 10px;
+	}
+
+	.card-right {
+		flex: 1;
+		margin-left: 20px;
+		margin-right: 20px;
+		min-width: 300px;
+	}
+
+	h2 {
+		padding-top: 15px;
+		font-size: 1.3rem;
+		color: #4b4b4b;
+	}
+	.separator {
+		margin-top: 10px;
+		border: 1px solid #c3c3c3;
+	}
+
+	p {
+		text-align: justify;
+		padding-top: 10px;
+		font-size: 0.95rem;
+		line-height: 150%;
+		color: #4b4b4b;
+	}
+
+	h6 {
+		font-size: 1rem;
+		line-height: 1.2;
+		color: #c3c3c3;
 	}
 </style>
