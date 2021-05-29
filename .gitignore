@@ -70,3 +70,5 @@ build/
 .svelte-kit
 database/
 connect-session-knex.sqlite
+en-blog.json
+sk-blog.json

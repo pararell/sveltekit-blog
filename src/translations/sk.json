@@ -2,5 +2,12 @@
     "home": "Domov",
     "about": "O mne",
     "contact": "Kontakt",
-    "search": "Hľadať"
+    "search": "Hľadať",
+    "blog_title": "Blog ",
+    "blog_subtitle": "Blog info SK",
+    "subject": "Subjekt",
+    "note": "Poznámka",
+    "send": "Poslať",
+    "about_title": "O mne",
+    "about_description": "Info o mne"
 }

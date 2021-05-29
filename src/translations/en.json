@@ -2,5 +2,12 @@
     "home": "Home",
     "about": "About me",
     "contact": "Contact",
-    "search": "Search"
+    "search": "Search",
+    "blog_title": "Blog",
+    "blog_subtitle": "Blog info",
+    "subject": "Subject",
+    "note": "Note",
+    "send": "Send",
+    "about_title": "About us",
+    "about_description": "About us info"
 }

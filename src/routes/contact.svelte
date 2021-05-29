@@ -4,6 +4,7 @@
 		email = '',
 		result = '';
 	import { api } from '$lib/api';
+	import { _ } from 'svelte-i18n';
 
 	async function handleSubmit() {
 		const request = {
@@ -22,28 +23,28 @@
 </script>
 
 <svelte:head>
-	<title>Contact</title>
+	<title>{$_('contact')}</title>
 </svelte:head>
 
 <div class="full" />
 <div class="container">
 	<div class="flex">
 		<div class="col">
-			<h1 class="title">Contact</h1>
+			<h1 class="title">{$_('contact')}</h1>
 			<form class="content" on:submit|preventDefault={handleSubmit}>
 				<span class="field">
-					<label for="subject">Subject</label>
+					<label for="subject">{$_('subject')}</label>
 					<input id="subject" name="subject" type="text" bind:value={subject} />
 				</span>
 				<span class="field">
-					<label for="email">E-mail</label>
+					<label for="email">Email</label>
 					<input id="email" name="email" type="text" bind:value={email} />
 				</span>
 				<span class="field">
-					<label for="note">Note</label>
+					<label for="note">{$_('note')}</label>
 					<textarea id="note" name="note" bind:value={note} />
 				</span>
-				<button disabled={!email || !note || !subject} type="submit" class="btn">Send</button>
+				<button disabled={!email || !note || !subject} type="submit" class="btn">{$_('send')}</button>
 			</form>
 			{#if result}
 				<span class="result">
