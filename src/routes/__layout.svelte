@@ -50,14 +50,14 @@
 </script>
 
 <script>
+	import '../app.css';
 	import Header from '$lib/Header.svelte';
 	import { page } from '$app/stores';
-	import '../app.css';
 	export let openHeader = '';
 
 	page.subscribe(() => {
-        openHeader = '';
-    });
+		openHeader = '';
+	});
 
 	const toggleMenu = (event) => {
 		if (event && event.detail && event.detail.action === 'close') {
@@ -70,11 +70,10 @@
 			openHeader = 'is-active';
 		}
 	};
-
 </script>
 
 {#if $isLoading}
-	Loading...
+	<div class="loading" />
 {:else}
 	<div class="hero">
 		<Header on:toggle={toggleMenu} active={openHeader} />
@@ -110,5 +109,23 @@
 		padding: 40px;
 		min-height: 100px;
 		background: var(--secondary-color);
+	}
+
+	.loading {
+		height: 0;
+		width: 0;
+		padding: 15px;
+		border: 6px solid var(--secondary-color);
+		border-right-color: var(--primary-color);
+		border-radius: 22px;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+	}
+
+	@-webkit-keyframes rotate {
+		100% {
+			-webkit-transform: rotate(360deg);
+		}
 	}
 </style>

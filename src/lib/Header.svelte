@@ -66,7 +66,6 @@
 				<input
 					type="search"
 					name="s"
-					aria-labelledby="search-label"
 					placeholder="{$_('search')}&hellip;"
 					class="draw"
 				/>
@@ -224,13 +223,6 @@
 		opacity: 1;
 	}
 
-	/*!
- * Hamburgers
- * @description Tasty CSS-animated hamburgers
- * @author Jonathan Suh @jonsuh
- * @site https://jonsuh.com/hamburgers
- * @link https://github.com/jonsuh/hamburgers
- */
 	.hamburger {
 		background-color: transparent;
 		border: 0;

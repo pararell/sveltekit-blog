@@ -69,7 +69,7 @@
 	.title {
 		text-align: center;
 		color: var(--text-color);
-		font-family: 'Josefin Sans', cwtexyen, sans-serif;
+		font-family: 'Josefin Sans', sans-serif;
 		position: relative;
 	}
 	.content {

@@ -1,5 +1,5 @@
 :root {
-	font-family: 'Josefin Sans', cwtexyen, sans-serif;
+	font-family: 'Josefin Sans', sans-serif;
 	--primary-color: #6A8A73;
 	--secondary-color: #b1bbbc;
 	--text-color: #444444;
@@ -27,7 +27,6 @@ body {
 	min-height: 100vh;
 	box-sizing: border-box;
 	margin: 0;
-	font-family: 'Josefin Sans', cwtexyen, sans-serif;
 	font-size: 100%;
 	line-height: 1.5;
 }
@@ -35,7 +34,6 @@ body {
 html,
 body,
 div,
-object,
 iframe,
 h1,
 h2,
@@ -49,14 +47,12 @@ ol,
 ul,
 li,
 form,
-legend,
 label,
 table,
 header,
 footer,
 nav,
-section,
-figure {
+section {
 	margin: 0;
 	padding: 0;
 }
@@ -65,9 +61,7 @@ header,
 footer,
 nav,
 section,
-article,
-hgroup,
-figure {
+article {
 	display: block;
 }
 
@@ -156,7 +150,6 @@ code {
 	transition: 1px ease-in;
 	padding: 15px;
 	border-radius: 5px;
-	font-family: 'Josefin Sans', cwtexyen, sans-serif;
 	background: #b1bbbc;
 }
 

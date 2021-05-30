@@ -7,11 +7,11 @@
 		<div class="card-left">
 			<div class="card-left-top">
 				<div class="thumbnail">
-					<img class="card-left-img" alt="img" src={blog.imgLink} />
+					<img class="card-left-img" alt="{blog.slug}" src={blog.imgLink} loading="lazy" />
 				</div>
 			</div>
 			<div class="card-left-bottom">
-				<h6>{new Date(blog.date).toLocaleDateString()} </h6>
+				<p class="date">{new Date(blog.date).toLocaleDateString()} </p>
 			</div>
 		</div>
 
@@ -28,7 +28,7 @@
 <style>
 	.card {
 		position: relative;
-		font-family: 'Josefin Sans', cwtexyen, sans-serif;
+		font-family: 'Josefin Sans', sans-serif;
 		display: flex;
 		flex-wrap: wrap;
 		width: 100%;
@@ -99,9 +99,9 @@
 		color: var(--text-color);
 	}
 
-	h6 {
+	.date {
 		font-size: 1rem;
 		line-height: 1.2;
-		color: var(--secondary-color);
+		padding: 0;
 	}
 </style>
