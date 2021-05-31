@@ -78,9 +78,7 @@
 
 	<Markdown
 		type={'update'}
-		title={$blog.title}
-		source={$blog.content}
-		id={$blog.id}
+		{...$blog}
 		on:redirectAction={handleRedirect}
 	/>
 {/if}

@@ -20,6 +20,9 @@ export const post = async (request) => {
 		description: request.body.get('description'),
 		imgLink: request.body.get('imgLink'),
 		content: request.body.get('content'),
+		categories: request.body.get('categories')
+			? request.body.get('categories').split(',')
+			: [],
 		date: new Date(),
 		author: request.body.get('author'),
 		lang: request.body.get('lang'),
@@ -33,6 +36,11 @@ export const patch = async (request) => {
 	return api(`api/blogs/update`, request, {
 		id: parseFloat(request.body.get('id')),
 		title: request.body.get('title'),
+		description: request.body.get('description'),
+		imgLink: request.body.get('imgLink'),
+		categories: request.body.get('categories')
+			? request.body.get('categories').split(',')
+			: [],
 		slug: request.body.get('title').toLowerCase().replace(/[^\w]/gi, '_'),
 		content: request.body.get('content'),
 		comments: []

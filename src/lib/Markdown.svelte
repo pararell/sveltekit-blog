@@ -7,14 +7,15 @@
 	import { enhance } from './form';
 
 	const dispatch = createEventDispatcher();
-	export let source = '# Subtitle';
+	export let content = '# Subtitle';
 	export let title = '';
 	export let imgLink = '';
 	export let description = '';
+	export let categories = '';
 	export let id = '';
 	export let type = 'create';
 	let error = '';
-	$: markdown = marked(source);
+	$: markdown = marked(content);
 </script>
 
 {#if $user?.email}
@@ -46,10 +47,11 @@
 				<input type="text" name="title" bind:value={title} placeholder="Title" />
 				<input type="text" name="imgLink" bind:value={imgLink} placeholder="Image link" />
 				<input type="text" name="description" bind:value={description} placeholder="Description" />
+				<input type="text" name="categories" bind:value={categories} placeholder="Categories" />
 				<input type="hidden" name="author" value={$user.email} />
 				<input type="hidden" name="id" value={id} />
 				<input type="hidden" name="lang" value={$locale} />
-				<button class="btn submit" disabled={!title || !source}> Save</button>
+				<button class="btn submit" disabled={!title || !content}> Save</button>
 			</div>
 			{#if error}
 				<p class="error">
@@ -63,7 +65,7 @@
 				<div class="markdown-editor__output">{@html markdown}</div>
 			</div>
 			<div class="markdown-editor__left-panel">
-				<textarea name="content" bind:value={source} class="markdown-editor__source" />
+				<textarea name="content" bind:value={content} class="markdown-editor__source" />
 			</div>
 		</div>
 	</form>
