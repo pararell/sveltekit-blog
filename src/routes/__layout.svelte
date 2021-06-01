@@ -99,6 +99,7 @@
 		margin: 0 auto;
 		box-sizing: border-box;
 		margin-top: var(--header-height);
+		min-height: calc(85vh - var(--header-height));
 	}
 
 	footer {

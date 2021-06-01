@@ -1,5 +1,6 @@
 import express from 'express';
-import { auth } from 'express-openid-connect';
+import openid from 'express-openid-connect';
+const { auth } = openid;
 import compression from 'compression';
 import bodyParser from 'body-parser';
 const { urlencoded, json } = bodyParser;

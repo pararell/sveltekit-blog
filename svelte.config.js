@@ -5,7 +5,6 @@ dotenv.config();
 const config = {
 	kit: {
 		adapter: node({out: 'build'}),
-		target: '#svelte',
 		files: {
 			assets: 'static',
 			hooks: 'src/hooks',
