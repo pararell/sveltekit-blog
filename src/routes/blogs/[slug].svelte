@@ -56,7 +56,7 @@
 	});
 
 	const handleRedirect = async (event) => {
-		const resBlogs = await api('api/blogs', null, null, fetch);
+		const resBlogs = await api({resource: 'api/blogs', serverFetch: fetch});
 		if (resBlogs) {
 			blogs.next(resBlogs.body);
 		}
@@ -87,17 +87,18 @@
 
 <style>
 	.content {
-		margin: 2em 0 4em 0;
+		margin: 2rem 0 4rem 0;
 	}
 
 	.content :global(h2) {
-		font-size: 1.6em;
+		font-size: 1.6rem;
 		font-weight: 600;
 		color: #000;
 	}
 
 	.content :global(p) {
-		font-size: 1.2em;
+		font-size: 1.2rem;
+		text-align: justify;
 	}
 
 	.content :global(pre) {
@@ -118,8 +119,8 @@
 	}
 
 	.content :global(li) {
-		margin: 0 0 0.5em 0;
-		font-size: 1.2em;
+		margin: 0 0 0.5rem 0;
+		font-size: 1.2rem;
 	}
 
 	.date {

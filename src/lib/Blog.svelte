@@ -1,8 +1,9 @@
 <script>
 	import { blogs } from '$lib/store/store';
+	export let category;
 </script>
 
-{#each $blogs as blog (blog.id)}
+{#each $blogs.filter(blog => category ?  blog.categories.includes(category) : true) as blog (blog.id)}
 	<a class="card" rel="prefetch" href="/blogs/{blog.slug}">
 		<div class="card-left">
 			<div class="card-left-top">

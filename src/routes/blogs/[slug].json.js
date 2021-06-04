@@ -3,7 +3,7 @@ import { api } from '$lib/api';
 
 // GET /blogs.json
 export const get = async (request) => {
-	const response = await api(`api/blogs/${request.params.slug}`, request);
+	const response = await api({resource: `api/blogs/${request.params.slug}`, request});
 
 	if (response.status === 404) {
 		return { body: {} };
@@ -28,12 +28,12 @@ export const post = async (request) => {
 		lang: request.body.get('lang'),
 		comments: []
 	}
-	return api(`api/blogs/create`, request, data);
+	return api({resource: `api/blogs/create`, request, data});
 };
 
 // PATCH /blogs/update.json
 export const patch = async (request) => {
-	return api(`api/blogs/update`, request, {
+	return api({resource: `api/blogs/update`, request, data: {
 		id: parseFloat(request.body.get('id')),
 		title: request.body.get('title'),
 		description: request.body.get('description'),
@@ -44,10 +44,10 @@ export const patch = async (request) => {
 		slug: request.body.get('title').toLowerCase().replace(/[^\w]/gi, '_'),
 		content: request.body.get('content'),
 		comments: []
-	});
+	}});
 };
 
 // DELETE /blogs/:uid.json
 export const del = async (request) => {
-	return api(`api/blogs/delete/` + request.body.get('id'), request);
+	return api({resource: `api/blogs/delete/` + request.body.get('id'), request});
 };

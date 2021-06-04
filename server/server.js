@@ -110,7 +110,8 @@ express()
 	})
 	.get('/api/blogs', async (req, res) => {
 		const lang = req.session.lang || 'en';
-		const blogs = await connection.select('*').from('blogs').where({ lang });
+		const blogs = await connection.select('*').from('blogs').where({ lang })
+			.orderBy([{column: 'date', order: 'desc'}])
 		try {
 			res.end(JSON.stringify(blogs));
 		} catch {

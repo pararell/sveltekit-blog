@@ -1,2 +1,2 @@
-# blog
+# Blog made with SvelteKit
  

@@ -7,13 +7,13 @@
 	import { _ } from 'svelte-i18n';
 
 	async function handleSubmit() {
-		const request = {
+		const data = {
 			subject,
 			note,
 			email
 		};
 
-		let response = await api(`api/contact`, { method: 'POST' }, request);
+		let response = await api({resource: `api/contact`, request: { method: 'POST' }, data});
 
 		if (response) {
 			result = response.body;

@@ -2,7 +2,7 @@ import { API_URL } from './constants';
 
 const baseUrl = API_URL;
 
-export async function api(resource, request, data, serverFetch) {
+export async function api({resource, request, data, serverFetch}) {
 	const req = request || {method: 'GET'};
 	const res = await (serverFetch || fetch)(`${baseUrl}/${resource}`, {
 		...req,

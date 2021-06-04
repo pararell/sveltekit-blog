@@ -6,6 +6,7 @@
 	import { goto } from '$app/navigation';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fromEvent } from 'rxjs';
+	import { map } from 'rxjs/internal/operators/map.js';
 
 	const dispatch = createEventDispatcher();
 
@@ -20,11 +21,20 @@
 		dispatch('toggle');
 	};
 
+	let categories = blogs.pipe(map(blogs => {
+		if (!blogs) {
+			return [];
+		}
+		return [...new Set(blogs
+			.map(blog => blog.categories.split(',').map(cat => cat.trim())).flat()
+		)]
+	}))
+
 	const handleLanguageChange = async () => {
 		locale.set(selected);
-		const langSet = await api('api/lang', { method: 'POST' }, { lang: selected });
+		const langSet = await api({resource: 'api/lang', request:{ method: 'POST' }, data: { lang: selected }});
 		if (langSet) {
-			const resBlogs = await api('api/blogs');
+			const resBlogs = await api({resource: 'api/blogs'});
 			if (resBlogs) {
 				blogs.next(resBlogs.body);
 				goto('/blogs');
@@ -94,8 +104,16 @@
 			<div class="col">
 				<h4>Blog</h4>
 				<ul>
-					{#each $blogs as blog}
+					{#each $blogs.slice(0, 3) as blog}
 						<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
+					{/each}
+				</ul>
+			</div>
+			<div class="col">
+				<h4>Categories</h4>
+				<ul>
+					{#each $categories as category}
+						<li><a href="/blogs/category/{category}">{category}</a></li>
 					{/each}
 				</ul>
 			</div>
@@ -158,13 +176,14 @@
 		display: flex;
 		height: 100%;
 		align-items: center;
-		color: var(--heading-color);
+		justify-content: center;
+		color:  #b4b9ba;
 		font-weight: 700;
 		font-size: 0.8rem;
 		text-transform: uppercase;
 		letter-spacing: 10%;
 		text-decoration: none;
-		transition: color 0.2s linear;
+		transition: color 0.3s ease;
 	}
 
 	@media screen and (max-width: 960px) {
@@ -199,7 +218,7 @@
 		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
 		background: #fff;
 		overflow: auto;
-		min-height: 300px;
+		min-height: 500px;
 	}
 
 	@media screen and (max-width: 768px) {
@@ -379,6 +398,7 @@
 	#site-nav h4 {
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
+		text-align: center;
 	}
 
 	#site-nav ul {
@@ -388,12 +408,6 @@
 
 	#site-nav li {
 		margin-bottom: 0.3125em;
-	}
-
-	#site-nav li a {
-		color: #b4b9ba;
-		text-decoration: none;
-		transition: color 0.3s ease;
 	}
 
 	#site-nav li a:hover,

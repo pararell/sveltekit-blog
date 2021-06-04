@@ -16,7 +16,7 @@
 		});
 
 		if (!config.lang) {
-			api('api/lang', { method: 'POST' }, { lang });
+			api({resource: 'api/lang', request:{ method: 'POST' }, data: { lang }});
 		}
 	});
 
@@ -28,9 +28,9 @@
 			};
 		}
 
-		const resUser = await api('api/user', null, null, fetch);
-		const resConfig = await api('api/config', null, null, fetch);
-		const resBlogs = await api('api/blogs', null, null, fetch);
+		const resUser = await api({resource:'api/user', serverFetch: fetch});
+		const resConfig = await api({resource:'api/config', serverFetch: fetch});
+		const resBlogs = await api({resource:'api/blogs', serverFetch: fetch});
 
 		if (resUser && resConfig && resBlogs) {
 			user.next(resUser.body);
