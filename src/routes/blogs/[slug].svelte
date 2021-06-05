@@ -1,6 +1,5 @@
 <script context="module">
-	import { blog, blogs, config, disqusLoaded } from '$lib/store/store';
-	import { setDisqus, resetDisqus } from '$lib/utils';
+	import { blog, blogs, config, disqusLoaded } from '$lib/store';
 
 	export const load = async ({ fetch, page }) => {
 		const res = await fetch(`/blogs/${page.params.slug}.json`);
@@ -23,6 +22,7 @@
 	import marked from 'marked';
 	import Markdown from '$lib/Markdown.svelte';
 	import { api } from '$lib/api';
+	import { setDisqus, resetDisqus } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import { filter } from 'rxjs/internal/operators/filter.js';
 	import { take } from 'rxjs/internal/operators/take.js';

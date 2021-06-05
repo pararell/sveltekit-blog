@@ -5,7 +5,6 @@ export const handle = async ({ request, render }) => {
 
 	request.locals = request.headers ? request.headers.cookie : '';
 
-
 	const response = await render(request);
 
 	return response;

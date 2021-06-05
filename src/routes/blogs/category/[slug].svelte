@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Blog</title>
+	<title>{$page?.params?.slug}</title>
 </svelte:head>
 
 <section>

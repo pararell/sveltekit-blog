@@ -2,7 +2,7 @@
 	import marked from 'marked';
 	import { goto } from '$app/navigation';
 	import { createEventDispatcher } from 'svelte';
-	import { user, blog } from './store/store';
+	import { user, blog } from './store';
 	import { _, locale } from 'svelte-i18n';
 	import { enhance } from './form';
 

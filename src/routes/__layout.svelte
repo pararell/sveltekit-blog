@@ -1,6 +1,6 @@
 <script context="module">
 	import { api } from '$lib/api';
-	import { user, config, blogs } from '$lib/store/store';
+	import { user, config, blogs } from '$lib/store';
 	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
 	import { filter } from 'rxjs/internal/operators/filter.js';
 	import { take } from 'rxjs/internal/operators/take.js';
@@ -11,7 +11,7 @@
 	config.pipe(filter((config) => !!config, take(1))).subscribe((config) => {
 		const lang = config.lang || getLocaleFromNavigator();
 		init({
-			fallbackLocale: 'sk',
+			fallbackLocale: 'en',
 			initialLocale: config.lang || getLocaleFromNavigator()
 		});
 
