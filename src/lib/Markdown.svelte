@@ -13,6 +13,7 @@
 	export let description = '';
 	export let categories = '';
 	export let id = '';
+	export let date = new Date().toISOString().substr(0, 10);
 	export let type = 'create';
 	let error = '';
 	$: markdown = marked(content);
@@ -48,6 +49,7 @@
 				<input type="text" name="imgLink" bind:value={imgLink} placeholder="Image link" />
 				<input type="text" name="description" bind:value={description} placeholder="Description" />
 				<input type="text" name="categories" bind:value={categories} placeholder="Categories" />
+				<input type="date" name="date" bind:value={date} placeholder="Date" />
 				<input type="hidden" name="author" value={$user.email} />
 				<input type="hidden" name="id" value={id} />
 				<input type="hidden" name="lang" value={$locale} />

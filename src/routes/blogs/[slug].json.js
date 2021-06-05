@@ -21,7 +21,7 @@ export const post = async (request) => {
 		categories: request.body.get('categories')
 			? request.body.get('categories').split(',')
 			: [],
-		date: new Date(),
+		date: request.body.get('date'),
 		author: request.body.get('author'),
 		lang: request.body.get('lang'),
 		comments: []
@@ -39,6 +39,7 @@ export const patch = async (request) => {
 		categories: request.body.get('categories')
 			? request.body.get('categories').split(',')
 			: [],
+		date: request.body.get('date'),
 		slug: request.body.get('title').toLowerCase().replace(/[^\w]/gi, '_'),
 		content: request.body.get('content'),
 		comments: []
