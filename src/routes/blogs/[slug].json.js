@@ -14,7 +14,7 @@ export const get = async (request) => {
 export const post = async (request) => {
 	const data = {
 		title: request.body.get('title'),
-		slug: request.body.get('title').toLowerCase().replace(/[^\w]/gi, '_'),
+		slug: request.body.get('title').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]/gi, '-'),
 		description: request.body.get('description'),
 		imgLink: request.body.get('imgLink'),
 		content: request.body.get('content'),
@@ -40,7 +40,7 @@ export const patch = async (request) => {
 			? request.body.get('categories').split(',')
 			: [],
 		date: request.body.get('date'),
-		slug: request.body.get('title').toLowerCase().replace(/[^\w]/gi, '_'),
+		slug: request.body.get('title').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]/gi, '-'),
 		content: request.body.get('content'),
 		comments: []
 	}});
