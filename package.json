@@ -10,16 +10,16 @@
     "format": "prettier --write --plugin-search-dir=. ."
   },
   "devDependencies": {
-    "@sveltejs/adapter-node": "1.0.0-next.33",
-    "@sveltejs/kit": "1.0.0-next.131",
-    "cookie-universal": "^2.1.4",
+    "@sveltejs/adapter-node": "next",
+    "@sveltejs/kit": "next",
+    "cookie-universal": "^2.1.5",
     "dotenv": "^9.0.2",
-    "eslint": "^7.22.0",
-    "eslint-config-prettier": "^8.1.0",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.0",
     "marked": "^1.2.7",
     "prettier": "~2.2.1",
-    "prettier-plugin-svelte": "^2.2.0",
+    "prettier-plugin-svelte": "^2.3.1",
     "rxjs": "^6.6.7",
     "svelte": "^3.38.3",
     "svelte-i18n": "^3.3.9"
