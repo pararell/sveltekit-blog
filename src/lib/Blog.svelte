@@ -3,28 +3,30 @@
 	export let category;
 </script>
 
-{#each $blogs.filter(blog => category ? blog.categories.includes(category) : true) as blog (blog.id)}
-	<a class="card" rel="prefetch" href="/blogs/{blog.slug}">
-		<div class="card-left">
-			<div class="card-left-top">
-				<div class="thumbnail">
-					<img class="card-left-img" alt="{blog.slug}" src={blog.imgLink} loading="lazy" />
+{#if $blogs}
+	{#each $blogs.filter(blog => category ? blog.categories.includes(category) : true) as blog (blog.id)}
+		<a class="card" rel="prefetch" href="/blogs/{blog.slug}">
+			<div class="card-left">
+				<div class="card-left-top">
+					<div class="thumbnail">
+						<img class="card-left-img" alt="{blog.slug}" src={blog.imgLink} loading="lazy" />
+					</div>
+				</div>
+				<div class="card-left-bottom">
+					<p class="date">{new Date(blog.date).toLocaleDateString()} </p>
 				</div>
 			</div>
-			<div class="card-left-bottom">
-				<p class="date">{new Date(blog.date).toLocaleDateString()} </p>
-			</div>
-		</div>
 
-		<div class="card-right">
-			<h2>{blog.title}</h2>
-			<div class="separator" />
-			<p>
-				{blog.description}
-			</p>
-		</div>
-	</a>
-{/each}
+			<div class="card-right">
+				<h2>{blog.title}</h2>
+				<div class="separator" />
+				<p>
+					{blog.description}
+				</p>
+			</div>
+		</a>
+	{/each}
+{/if}
 
 <style>
 	.card {

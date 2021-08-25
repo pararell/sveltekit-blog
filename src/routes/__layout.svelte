@@ -2,23 +2,7 @@
 	import { api } from '$lib/api';
 	import { user, config, blogs } from '$lib/store';
 	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
-	import { filter } from 'rxjs/internal/operators/filter.js';
-	import { take } from 'rxjs/internal/operators/take.js';
-
-	register('en', () => import('../translations/en.json'));
-	register('sk', () => import('../translations/sk.json'));
-
-	config.pipe(filter((config) => !!config, take(1))).subscribe((config) => {
-		const lang = config.lang || getLocaleFromNavigator();
-		init({
-			fallbackLocale: 'en',
-			initialLocale: config.lang || getLocaleFromNavigator()
-		});
-
-		if (!config.lang) {
-			api({resource: 'api/lang', request:{ method: 'POST' }, data: { lang }});
-		}
-	});
+	import { filter, take } from 'rxjs/operators';
 
 	export const load = async ({ fetch, page }) => {
 		if (user.value && config.value && blogs.value) {
@@ -28,9 +12,9 @@
 			};
 		}
 
-		const resUser = await api({resource:'api/user', serverFetch: fetch});
-		const resConfig = await api({resource:'api/config', serverFetch: fetch});
-		const resBlogs = await api({resource:'api/blogs', serverFetch: fetch});
+		const resUser = await api({ resource: 'api/user', serverFetch: fetch });
+		const resConfig = await api({ resource: 'api/config', serverFetch: fetch });
+		const resBlogs = await api({ resource: 'api/blogs', serverFetch: fetch });
 
 		if (resUser && resConfig && resBlogs) {
 			user.next(resUser.body);
@@ -46,6 +30,34 @@
 		return {
 			error: new Error()
 		};
+	};
+
+	setJSONLangs(['en', 'sk']);
+	setLang();
+
+	const setJSONLangs = (langs) => {
+		langs.forEach((lang) => {
+			register(lang, () => import('../translations/' + lang + '.json'));
+		});
+	};
+
+	const setLang = () => {
+		config
+			.pipe(
+				filter((configValue) => !!configValue),
+				take(1)
+			)
+			.subscribe((configValue) => {
+				const lang = configValue.lang || getLocaleFromNavigator();
+				init({
+					fallbackLocale: 'en',
+					initialLocale: configValue.lang || getLocaleFromNavigator()
+				});
+
+				if (!configValue.lang) {
+					api({ resource: 'api/lang', request: { method: 'POST' }, data: { lang } });
+				}
+			});
 	};
 </script>
 

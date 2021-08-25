@@ -6,7 +6,7 @@
 	import { _, locale, locales } from 'svelte-i18n';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fromEvent } from 'rxjs';
-	import { map } from 'rxjs/internal/operators/map.js';
+	import { map } from 'rxjs/operators';
 
 	const dispatch = createEventDispatcher();
 
@@ -103,10 +103,11 @@
 			</div>
 			<div class="col">
 				<h4>Blog</h4>
-				<ul>
-					{#each $blogs.slice(0, 3) as blog}
-						<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
-					{/each}
+				<ul>{#if $blogs}
+						{#each $blogs.slice(0, 3) as blog}
+							<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
+						{/each}
+					{/if}
 				</ul>
 			</div>
 			<div class="col">

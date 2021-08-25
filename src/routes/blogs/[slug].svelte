@@ -24,10 +24,7 @@
 	import { api } from '$lib/api';
 	import { setDisqus, resetDisqus } from '$lib/utils';
 	import { onMount } from 'svelte';
-	import { filter } from 'rxjs/internal/operators/filter.js';
-	import { take } from 'rxjs/internal/operators/take.js';
-	import { map } from 'rxjs/internal/operators/map.js';
-	import { mergeMap } from 'rxjs/internal/operators/mergeMap.js';
+	import { filter, map, mergeMap, take } from 'rxjs/operators';
 	export let page;
 
 	onMount(() => {
