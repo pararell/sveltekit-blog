@@ -1,13 +1,13 @@
 <script context="module">
 	import { blog, blogs, config, disqusLoaded } from '$lib/store';
 
-	export const load = async ({ fetch, page }) => {
-		const res = await fetch(`/blogs/${page.params.slug}.json`);
+	export const load = async ({ fetch, url, params }) => {
+		const res = await fetch(`/blogs/${params.slug}.json`);
 
 		if (res.ok) {
 			const blogFromApi = await res.json();
 			blog.next(blogFromApi);
-			return { props: { page } };
+			return { props: { page: url } };
 		}
 
 		const { message } = await res.json();
@@ -53,7 +53,7 @@
 	});
 
 	const handleRedirect = async (event) => {
-		const resBlogs = await api({resource: 'api/blogs', serverFetch: fetch});
+		const resBlogs = await api({url: 'api/blogs', serverFetch: fetch});
 		if (resBlogs) {
 			blogs.next(resBlogs.body);
 		}

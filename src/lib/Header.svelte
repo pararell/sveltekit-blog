@@ -32,9 +32,9 @@
 
 	const handleLanguageChange = async () => {
 		locale.set(selected);
-		const langSet = await api({resource: 'api/lang', request:{ method: 'POST' }, data: { lang: selected }});
+		const langSet = await api({url: 'api/lang', method: 'POST', data: { lang: selected }});
 		if (langSet) {
-			const resBlogs = await api({resource: 'api/blogs'});
+			const resBlogs = await api({url: 'api/blogs'});
 			if (resBlogs) {
 				blogs.next(resBlogs.body);
 				goto('/blogs');
@@ -57,11 +57,11 @@
 	});
 </script>
 
-<header id="header" role="banner" class={active}>
+<header id="header" class={active}>
 	<div class="container">
 		<div class="header-menu">
 			<a sveltekit:prefetch href="/" class="logo">T</a>
-			<a class="menu-link" class:active={$page.path === '/blogs'} sveltekit:prefetch href="/blogs"
+			<a class="menu-link" class:active={$page.url.pathname === '/blogs'} sveltekit:prefetch href="/blogs"
 			>Blog</a
 		>
 			<div class="menu-links">
@@ -83,20 +83,20 @@
 			</form>
 		</div>
 
-		<nav id="site-nav" role="navigation" class={active}>
+		<nav id="site-nav" class={active}>
 			<div class="col">
 				<h4>T</h4>
 				<ul>
-					<li class:active={$page.path === '/'}>
+					<li class:active={$page.url.pathname  === '/'}>
 						<a sveltekit:prefetch href="/">{$_('home')}</a>
 					</li>
-					<li class:active={$page.path === '/about'}>
+					<li class:active={$page.url.pathname  === '/about'}>
 						<a sveltekit:prefetch href="/about">{$_('about')}</a>
 					</li>
-					<li class:active={$page.path === '/blogs'}>
+					<li class:active={$page.url.pathname  === '/blogs'}>
 						<a sveltekit:prefetch href="/blogs">Blog</a>
 					</li>
-					<li class:active={$page.path === '/contact'}>
+					<li class:active={$page.url.pathname  === '/contact'}>
 						<a sveltekit:prefetch href="/contact">{$_('contact')}</a>
 					</li>
 				</ul>

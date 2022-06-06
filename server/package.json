@@ -1,26 +1,27 @@
 {
     "name": "blog-server",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "scripts": {
         "dev": "nodemon server.js",
         "start": "node server.js"
     },
     "devDependencies": {
-        "nodemon": "^2.0.7"
+        "nodemon": "^2.0.16"
     },
     "type": "module",
     "dependencies": {
-        "body-parser": "^1.19.0",
+        "bcrypt": "^5.0.1",
+        "body-parser": "^1.20.0",
         "compression": "^1.7.4",
-        "connect-session-knex": "^2.1.0",
-        "cookie-universal": "^2.1.4",
+        "connect-session-knex": "^3.0.0",
+        "cookie-universal": "^2.2.1",
         "cors": "^2.8.5",
-        "dotenv": "^9.0.2",
-        "express": "^4.17.1",
-        "express-openid-connect": "^1.0.2",
-        "express-session": "^1.17.1",
-        "knex": "^0.21.14",
-        "nodemailer": "^6.4.11",
-        "sqlite3": "^5.0.0"
+        "dotenv": "^16.0.1",
+        "express": "^4.18.1",
+        "express-session": "^1.17.3",
+        "jsonwebtoken": "^8.5.1",
+        "knex": "^2.1.0",
+        "nodemailer": "^6.7.5",
+        "sqlite3": "^5.0.8"
     }
 }

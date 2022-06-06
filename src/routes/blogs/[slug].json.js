@@ -1,7 +1,7 @@
 import { api } from '$lib/api';
 
-export const get = async (request) => {
-	const response = await api({resource: `api/blogs/${request.params.slug}`, request});
+export const get = async (event) => {
+	const response = await api({url: `api/blogs/${event.params.slug}`});
 
 	if (response.status === 404) {
 		return { body: {} };
@@ -11,42 +11,45 @@ export const get = async (request) => {
 };
 
 // POST /blogs/create.json
-export const post = async (request) => {
+export const post = async ({request}) => {
+	const form = await request.formData();
 	const data = {
-		title: request.body.get('title'),
-		slug: request.body.get('title').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]/gi, '-'),
-		description: request.body.get('description'),
-		imgLink: request.body.get('imgLink'),
-		content: request.body.get('content'),
-		categories: request.body.get('categories')
-			? request.body.get('categories').split(',')
+		title: form.get('title'),
+		slug: form.get('title').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]/gi, '-'),
+		description: form.get('description'),
+		imgLink: form.get('imgLink'),
+		content: form.get('content'),
+		categories: form.get('categories')
+			? form.get('categories').split(',')
 			: [],
-		date: request.body.get('date'),
-		author: request.body.get('author'),
-		lang: request.body.get('lang'),
+		date: form.get('date'),
+		author: form.get('author'),
+		lang: form.get('lang'),
 		comments: []
 	}
-	return api({resource: `api/blogs/create`, request, data});
+	return api({url: `api/blogs/create`, method: 'POST', data});
 };
 
 // PATCH /blogs/update.json
-export const patch = async (request) => {
-	return api({resource: `api/blogs/update`, request, data: {
-		id: parseFloat(request.body.get('id')),
-		title: request.body.get('title'),
-		description: request.body.get('description'),
-		imgLink: request.body.get('imgLink'),
-		categories: request.body.get('categories')
-			? request.body.get('categories').split(',')
+export const patch = async ({request}) => {
+	const form = await request.formData();
+	return api({url: `api/blogs/update`, method: 'PATCH', data: {
+		id: parseFloat(form.get('id')),
+		title: form.get('title'),
+		description: form.get('description'),
+		imgLink: form.get('imgLink'),
+		categories: form.get('categories')
+			? form.get('categories').split(',')
 			: [],
-		date: request.body.get('date'),
-		slug: request.body.get('title').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]/gi, '-'),
-		content: request.body.get('content'),
+		date: form.get('date'),
+		slug: form.get('title').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]/gi, '-'),
+		content: form.get('content'),
 		comments: []
 	}});
 };
 
 // DELETE /blogs/:uid.json
-export const del = async (request) => {
-	return api({resource: `api/blogs/delete/` + request.body.get('id'), request});
+export const del = async ({request}) => {
+	const form = await request.formData();
+	return api({url: `api/blogs/delete/` + form.get('id'), method: 'DELETE'});
 };

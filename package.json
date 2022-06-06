@@ -11,18 +11,18 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "next",
-    "@sveltejs/kit": "next",
-    "cookie-universal": "^2.1.5",
-    "dotenv": "^10.0.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-svelte3": "^3.2.0",
+    "@sveltejs/kit": "1.0.0-next.348",
+    "cookie-universal": "^2.2.1",
+    "dotenv": "^16.0.1",
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-svelte3": "^4.0.0",
     "marked": "^3.0.2",
-    "prettier": "~2.3.2",
-    "prettier-plugin-svelte": "^2.3.1",
-    "rxjs": "^7.3.0",
-    "svelte": "^3.42.3",
-    "svelte-i18n": "^3.3.10"
+    "prettier": "~2.6.2",
+    "prettier-plugin-svelte": "^2.7.0",
+    "rxjs": "^7.5.5",
+    "svelte": "^3.48.0",
+    "svelte-i18n": "^3.4.0"
   },
   "type": "module"
 }

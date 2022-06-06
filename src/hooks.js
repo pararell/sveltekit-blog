@@ -1,17 +1,13 @@
-export const handle = async ({ request, resolve }) => {
-	if (request.query.has('_method')) {
-		request.method = request.query.get('_method').toUpperCase();
-	}
+export const handle = async ({ event, resolve }) => {
 
-	request.locals = request.headers ? request.headers.cookie : '';
+	if (event.url.searchParams.has('_method')) {
+		event.request.method = event.url.searchParams.get('_method').toUpperCase();
+}
 
-	const response = await resolve(request);
+	const response = await resolve(event);
 
 	return response;
 };
 
-export function getSession(request) {
-	return {
-		...request.locals
-	}
-}
+
+

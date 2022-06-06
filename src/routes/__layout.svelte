@@ -4,17 +4,17 @@
 	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
 	import { filter, take } from 'rxjs/operators';
 
-	export const load = async ({ fetch, page }) => {
+	export const load = async ({ fetch }) => {
 		if (user.value && config.value && blogs.value) {
 			return {
 				props: {},
-				maxage: 0
+				cache: 0
 			};
 		}
 
-		const resUser = await api({ resource: 'api/user', serverFetch: fetch });
-		const resConfig = await api({ resource: 'api/config', serverFetch: fetch });
-		const resBlogs = await api({ resource: 'api/blogs', serverFetch: fetch });
+		const resUser = await api({ url: 'api/user', serverFetch: fetch });
+		const resConfig = await api({ url: 'api/config', serverFetch: fetch });
+		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
 
 		if (resUser && resConfig && resBlogs) {
 			user.next(resUser.body);
@@ -23,7 +23,7 @@
 
 			return {
 				props: {},
-				maxage: 0
+				cache: 0
 			};
 		}
 
@@ -31,9 +31,6 @@
 			error: new Error()
 		};
 	};
-
-	setJSONLangs(['en', 'sk']);
-	setLang();
 
 	const setJSONLangs = (langs) => {
 		langs.forEach((lang) => {
@@ -55,10 +52,13 @@
 				});
 
 				if (!configValue.lang) {
-					api({ resource: 'api/lang', request: { method: 'POST' }, data: { lang } });
+					api({ url: 'api/lang', method: 'POST', data: { lang } });
 				}
 			});
 	};
+
+	setJSONLangs(['en', 'sk']);
+	setLang();
 </script>
 
 <script>

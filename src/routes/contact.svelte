@@ -13,7 +13,7 @@
 			email
 		};
 
-		let response = await api({resource: `api/contact`, request: { method: 'POST' }, data});
+		let response = await api({url: `api/contact`, method: 'POST', data});
 
 		if (response) {
 			result = response.body;

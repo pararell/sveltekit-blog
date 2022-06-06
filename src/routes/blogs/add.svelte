@@ -4,7 +4,7 @@
 	import { blogs } from '$lib/store';
 
 	const handleRedirect = async (event) => {
-		const resBlogs = await api({resource: 'api/blogs', serverFetch:fetch});
+		const resBlogs = await api({url: 'api/blogs', serverFetch:fetch});
 
 		if (resBlogs) {
 			blogs.next(resBlogs.body)

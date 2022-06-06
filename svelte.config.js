@@ -5,6 +5,9 @@ dotenv.config();
 const config = {
 	kit: {
 		adapter: node({out: 'build'}),
+		methodOverride: {
+			allowed: ['PUT', 'PATCH', 'DELETE']
+		},
 		files: {
 			assets: 'static',
 			hooks: 'src/hooks',

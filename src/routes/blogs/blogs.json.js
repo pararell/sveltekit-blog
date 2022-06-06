@@ -1,8 +1,8 @@
 import { api } from '$lib/api';
 
 // GET /blogs.json
-export const get = async (request) => {
-	const response = await api({resource: `api/blogs`, request});
+export const get = async () => {
+	const response = await api({url: `api/blogs`});
 
 	if (response.status === 404) {
 		return { body: [] };

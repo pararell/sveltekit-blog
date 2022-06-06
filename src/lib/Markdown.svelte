@@ -4,7 +4,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { user, blog } from './store';
 	import { _, locale } from 'svelte-i18n';
-	import { enhance } from './form';
+	import { api } from '$lib/api';
 
 	const dispatch = createEventDispatcher();
 	export let content = '# Subtitle';
@@ -17,30 +17,81 @@
 	export let type = 'create';
 	let error = '';
 	$: markdown = marked(content);
-</script>
 
-{#if $user?.email}
-	<form
-		class="new"
-		action={'/blogs/' + type + '.json' + (type === 'update' ? '?_method=patch' : '')}
-		method="post"
-		use:enhance={{
-			result: async (res, form) => {
-				const created = await res.json();
-				blog.next(created);
+	const submitForm = async (method) => {
+		if (method === 'POST' && title) {
+			const data = {
+				title,
+				slug: title
+					.toLowerCase()
+					.normalize('NFD')
+					.replace(/[\u0300-\u036f]/g, '')
+					.replace(/[^\w]/gi, '-'),
+				description,
+				imgLink,
+				content,
+				categories: categories ? categories.split(',') : [],
+				date,
+				author: user.value.Email,
+				lang: $locale,
+				comments: []
+			};
+			const res = await api({ url: `api/blogs/create`, method, data });
+			blog.next(res.body);
+			dispatch('redirectAction', {
+				text: 'blogs'
+			});
+
+			if (type === 'create') {
+				goto('/blogs');
+			}
+		}
+
+		if (method === 'PATCH' && id && title) {
+			const data = {
+				id: parseFloat(id),
+				title,
+				slug: title
+					.toLowerCase()
+					.normalize('NFD')
+					.replace(/[\u0300-\u036f]/g, '')
+					.replace(/[^\w]/gi, '-'),
+				description,
+				imgLink,
+				content,
+				categories: categories ? categories.split(',') : [],
+				date,
+				author: user.value.Email,
+				lang: $locale,
+				comments: []
+			};
+			const res = await api({ url: `api/blogs/update`, method, data });
+			blog.next(res.body);
+
+			dispatch('redirectAction', {
+				text: 'blogs'
+			});
+
+			goto('/blogs/' + res.body.slug);
+		}
+
+		if (method === 'DELETE' && id) {
+			const res = await api({ url: `api/blogs/delete/` + id, method });
+
+			if (res) {
 				dispatch('redirectAction', {
 					text: 'blogs'
 				});
-
-				if (type === 'create') {
-					goto('/blogs');
-					form.reset();
-				}
-				if (type === 'update') {
-					goto('/blogs/' + created.slug);
-				}
+				goto('/blogs');
 			}
-		}}
+		}
+	};
+</script>
+
+{#if $user?.Email}
+	<form
+		on:submit|preventDefault={() => submitForm(type === 'update' ? 'PATCH' : 'POST')}
+		class="new"
 	>
 		<header class="header">
 			<h1 class="header-title">Add blog</h1>
@@ -50,7 +101,7 @@
 				<input type="text" name="description" bind:value={description} placeholder="Description" />
 				<input type="text" name="categories" bind:value={categories} placeholder="Categories" />
 				<input type="date" name="date" bind:value={date} placeholder="Date" />
-				<input type="hidden" name="author" value={$user.email} />
+				<input type="hidden" name="author" value={$user.Email} />
 				<input type="hidden" name="id" value={id} />
 				<input type="hidden" name="lang" value={$locale} />
 				<button class="btn submit" disabled={!title || !content}> Save</button>
@@ -72,18 +123,7 @@
 		</div>
 	</form>
 	{#if type === 'update'}
-		<form
-			action="/blogs/delete.json?_method=delete"
-			method="post"
-			use:enhance={{
-				result: () => {
-					dispatch('redirectAction', {
-						text: 'blogs'
-					});
-					goto('/blogs');
-				}
-			}}
-		>
+		<form on:submit|preventDefault={() => submitForm('DELETE')}>
 			<input type="hidden" name="id" value={id} />
 			<button class="btn delete" aria-label="Delete blog"> Delete Blog</button>
 		</form>
