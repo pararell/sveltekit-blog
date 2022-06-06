@@ -1,11 +1,11 @@
 <script context="module">
 	import { api } from '$lib/api';
-	import { user, config, blogs } from '$lib/store';
+	import { user, config, blogs, pages } from '$lib/store';
 	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
 	import { filter, take } from 'rxjs/operators';
 
 	export const load = async ({ fetch }) => {
-		if (user.value && config.value && blogs.value) {
+		if (user.value && config.value && blogs.value && pages.value) {
 			return {
 				props: {},
 				cache: 0
@@ -15,11 +15,13 @@
 		const resUser = await api({ url: 'api/user', serverFetch: fetch });
 		const resConfig = await api({ url: 'api/config', serverFetch: fetch });
 		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
+		const resPages = await api({ url: 'api/pages', serverFetch: fetch });
 
-		if (resUser && resConfig && resBlogs) {
+		if (resUser && resConfig && resBlogs && resPages) {
 			user.next(resUser.body);
 			config.next(resConfig.body);
 			blogs.next(resBlogs.body);
+			pages.next(resPages.body);
 
 			return {
 				props: {},
@@ -121,7 +123,8 @@
 		align-items: center;
 		padding: 40px;
 		min-height: 100px;
-		background: var(--secondary-color);
+		background-color: #485461;
+		background-image: linear-gradient(315deg, #485461 0%, #28313b 74%);
 	}
 
 	.loading {

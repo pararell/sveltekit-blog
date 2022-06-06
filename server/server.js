@@ -51,7 +51,7 @@ connection.schema
 		}
 	})
 	.then(() => {
-		console.log('done');
+		console.log('Blogs checked');
 	})
 	.catch((error) => {
 		console.error(`There was an error setting up the database: ${error}`);
@@ -81,11 +81,43 @@ connection.schema
 		}
 	})
 	.then(() => {
-		console.log('done');
+		console.log('Users checked');
 	})
 	.catch((error) => {
 		console.error(`There was an error setting up the database: ${error}`);
 	});
+
+	connection.schema
+		.hasTable('Pages')
+		.then((exists) => {
+			if (!exists) {
+				return connection.schema
+					.createTable('Pages', (table) => {
+						table.increments('id').primary();
+						table.string('title');
+						table.string('slug');
+						table.string('description');
+						table.string('url');
+						table.string('content');
+						table.string('image');
+						table.string('lang');
+						table.string('position');
+						table.string('metaTitle');
+					})
+					.then(() => {
+						console.log("Table 'Pages' created");
+					})
+					.catch((error) => {
+						console.error(`There was an error creating table: ${error}`);
+					});
+			}
+		})
+		.then(() => {
+			console.log('Pages checked');
+		})
+		.catch((error) => {
+			console.error(`There was an error setting up the database: ${error}`);
+		});
 
 const { PORT } = process.env;
 const portServer = PORT || 4000;
@@ -224,6 +256,97 @@ app.delete('/api/blogs/delete/:id', async (req, res) => {
 	}
 });
 
+app.get('/api/pages', async (req, res) => {
+	const lang = req.session.lang || 'en';
+	const blogs = await connection
+		.select('*')
+		.from('pages')
+		.where({ lang });
+	try {
+		res.end(JSON.stringify(blogs));
+	} catch {
+		res.end(JSON.stringify({ message: `There was an error retrieving pages: ${err}` }));
+	}
+});
+
+app.post('/api/pages/create', async (req, res) => {
+	if (!req.session.token) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const admin = userInfo && userInfo.Email === process.env.adminEmail;
+	if (!admin) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const ifExist = await connection('pages').where({ slug: req.body.slug });
+	if (ifExist && !!ifExist.length) {
+		res.end(JSON.stringify({ message: `Page already exist` }));
+		return;
+	}
+	const blogs = await connection('pages').insert({ ...req.body });
+	try {
+		res.end(JSON.stringify(blogs));
+	} catch {
+		res.end(JSON.stringify({ message: `There was an error retrieving pages: ${err}` }));
+	}
+});
+
+app.patch('/api/pages/update', async (req, res) => {
+	if (!req.session.token) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const admin = userInfo && userInfo.Email === process.env.adminEmail;
+	if (!admin) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const _pages = await connection('pages')
+		.where({ id: req.body.id })
+		.update({ ...req.body });
+
+	const page = await connection.select('*').from('pages').where('id', req.body.id).first();
+
+	try {
+		res.end(JSON.stringify(page));
+	} catch {
+		res.end(JSON.stringify({ message: `There was an error retrieving pages: ${err}` }));
+	}
+});
+
+app.get('/api/pages/:slug', async (req, res) => {
+	let { slug } = req.params;
+	const pages = await connection.select('*').from('pages').where('slug', slug).first();
+	try {
+		res.end(JSON.stringify(pages));
+	} catch {
+		res.end(JSON.stringify({ message: `There was an error retrieving pages` }));
+	}
+});
+
+app.delete('/api/pages/delete/:id', async (req, res) => {
+	if (!req.session.token) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const admin = userInfo && userInfo.Email === process.env.adminEmail;
+	if (!admin) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const id = req.params['id'];
+	const blogs = await connection('pages').where('id', id).del();
+	try {
+		res.end(JSON.stringify({}));
+	} catch {
+		res.end(JSON.stringify({ message: `There was an error retrieving pages` }));
+	}
+});
+
 app.post('/api/login', async (req, res) => {
 	try {
 		const { Email, Password } = req.body;
@@ -249,6 +372,8 @@ app.post('/api/login', async (req, res) => {
 
 				user.Token = token;
 				req.session.token = token;
+
+				console.log(req.session.token, 'req.session.token')
 
 				res.end(JSON.stringify(user));
 			} else {

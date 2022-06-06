@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,700&display=swap');
+
 :root {
-	font-family: 'Josefin Sans', sans-serif;
-	--primary-color: #6A8A73;
+	font-family: 'Nunito', sans-serif;
+	--primary-color: #000;
 	--secondary-color: #b1bbbc;
 	--text-color: #444444;
 	--column-width: 42rem;
@@ -195,6 +197,8 @@ code {
 .hero:after {
 	content: '';
 	background: var(--primary-color);
+	background-color: #485461;
+	background-image: linear-gradient(315deg, #485461 0%, #28313b 74%);
 	box-shadow: 0px 1px 18px var(--primary-color);
 	position: absolute;
 	top: 0;

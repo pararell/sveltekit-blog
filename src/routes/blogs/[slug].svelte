@@ -1,5 +1,5 @@
 <script context="module">
-	import { blog, blogs, config, disqusLoaded } from '$lib/store';
+	import { blog, blogs } from '$lib/store';
 
 	export const load = async ({ fetch, url, params }) => {
 		const res = await fetch(`/blogs/${params.slug}.json`);
@@ -7,13 +7,14 @@
 		if (res.ok) {
 			const blogFromApi = await res.json();
 			blog.next(blogFromApi);
-			return { props: { page: url } };
+			return { props: { url, params } };
 		}
 
-		const { message } = await res.json();
-
 		return {
-			error: new Error(message)
+			props: {
+				url,
+				params
+			}
 		};
 	};
 </script>
@@ -21,39 +22,13 @@
 <script>
 	import marked from 'marked';
 	import Markdown from '$lib/Markdown.svelte';
+	import Comments from '$lib/Comments.svelte';
 	import { api } from '$lib/api';
-	import { setDisqus, resetDisqus } from '$lib/utils';
-	import { onMount } from 'svelte';
-	import { filter, map, mergeMap, take } from 'rxjs/operators';
-	export let page;
-
-	onMount(() => {
-		config
-			.pipe(
-				mergeMap((config) =>
-					disqusLoaded.pipe(
-						filter((disqusLoaded) => !disqusLoaded),
-						map(() => config)
-					)
-				),
-				filter((config) => config && config.disqusSrc),
-				take(1)
-			)
-			.subscribe((config) => {
-				setDisqus(config)
-					.pipe(take(1))
-					.subscribe(() => {
-						disqusLoaded.next(true);
-					});
-			});
-
-		disqusLoaded.pipe(filter(Boolean), take(1)).subscribe(() => {
-			resetDisqus(page);
-		});
-	});
+	export let url, params;
+	
 
 	const handleRedirect = async (event) => {
-		const resBlogs = await api({url: 'api/blogs', serverFetch: fetch});
+		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
 		if (resBlogs) {
 			blogs.next(resBlogs.body);
 		}
@@ -73,14 +48,10 @@
 
 	<span class="date">{new Date($blog.date).toLocaleDateString()}</span>
 
-	<Markdown
-		type={'update'}
-		{...$blog}
-		on:redirectAction={handleRedirect}
-	/>
+	<Markdown type={'update'} {...$blog} on:redirectAction={handleRedirect} />
 {/if}
 
-<div id="disqus_thread" />
+<Comments host={url.host} slug={params.slug} />
 
 <style>
 	.content {

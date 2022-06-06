@@ -1,6 +1,7 @@
 <script>
-	import Blog from '$lib/Blog.svelte';
-    import { page } from '$app/stores';
+	import Blogs from '$lib/Blogs.svelte';
+	import { page } from '$app/stores';
+	import { blogs } from '$lib/store';
 </script>
 
 <svelte:head>
@@ -9,12 +10,12 @@
 
 <section>
 	<h2>{$page?.params?.slug}</h2>
-	<Blog category={$page?.params?.slug} />
+	<Blogs category={$page?.params?.slug} blogs={$blogs} />
 </section>
 
 <style>
 	h2 {
 		text-align: center;
-        text-transform: uppercase;
+		text-transform: uppercase;
 	}
 </style>

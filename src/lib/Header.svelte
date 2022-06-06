@@ -21,20 +21,22 @@
 		dispatch('toggle');
 	};
 
-	let categories = blogs.pipe(map(blogs => {
-		if (!blogs) {
-			return [];
-		}
-		return [...new Set(blogs
-			.map(blog => blog.categories.split(',').map(cat => cat.trim())).flat()
-		)]
-	}))
+	let categories = blogs.pipe(
+		map((blogs) => {
+			if (!blogs) {
+				return [];
+			}
+			return [
+				...new Set(blogs.map((blog) => blog.categories.split(',').map((cat) => cat.trim())).flat())
+			];
+		})
+	);
 
 	const handleLanguageChange = async () => {
 		locale.set(selected);
-		const langSet = await api({url: 'api/lang', method: 'POST', data: { lang: selected }});
+		const langSet = await api({ url: 'api/lang', method: 'POST', data: { lang: selected } });
 		if (langSet) {
-			const resBlogs = await api({url: 'api/blogs'});
+			const resBlogs = await api({ url: 'api/blogs' });
 			if (resBlogs) {
 				blogs.next(resBlogs.body);
 				goto('/blogs');
@@ -60,10 +62,13 @@
 <header id="header" class={active}>
 	<div class="container">
 		<div class="header-menu">
-			<a sveltekit:prefetch href="/" class="logo">T</a>
-			<a class="menu-link" class:active={$page.url.pathname === '/blogs'} sveltekit:prefetch href="/blogs"
-			>Blog</a
-		>
+			<a sveltekit:prefetch href="/" class="logo">MS</a>
+			<a
+				class="menu-link"
+				class:active={$page.url.pathname === '/blogs'}
+				sveltekit:prefetch
+				href="/blogs">Blog</a
+			>
 			<div class="menu-links">
 				<button class="hamburger hamburger--boring {active}" on:click={toggleMenu} type="button">
 					<span class="hamburger-box">
@@ -73,37 +78,33 @@
 				</button>
 			</div>
 			<form id="header-search" style="opacity: 0;width:1px;">
-				<input
-					type="search"
-					name="s"
-					placeholder="{$_('search')}&hellip;"
-					class="draw"
-				/>
+				<input type="search" name="s" placeholder="{$_('search')}&hellip;" class="draw" />
 				<button type="submit">&rarr;</button>
 			</form>
 		</div>
 
 		<nav id="site-nav" class={active}>
 			<div class="col">
-				<h4>T</h4>
+				<h4>MS</h4>
 				<ul>
-					<li class:active={$page.url.pathname  === '/'}>
+					<li class:active={$page.url.pathname === '/'}>
 						<a sveltekit:prefetch href="/">{$_('home')}</a>
 					</li>
-					<li class:active={$page.url.pathname  === '/about'}>
+					<li class:active={$page.url.pathname === '/about'}>
 						<a sveltekit:prefetch href="/about">{$_('about')}</a>
 					</li>
-					<li class:active={$page.url.pathname  === '/blogs'}>
+					<li class:active={$page.url.pathname === '/blogs'}>
 						<a sveltekit:prefetch href="/blogs">Blog</a>
 					</li>
-					<li class:active={$page.url.pathname  === '/contact'}>
+					<li class:active={$page.url.pathname === '/contact'}>
 						<a sveltekit:prefetch href="/contact">{$_('contact')}</a>
 					</li>
 				</ul>
 			</div>
 			<div class="col">
 				<h4>Blog</h4>
-				<ul>{#if $blogs}
+				<ul>
+					{#if $blogs}
 						{#each $blogs.slice(0, 3) as blog}
 							<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
 						{/each}
@@ -135,19 +136,18 @@
 </header>
 
 <style>
-
 	.logo {
-		color: #FFF;
+		color: #fff;
 		font-weight: 700;
-		font-size: 69px;
+		font-size: 40px;
 		line-height: 1;
 		border-radius: 50%;
-		width: 30px;
+		width: 50px;
 		height: 30px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding-top: 20px;
+		padding-top: 5px;
 	}
 
 	.logo:hover {
@@ -178,7 +178,7 @@
 		height: 100%;
 		align-items: center;
 		justify-content: center;
-		color:  #b4b9ba;
+		color: #b4b9ba;
 		font-weight: 700;
 		font-size: 0.8rem;
 		text-transform: uppercase;

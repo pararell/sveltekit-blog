@@ -1,19 +1,22 @@
 <script>
-	import { blogs } from '$lib/store';
+	export let blogs = [];
 	export let category;
+	$: blogsToShow = blogs
+		.filter((blog) => (category ? blog.categories.includes(category) : true))
+		.sort((a, b) => new Date(b.Created) - new Date(a.Created));
 </script>
 
-{#if $blogs}
-	{#each $blogs.filter(blog => category ? blog.categories.includes(category) : true) as blog (blog.id)}
+{#if blogsToShow}
+	{#each blogsToShow as blog (blog.id)}
 		<a class="card" rel="prefetch" href="/blogs/{blog.slug}">
 			<div class="card-left">
 				<div class="card-left-top">
 					<div class="thumbnail">
-						<img class="card-left-img" alt="{blog.slug}" src={blog.imgLink} loading="lazy" />
+						<img class="card-left-img" alt={blog.slug} src={blog.imgLink} loading="lazy" />
 					</div>
 				</div>
 				<div class="card-left-bottom">
-					<p class="date">{new Date(blog.date).toLocaleDateString()} </p>
+					<p class="date">{new Date(blog.date).toLocaleDateString()}</p>
 				</div>
 			</div>
 
@@ -74,7 +77,7 @@
 
 	.card-left-bottom {
 		margin-top: -25px;
-    	padding-left: 10px;
+		padding-left: 10px;
 	}
 
 	.card-right {

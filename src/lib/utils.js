@@ -23,8 +23,8 @@ export const resetDisqus = (page) => {
     DISQUS.reset({
         reload: true,
         config: function () {
-            this.page.url = 'https://' + host + '/blogs/' + page.params.slug;
-            this.page.identifier = page.params.slug;
+            this.page.url = 'https://' + host + '/blogs/' + page.attributes.slug;
+            this.page.identifier = page.attributes.slug;
             this.language = 'en';
         }
     });

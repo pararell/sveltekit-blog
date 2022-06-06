@@ -1,5 +1,6 @@
 <script>
-	import Blog from '$lib/Blog.svelte';
+	import { blogs } from '$lib/store';
+	import Blogs from '$lib/Blogs.svelte';
 	import { _ } from 'svelte-i18n';
 </script>
 
@@ -11,7 +12,7 @@
 	<h1>{$_('blog_title')}</h1>
 	<h2>{$_('blog_subtitle')}</h2>
 
-	<Blog />
+	<Blogs blogs="{$blogs}"/>
 </section>
 
 <style>

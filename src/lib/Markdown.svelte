@@ -5,6 +5,7 @@
 	import { user, blog } from './store';
 	import { _, locale } from 'svelte-i18n';
 	import { api } from '$lib/api';
+import { ADMIN_EMAIL } from './constants';
 
 	const dispatch = createEventDispatcher();
 	export let content = '# Subtitle';
@@ -88,7 +89,7 @@
 	};
 </script>
 
-{#if $user?.Email}
+{#if $user?.Email === ADMIN_EMAIL}
 	<form
 		on:submit|preventDefault={() => submitForm(type === 'update' ? 'PATCH' : 'POST')}
 		class="new"
