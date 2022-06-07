@@ -9,12 +9,14 @@
 </svelte:head>
 
 <section>
-	<h2>{$page?.params?.slug}</h2>
+	<div class="container">
+	<h1>{$page?.params?.slug}</h1>
 	<Blogs category={$page?.params?.slug} blogs={$blogs} />
+</div>
 </section>
 
 <style>
-	h2 {
+	h1 {
 		text-align: center;
 		text-transform: uppercase;
 	}

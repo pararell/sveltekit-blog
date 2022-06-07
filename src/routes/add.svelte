@@ -1,25 +1,25 @@
 <script>
 	import Markdown from '$lib/Markdown.svelte';
 	import { api } from '$lib/api';
-	import { blogs, blog, user } from '$lib/store';
+	import { pages, user } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { ADMIN_EMAIL } from '$lib/constants';
 	import { _, locale } from 'svelte-i18n';
 
 	export let title = '';
-	export let imgLink = '';
+  export let metaTitle = '';
+	export let image = '';
 	export let description = '';
-	export let categories = '';
-	export let id = '';
-	export let date = new Date().toISOString().substr(0, 10);
+	export let url = '';
+  export let position = '';
 	export let content = '#Title';
 	let error = '';
 
 	const handleRedirect = async (event) => {
-		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
+		const resPages = await api({ url: 'api/pages', serverFetch: fetch });
 
-		if (resBlogs) {
-			blogs.next(resBlogs.body);
+		if (resPages) {
+			pages.next(resPages.body);
 		}
 	};
 
@@ -27,25 +27,23 @@
 		if (title) {
 			const data = {
 				title,
+        url,
+        metaTitle,
+        position,
 				slug: title
 					.toLowerCase()
 					.normalize('NFD')
 					.replace(/[\u0300-\u036f]/g, '')
 					.replace(/[^\w]/gi, '-'),
 				description,
-				imgLink,
+				image,
 				content,
-				categories: categories ? categories.split(',') : [],
-				date,
-				author: user.value.Email,
 				lang: $locale,
-				comments: []
 			};
 
-			const res = await api({ url: `api/blogs/create`, method: 'POST', data });
-			blog.next(res.body);
+			const res = await api({ url: `api/pages/create`, method: 'POST', data });
 			handleRedirect();
-			goto('/blogs');
+			goto('/');
 		}
 	};
 </script>
@@ -55,14 +53,13 @@
 		<h1 class="header-title">Add blog</h1>
 		<div class="header-cta">
 			<input type="text" name="title" bind:value={title} placeholder="Title" />
-			<input type="text" name="imgLink" bind:value={imgLink} placeholder="Image link" />
+      <input type="text" name="metaTitle" bind:value={metaTitle} placeholder="MetaTitle" />
+      <input type="text" name="url" bind:value={url} placeholder="Url" />
+			<input type="text" name="image" bind:value={image} placeholder="Image link" />
+      <input type="number" name="position" bind:value={position} placeholder="Position" />
 			<input type="text" name="description" bind:value={description} placeholder="Description" />
-			<input type="text" name="categories" bind:value={categories} placeholder="Categories" />
-			<input type="date" name="date" bind:value={date} placeholder="Date" />
-			<input type="hidden" name="author" value={$user.Email} />
-			<input type="hidden" name="id" value={id} />
 			<input type="hidden" name="lang" value={$locale} />
-			<button class="btn submit" disabled={!title || !content}> Save</button>
+			<button class="btn submit" disabled={!title || !url || !content}> Save</button>
 		</div>
 		{#if error}
 			<p class="error">
