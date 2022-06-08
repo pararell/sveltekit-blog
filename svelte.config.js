@@ -10,13 +10,17 @@ const config = {
 		})
 	],
 	kit: {
-		adapter: node({ out: 'build' }),
+		adapter: node({ out: 'build', precompress: false }),
 		methodOverride: {
 			allowed: ['PUT', 'PATCH', 'DELETE']
 		},
-		// prerender: {
-    //   default: true
-    // },
+		serviceWorker: {
+			register: false
+		},
+		prerender: {
+      default: false,
+			enabled: false
+    },
 		files: {
 			assets: 'static',
 			hooks: 'src/hooks',

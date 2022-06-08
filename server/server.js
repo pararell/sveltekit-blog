@@ -124,6 +124,7 @@ const portServer = PORT || 4000;
 
 const app = express();
 
+
 app.use(
 	session({
 		secret: process.env.cookieSecret,
@@ -156,22 +157,30 @@ app.get('/api/user', async (req, res) => {
 });
 
 app.get('/api/config', async (req, res) => {
-	res.end(JSON.stringify({ disqusSrc: process.env.disqusSrc, lang: req.session.lang }));
+	try {
+		res.end(JSON.stringify({ disqusSrc: process.env.disqusSrc, lang: req.session.lang }));
+	} catch (err) {
+		res.end(JSON.stringify({}));
+	}
 });
 
 app.post('/api/lang', async (req, res) => {
+	try {
 	req.session.lang = req.body.lang;
 	res.end(JSON.stringify({ lang: req.body.lang }));
+} catch (err) {
+	res.end(JSON.stringify({ lang: 'en'}));
+}
 });
 
 app.get('/api/blogs', async (req, res) => {
-	const lang = req.session.lang || 'en';
-	const blogs = await connection
-		.select('*')
-		.from('blogs')
-		.where({ lang })
-		.orderBy([{ column: 'date', order: 'desc' }]);
 	try {
+		const lang = req.session.lang || 'en';
+		const blogs = await connection
+			.select('*')
+			.from('blogs')
+			.where({ lang })
+			.orderBy([{ column: 'date', order: 'desc' }]);
 		res.end(JSON.stringify(blogs));
 	} catch {
 		res.end(JSON.stringify({ message: `There was an error retrieving blogs: ${err}` }));
@@ -257,12 +266,12 @@ app.delete('/api/blogs/delete/:id', async (req, res) => {
 });
 
 app.get('/api/pages', async (req, res) => {
-	const lang = req.session.lang || 'en';
-	const pages = await connection
-		.select('*')
-		.from('pages')
-		.where({ lang });
 	try {
+		const lang = req.session.lang || 'en';
+		const pages = await connection
+			.select('*')
+			.from('pages')
+			.where({ lang });
 		res.end(JSON.stringify(pages));
 	} catch {
 		res.end(JSON.stringify({ message: `There was an error retrieving pages: ${err}` }));
@@ -468,6 +477,7 @@ const run = async () => {
 	if (fs.existsSync('../build/handler.js')) {
 		const {handler} = await import('../build/handler.js');
 		app.use(handler);
+
 	}
 
 	app.listen(portServer, (err) => {

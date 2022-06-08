@@ -3,16 +3,9 @@
 	import { user, config, blogs, pages } from '$lib/store';
 	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
 	import { filter, take } from 'rxjs/operators';
+	import { browser } from '$app/env';
 
 	export const load = async ({ fetch }) => {
-		if (user.value && config.value && blogs.value && pages.value) {
-			return {
-				props: {},
-				cache: {
-					"maxage": 0,
-				}
-			};
-		}
 
 		const resUser = await api({ url: 'api/user', serverFetch: fetch });
 		const resConfig = await api({ url: 'api/config', serverFetch: fetch });
