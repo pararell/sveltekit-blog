@@ -9,7 +9,7 @@ export async function api({url, method, data, serverFetch}) {
 		method: method || 'GET',
 		headers: {
 			'Content-Type': 'application/json',
-			Cache: 'no-cache',
+			'cache-control': 'public, max-age=3600',
 			'cookie': cookiesRes
 		},
 		credentials: 'include',

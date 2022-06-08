@@ -8,7 +8,9 @@
 		if (user.value && config.value && blogs.value && pages.value) {
 			return {
 				props: {},
-				cache: 0
+				cache: {
+					"maxage": 0,
+				}
 			};
 		}
 
@@ -25,7 +27,9 @@
 
 			return {
 				props: {},
-				cache: 0
+				cache: {
+					"maxage": 0,
+				}
 			};
 		}
 

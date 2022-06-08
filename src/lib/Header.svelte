@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { api } from '$lib/api';
-	import { blogs } from '$lib/store';
+	import { blogs, pages } from '$lib/store';
 	import { _, locale, locales } from 'svelte-i18n';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fromEvent } from 'rxjs';
@@ -37,9 +37,12 @@
 		const langSet = await api({ url: 'api/lang', method: 'POST', data: { lang: selected } });
 		if (langSet) {
 			const resBlogs = await api({ url: 'api/blogs' });
-			if (resBlogs) {
+			const resPages = await api({ url: 'api/pages' });
+			if (resBlogs && resPages) {
 				blogs.next(resBlogs.body);
-				goto('/blogs');
+				pages.next(resPages.body);
+				toggleMenu();
+				goto('/');
 				return;
 			}
 			return;
@@ -90,15 +93,15 @@
 					<li class:active={$page.url.pathname === '/'}>
 						<a sveltekit:prefetch href="/">{$_('home')}</a>
 					</li>
-					<li class:active={$page.url.pathname === '/about'}>
+					<!-- <li class:active={$page.url.pathname === '/about'}>
 						<a sveltekit:prefetch href="/about">{$_('about')}</a>
-					</li>
+					</li> -->
 					<li class:active={$page.url.pathname === '/blogs'}>
 						<a sveltekit:prefetch href="/blogs">Blog</a>
 					</li>
-					<li class:active={$page.url.pathname === '/contact'}>
+					<!-- <li class:active={$page.url.pathname === '/contact'}>
 						<a sveltekit:prefetch href="/contact">{$_('contact')}</a>
-					</li>
+					</li> -->
 				</ul>
 			</div>
 			<div class="col">

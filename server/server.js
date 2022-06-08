@@ -258,12 +258,12 @@ app.delete('/api/blogs/delete/:id', async (req, res) => {
 
 app.get('/api/pages', async (req, res) => {
 	const lang = req.session.lang || 'en';
-	const blogs = await connection
+	const pages = await connection
 		.select('*')
 		.from('pages')
 		.where({ lang });
 	try {
-		res.end(JSON.stringify(blogs));
+		res.end(JSON.stringify(pages));
 	} catch {
 		res.end(JSON.stringify({ message: `There was an error retrieving pages: ${err}` }));
 	}
@@ -372,8 +372,6 @@ app.post('/api/login', async (req, res) => {
 
 				user.Token = token;
 				req.session.token = token;
-
-				console.log(req.session.token, 'req.session.token')
 
 				res.end(JSON.stringify(user));
 			} else {

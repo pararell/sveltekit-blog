@@ -14,6 +14,9 @@ const config = {
 		methodOverride: {
 			allowed: ['PUT', 'PATCH', 'DELETE']
 		},
+		// prerender: {
+    //   default: true
+    // },
 		files: {
 			assets: 'static',
 			hooks: 'src/hooks',
