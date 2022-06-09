@@ -268,10 +268,9 @@ app.delete('/api/blogs/delete/:id', async (req, res) => {
 app.get('/api/pages', async (req, res) => {
 	try {
 		const lang = req.session.lang || 'en';
-		const pages = await connection
-			.select('*')
-			.from('pages')
-			.where({ lang });
+		const pages = await connection('pages')
+			.where({ lang })
+			.select('id','title', 'metaTitle', 'url', 'slug', 'description', 'position', 'lang');
 		res.end(JSON.stringify(pages));
 	} catch {
 		res.end(JSON.stringify({ message: `There was an error retrieving pages: ${err}` }));
@@ -327,8 +326,12 @@ app.patch('/api/pages/update', async (req, res) => {
 });
 
 app.get('/api/pages/:slug', async (req, res) => {
+	const lang = req.session.lang || 'en';
 	let { slug } = req.params;
-	const pages = await connection.select('*').from('pages').where('slug', slug).first();
+	const pages = await connection.select('*')
+		.from('pages')
+		.where({ lang })
+		.where('slug', slug).orWhere('url', slug).first();
 	try {
 		res.end(JSON.stringify(pages));
 	} catch {

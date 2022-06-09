@@ -7,7 +7,13 @@ import { fileURLToPath } from 'url';
 const file = fileURLToPath(new URL('package.json', import.meta.url));
 const json = readFileSync(file, 'utf8');
 const pkg = JSON.parse(json);
-
+const ssrObj = process.env.NODE_ENV !== 'development' 
+	? {
+		ssr: {
+			noExternal: Object.keys(pkg.dependencies || {})
+		}
+	}
+	: {};
 
 const config = {
 	preprocess: [
@@ -38,9 +44,7 @@ const config = {
 			server: {
 				cors: false
 			},
-			ssr: {
-				noExternal: Object.keys(pkg.dependencies || {})
-			}
+			...ssrObj
 		})
 	}
 };

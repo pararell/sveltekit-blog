@@ -1,11 +1,32 @@
+<script context="module">
+	import { pageWithContent, user } from '$lib/store';
+
+export const load = async ({ fetch, url, params }) => {
+	const res = await fetch(`/home.json`);
+
+	if (res.ok) {
+		const pageFromApi = await res.json();
+		pageWithContent.next(pageFromApi);
+		return { props: { url, params } };
+	}
+
+	return {
+		props: {
+			url,
+			params
+		}
+	};
+};
+</script>
+
 <script>
 	import { _ } from 'svelte-i18n';
-	import { pages, user } from '$lib/store';
 	import marked from 'marked';
 	import Markdown from '$lib/Markdown.svelte';
 	import { api } from '$lib/api';
 	import { goto } from '$app/navigation';
 	import { ADMIN_EMAIL } from '$lib/constants';
+	import { take, filter } from 'rxjs';
 
 	let homePage;
 
@@ -19,19 +40,15 @@
 	export let content = '';
 	let error = '';
 
-	pages.subscribe((ps) => {
-		const home = ps.find((p) => p.url === '/');
-		if (home) {
-			homePage = home;
-			title = home.title;
-			metaTitle = home.metaTitle;
-			image = home.image;
-			description = home.description;
-			url = home.url;
-			id = home.id;
-			position = home.position;
-			content = home.content;
-		}
+	pageWithContent.pipe(filter(Boolean),take(1)).subscribe((pageFound) => {
+		 homePage = pageFound;
+	    title = pageFound.title;
+      metaTitle = pageFound.title;
+      url = pageFound.url;
+      image = pageFound.imgLink;
+      description = pageFound.description;
+      id = pageFound.id;
+      content = pageFound.content;
 	});
 
 	const handleRedirect = async (event) => {

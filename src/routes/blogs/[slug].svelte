@@ -27,6 +27,8 @@
 	import { goto } from '$app/navigation';
 	import { ADMIN_EMAIL } from '$lib/constants';
 	import { _, locale } from 'svelte-i18n';
+	import { onDestroy } from 'svelte';
+	import { take } from 'rxjs';
 	export let url, params;
 	export let title = '';
 	export let imgLink = '';
@@ -37,7 +39,7 @@
 	export let date = new Date().toISOString().substr(0, 10);
 	export let content = '#Title';
 
-	blog.subscribe((b) => {
+  blog.pipe(take(1)).subscribe((b) => {
 		content = b.content;
 		title = b.title;
 		imgLink = b.imgLink;
@@ -49,6 +51,7 @@
 	});
 	let error = '';
 
+
 	const handleRedirect = async (event) => {
 		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
 		if (resBlogs) {
@@ -57,7 +60,6 @@
 	};
 
 	const submitForm = async (method) => {
-		console.log(content, 'content')
 		if (method === 'PATCH' && id && title) {
 			const data = {
 				id: parseFloat(id),

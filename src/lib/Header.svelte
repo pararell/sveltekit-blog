@@ -72,6 +72,17 @@
 				sveltekit:prefetch
 				href="/blogs">Blog</a
 			>
+
+			{#each $pages as pageToShow (pageToShow.id)}
+				{#if pageToShow.url !== '/'}
+					<a
+					class="menu-link"
+					class:active={$page.url.pathname === pageToShow.url}
+					sveltekit:prefetch
+					href="{pageToShow.url}">{pageToShow.title}</a
+				>
+					{/if}
+			{/each}
 			<div class="menu-links">
 				<button class="hamburger hamburger--boring {active}" on:click={toggleMenu} type="button">
 					<span class="hamburger-box">
@@ -99,6 +110,16 @@
 					<li class:active={$page.url.pathname === '/blogs'}>
 						<a sveltekit:prefetch href="/blogs">Blog</a>
 					</li>
+
+					{#each $pages as pageToShow (pageToShow.id)}
+						{#if pageToShow.url !== '/'}
+							<li class:active={$page.url.pathname === pageToShow.url}>
+								<a sveltekit:prefetch href="{pageToShow.url}">{pageToShow.title}</a>
+							</li>
+						{/if}
+					{/each}
+
+
 					<!-- <li class:active={$page.url.pathname === '/contact'}>
 						<a sveltekit:prefetch href="/contact">{$_('contact')}</a>
 					</li> -->
@@ -145,7 +166,7 @@
 		font-size: 40px;
 		line-height: 1;
 		border-radius: 50%;
-		width: 50px;
+		width: 80px;
 		height: 30px;
 		display: flex;
 		align-items: center;
@@ -173,7 +194,7 @@
 		font-weight: 600;
 		letter-spacing: 0.08em;
 		line-height: 1;
-		padding: 0 1em;
+		padding: 0 0.5em;
 		display: inline-block;
 	}
 	nav a {
