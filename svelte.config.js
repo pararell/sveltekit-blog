@@ -27,12 +27,8 @@ const config = {
 			allowed: ['PUT', 'PATCH', 'DELETE']
 		},
 		serviceWorker: {
-			register: false
+			register: false,
 		},
-		prerender: {
-      default: false,
-			enabled: false
-    },
 		files: {
 			assets: 'static',
 			hooks: 'src/hooks',

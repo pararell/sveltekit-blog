@@ -1,12 +1,11 @@
 <script context="module">
-    import { pageWithContent, user } from '$lib/store';
+	import { pageWithContent } from '$lib/store';
 
 	export const load = async ({ fetch, url, params }) => {
-		const res = await fetch(`/${params.page}/${params.page}.json`);
+		const resPage = await api({ url: `api/pages/${params.page}`, serverFetch: fetch });
 
-		if (res.ok) {
-			const pageFromApi = await res.json();
-			pageWithContent.next(pageFromApi);
+		if (resPage) {
+			pageWithContent.next(resPage.body);
 			return { props: { url, params } };
 		}
 
@@ -20,55 +19,58 @@
 </script>
 
 <script>
-    import marked from 'marked';
-    import Markdown from '$lib/Markdown.svelte';
-    import { api } from '$lib/api';
-    import { ADMIN_EMAIL } from '$lib/constants';
-import { take, filter } from 'rxjs';
+	import { _ } from 'svelte-i18n';
+	import marked from 'marked';
+	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
+	import { api } from '$lib/api';
+	import { onDestroy } from 'svelte';
+	import { pageModelForm } from '$lib/constants';
 
-    export let title = '';
-    export let metaTitle = '';
-    export let image = '';
-    export let description = '';
-    export let position = '';
-    export let id = '';
-    export let url = '';
-    export let content = '#Title';
-    let error = '';
+  let pageForm = Object.entries(pageModelForm);
+	let id = '';
+  let pageShow;
 
-    pageWithContent.pipe(filter(Boolean),take(1)).subscribe((pageFound) => {
-	    title = pageFound.title;
-      metaTitle = pageFound.title;
-      url = pageFound.url;
-      image = pageFound.imgLink;
-      description = pageFound.description;
-      id = pageFound.id;
-      content = pageFound.content;
+	let pageSub = pageWithContent.subscribe((pageFound) => {
+		pageShow = pageFound;
+
+		if (pageShow) {
+			const pageKeys = Object.keys(pageFound);
+			id = pageFound.id;
+
+			pageForm = pageForm.map((keyval) => {
+				const found = pageKeys.includes(keyval[0]);
+				if (found) {
+					keyval[1].value = pageFound[keyval[0]];
+					return keyval;
+				}
+
+				return keyval;
+			});
+		}
 	});
 
-    const submitForm = async () => {
-		if (title && id) {
+	onDestroy(() => pageSub.unsubscribe());
+
+	const submitForm = async (event) => {
+		const formData = event.detail;
+
+		if (formData.title && id) {
 			const data = {
-        id: parseFloat(id),
-				title,
-        url,
-        metaTitle,
-        position,
-				slug: title
+				id: parseFloat(id),
+				...formData,
+				slug: formData.title
 					.toLowerCase()
 					.normalize('NFD')
 					.replace(/[\u0300-\u036f]/g, '')
-					.replace(/[^\w]/gi, '-'),
-				description,
-				image,
-				content
+					.replace(/[^\w]/gi, '-')
 			};
 
 			const res = await api({ url: `api/pages/update`, method: 'PATCH', data });
-			pageWithContent.next(res.body);
+			if (res) {
+				pageWithContent.next(res.body);
+			}
 		}
 	};
-
 </script>
 
 <svelte:head>
@@ -76,33 +78,12 @@ import { take, filter } from 'rxjs';
 </svelte:head>
 
 {#if $pageWithContent}
-<div class="container">
-	<div class="content">
-		{@html marked($pageWithContent.content)}
-	</div>
-</div>
-
-{#if $user?.Email === ADMIN_EMAIL}
-	<form on:submit|preventDefault={submitForm} class="new">
-		<h1 class="header-title">Add blog</h1>
-		<div class="header-cta">
-			<input type="text" name="title" bind:value={title} placeholder="Title" />
-      <input type="text" name="metaTitle" bind:value={metaTitle} placeholder="MetaTitle" />
-      <input type="text" name="url" bind:value={url} placeholder="Url" />
-			<input type="text" name="image" bind:value={image} placeholder="Image link" />
-      <input type="number" name="position" bind:value={position} placeholder="Position" />
-			<input type="text" name="description" bind:value={description} placeholder="Description" />
-			<button class="btn submit" disabled={!title || !url || !content}> Save</button>
+	<div class="container">
+		<div class="content">
+			{@html marked($pageWithContent.content)}
 		</div>
-		{#if error}
-			<p class="error">
-				{error}
-			</p>
-		{/if}
-
-      <Markdown bind:content={content}  />
-    </form>
-  {/if}
+      <FormWithMarkdown form={pageForm} on:submitForm={submitForm} />
+	</div>
 {/if}
 
 <style>
@@ -142,38 +123,4 @@ import { take, filter } from 'rxjs';
 		margin: 0 0 0.5rem 0;
 		font-size: 1.2rem;
 	}
-
-	.date {
-		text-align: right;
-		margin-right: 0;
-		margin-left: auto;
-		display: block;
-		color: var(--secondary-color);
-	}
-
-	.header-title {
-		margin: 0 0 10px 0;
-		text-align: center;
-	}
-
-	.header-cta {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		justify-content: center;
-		width: 100%;
-		position: relative;
-	}
-
-	input {
-		min-width: 50%;
-		border-radius: 4px;
-		padding: 0 10px;
-		box-shadow: 0px 0px 4px #ccc;
-		border: 1px solid transparent;
-		min-height: 35px;
-		outline: none;
-		margin-right: 15px;
-	}
 </style>
-

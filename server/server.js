@@ -236,9 +236,9 @@ app.patch('/api/blogs/update', async (req, res) => {
 });
 
 app.get('/api/blogs/:slug', async (req, res) => {
-	let { slug } = req.params;
-	const blogs = await connection.select('*').from('blogs').where('slug', slug).first();
 	try {
+		let { slug } = req.params;
+		const blogs = await connection.select('*').from('blogs').where('slug', slug).first();
 		res.end(JSON.stringify(blogs));
 	} catch {
 		res.end(JSON.stringify({ message: `There was an error retrieving blogs` }));
@@ -326,13 +326,13 @@ app.patch('/api/pages/update', async (req, res) => {
 });
 
 app.get('/api/pages/:slug', async (req, res) => {
-	const lang = req.session.lang || 'en';
-	let { slug } = req.params;
-	const pages = await connection.select('*')
-		.from('pages')
-		.where({ lang })
-		.where('slug', slug).orWhere('url', slug).first();
 	try {
+		const lang = req.session.lang || 'en';
+		let { slug } = req.params;
+		const pages = await connection.select('*')
+			.from('pages')
+			.where({ lang })
+			.where('slug', slug).orWhere('url', slug).first();
 		res.end(JSON.stringify(pages));
 	} catch {
 		res.end(JSON.stringify({ message: `There was an error retrieving pages` }));

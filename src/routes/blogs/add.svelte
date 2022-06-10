@@ -15,6 +15,8 @@
 	export let content = '#Title';
 	let error = '';
 
+	
+
 	const handleRedirect = async (event) => {
 		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
 

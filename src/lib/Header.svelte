@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { api } from '$lib/api';
-	import { blogs, pages } from '$lib/store';
+	import { blogs, pages, pageWithContent } from '$lib/store';
 	import { _, locale, locales } from 'svelte-i18n';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fromEvent } from 'rxjs';
@@ -38,11 +38,13 @@
 		if (langSet) {
 			const resBlogs = await api({ url: 'api/blogs' });
 			const resPages = await api({ url: 'api/pages' });
-			if (resBlogs && resPages) {
+			const resHomePage = await api({ url: 'api/pages/home' });
+			if (resBlogs && resPages && resHomePage) {
 				blogs.next(resBlogs.body);
 				pages.next(resPages.body);
-				toggleMenu();
-				goto('/');
+				pageWithContent.next(resHomePage.body);
+				dispatch('toggle');
+
 				return;
 			}
 			return;
@@ -65,11 +67,10 @@
 <header id="header" class={active}>
 	<div class="container">
 		<div class="header-menu">
-			<a sveltekit:prefetch href="/" class="logo">MS</a>
+			<a href="/" class="logo">MS</a>
 			<a
 				class="menu-link"
 				class:active={$page.url.pathname === '/blogs'}
-				sveltekit:prefetch
 				href="/blogs">Blog</a
 			>
 
@@ -78,8 +79,7 @@
 					<a
 					class="menu-link"
 					class:active={$page.url.pathname === pageToShow.url}
-					sveltekit:prefetch
-					href="{pageToShow.url}">{pageToShow.title}</a
+					href="/{pageToShow.url}">{pageToShow.title}</a
 				>
 					{/if}
 			{/each}
@@ -102,19 +102,19 @@
 				<h4>MS</h4>
 				<ul>
 					<li class:active={$page.url.pathname === '/'}>
-						<a sveltekit:prefetch href="/">{$_('home')}</a>
+						<a  href="/">{$_('home')}</a>
 					</li>
 					<!-- <li class:active={$page.url.pathname === '/about'}>
 						<a sveltekit:prefetch href="/about">{$_('about')}</a>
 					</li> -->
 					<li class:active={$page.url.pathname === '/blogs'}>
-						<a sveltekit:prefetch href="/blogs">Blog</a>
+						<a href="/blogs">Blog</a>
 					</li>
 
 					{#each $pages as pageToShow (pageToShow.id)}
 						{#if pageToShow.url !== '/'}
 							<li class:active={$page.url.pathname === pageToShow.url}>
-								<a sveltekit:prefetch href="{pageToShow.url}">{pageToShow.title}</a>
+								<a href="{pageToShow.url}">{pageToShow.title}</a>
 							</li>
 						{/if}
 					{/each}
