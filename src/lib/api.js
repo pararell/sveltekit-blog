@@ -8,7 +8,8 @@ export async function api({url, method, data, serverFetch}) {
 	const res = await (serverFetch || fetch)(`${baseUrl}/${url}`, {
 		method: method || 'GET',
 		headers: {
-			'Content-Type': 'application/json',
+			"content-type": "application/json",
+			"accept": "application/json",
 			'cookie': cookiesRes
 		},
 		credentials: 'include',

@@ -35,7 +35,6 @@
 						<label class="label" for={name}>{name}</label>
 						<TextField {name} placeholder={name} type={item.type} bind:value={item.value} />
 					</span>
-					<br />
 				{/if}
 				{#if item.type === 'textarea'}
 					<span class="field">
@@ -52,7 +51,6 @@
 				{#if item.type === 'radio'}
 					<label class="label" for={name}>{name}</label>
 					<br />
-
 					<span class="field">
 						<RadioGroup class="radio-group" items={item.items} bind:value={item.value} />
 					</span>
@@ -80,5 +78,24 @@
 		<Button filled type="submit">Submit</Button>
 	</form>
 {/if}
+
+<style>
+  .field {
+    max-width: 400px;
+    display: block;
+    margin: 10px auto;
+  }
+
+  .label {
+    text-transform: capitalize;
+  }
+
+  .form :global(.btn) {
+    display: block;
+    border-radius: 6px;
+    max-width: 300px;
+    margin: 20px auto;
+  }
+</style>
 
 

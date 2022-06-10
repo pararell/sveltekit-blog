@@ -1,21 +1,12 @@
 <script>
-	import Markdown from '$lib/Markdown.svelte';
 	import { api } from '$lib/api';
 	import { blogs, blog, user } from '$lib/store';
 	import { goto } from '$app/navigation';
-	import { ADMIN_EMAIL } from '$lib/constants';
+	import { blogModelForm } from '$lib/constants';
 	import { _, locale } from 'svelte-i18n';
+	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 
-	export let title = '';
-	export let imgLink = '';
-	export let description = '';
-	export let categories = '';
-	export let id = '';
-	export let date = new Date().toISOString().substr(0, 10);
-	export let content = '#Title';
-	let error = '';
-
-	
+	let blogForm = Object.entries(blogModelForm);
 
 	const handleRedirect = async (event) => {
 		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
@@ -25,20 +16,17 @@
 		}
 	};
 
-	const submitForm = async () => {
-		if (title) {
+	const submitForm = async (event) => {
+		const formData = event.detail;
+		if (formData.title) {
 			const data = {
-				title,
-				slug: title
+				...formData,
+				slug: formData.title
 					.toLowerCase()
 					.normalize('NFD')
 					.replace(/[\u0300-\u036f]/g, '')
 					.replace(/[^\w]/gi, '-'),
-				description,
-				imgLink,
-				content,
-				categories: categories ? categories.split(',') : [],
-				date,
+				categories: formData.categories ? formData.categories.split(',') : [],
 				author: user.value.Email,
 				lang: $locale,
 				comments: []
@@ -52,54 +40,14 @@
 	};
 </script>
 
-{#if $user?.Email === ADMIN_EMAIL}
-	<form on:submit|preventDefault={submitForm} class="new">
-		<h1 class="header-title">Add blog</h1>
-		<div class="header-cta">
-			<input type="text" name="title" bind:value={title} placeholder="Title" />
-			<input type="text" name="imgLink" bind:value={imgLink} placeholder="Image link" />
-			<input type="text" name="description" bind:value={description} placeholder="Description" />
-			<input type="text" name="categories" bind:value={categories} placeholder="Categories" />
-			<input type="date" name="date" bind:value={date} placeholder="Date" />
-			<input type="hidden" name="author" value={$user.Email} />
-			<input type="hidden" name="id" value={id} />
-			<input type="hidden" name="lang" value={$locale} />
-			<button class="btn submit" disabled={!title || !content}> Save</button>
-		</div>
-		{#if error}
-			<p class="error">
-				{error}
-			</p>
-		{/if}
-
-		<Markdown bind:content={content}  />
-	</form>
-{/if}
-
+<div class="page">
+	<div class="container">
+		<FormWithMarkdown form={blogForm} on:submitForm={submitForm} />
+	</div>
+</div>
 
 <style>
-	.header-title {
-		margin: 0 0 10px 0;
-		text-align: center;
-	}
-
-	.header-cta {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		justify-content: center;
-		width: 100%;
-		position: relative;
-	}
-
-	input {
-		min-width: 50%;
-		border-radius: 4px;
-		padding: 0 10px;
-		box-shadow: 0px 0px 4px #ccc;
-		border: 1px solid transparent;
-		min-height: 35px;
-		outline: none;
-		margin-right: 15px;
+	.page {
+		padding-top: 40px;
 	}
 </style>

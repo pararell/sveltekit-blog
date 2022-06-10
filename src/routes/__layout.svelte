@@ -6,22 +6,23 @@
 	import { browser } from '$app/env';
 
 	export const load = async ({ fetch }) => {
+		const resUser = api({ url: 'api/user', serverFetch: fetch });
+		const resConfig = api({ url: 'api/config', serverFetch: fetch });
+		const resBlogs = api({ url: 'api/blogs', serverFetch: fetch });
+		const resPages = api({ url: 'api/pages', serverFetch: fetch });
 
-		const resUser = await api({ url: 'api/user', serverFetch: fetch });
-		const resConfig = await api({ url: 'api/config', serverFetch: fetch });
-		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
-		const resPages = await api({ url: 'api/pages', serverFetch: fetch });
+		const data = await Promise.all([resUser, resConfig, resBlogs, resPages]);
 
-		if (resUser && resConfig && resBlogs && resPages) {
-			user.next(resUser.body);
-			config.next(resConfig.body);
-			blogs.next(resBlogs.body);
-			pages.next(resPages.body);
+		if (data) {
+			user.next(data[0].body);
+			config.next(data[1].body);
+			blogs.next(data[2].body);
+			pages.next(data[3].body);
 
 			return {
 				props: {},
 				cache: {
-					"maxage": 0,
+					maxage: 0
 				}
 			};
 		}

@@ -2,11 +2,10 @@
 	import { blog, blogs, user } from '$lib/store';
 
 	export const load = async ({ fetch, url, params }) => {
-		const res = await fetch(`/blogs/${params.slug}.json`);
+		const resBlog = await api({ url: `api/blogs/${params.slug}`, serverFetch: fetch });
 
-		if (res.ok) {
-			const blogFromApi = await res.json();
-			blog.next(blogFromApi);
+		if (resBlog) {
+			blog.next(resBlog.body);
 			return { props: { url, params } };
 		}
 
@@ -21,75 +20,78 @@
 
 <script>
 	import marked from 'marked';
-	import Markdown from '$lib/Markdown.svelte';
 	import Comments from '$lib/Comments.svelte';
 	import { api } from '$lib/api';
 	import { goto } from '$app/navigation';
-	import { ADMIN_EMAIL } from '$lib/constants';
-	import { _, locale } from 'svelte-i18n';
+	import { blogModelForm, ADMIN_EMAIL } from '$lib/constants';
+	import { _ } from 'svelte-i18n';
 	import { onDestroy } from 'svelte';
-	import { take } from 'rxjs';
+	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
+
 	export let url, params;
-	export let title = '';
-	export let imgLink = '';
-	export let description = '';
-	export let categories = '';
-	export let comments = [];
-	export let id = '';
-	export let date = new Date().toISOString().substr(0, 10);
-	export let content = '#Title';
+	let id = '';
+	let blogForm = Object.entries(blogModelForm);
+	let blogShow;
 
-  blog.pipe(take(1)).subscribe((b) => {
-		content = b.content;
-		title = b.title;
-		imgLink = b.imgLink;
-		description = b.description;
-		categories = b.categories;
-		id = b.id;
-		date = b.date;
-		comments = b.comments;
-	});
-	let error = '';
+	let blogSub = blog.subscribe((blogFound) => {
+		blogShow = blogFound;
 
+		if (blogShow) {
+			const blogKeys = Object.keys(blogFound);
+			id = blogFound.id;
 
-	const handleRedirect = async (event) => {
-		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
-		if (resBlogs) {
-			blogs.next(resBlogs.body);
+			blogForm = blogForm.map((keyval) => {
+				const found = blogKeys.includes(keyval[0]);
+				if (found) {
+					keyval[1].value = blogFound[keyval[0]];
+					return keyval;
+				}
+
+				return keyval;
+			});
 		}
-	};
+	});
 
-	const submitForm = async (method) => {
-		if (method === 'PATCH' && id && title) {
+	onDestroy(() => blogSub.unsubscribe());
+
+	const submitForm = async (event) => {
+		const formData = event.detail;
+		if (id && formData.title) {
 			const data = {
+				...formData,
 				id: parseFloat(id),
-				title,
-				slug: title
+				slug: formData.title
 					.toLowerCase()
 					.normalize('NFD')
 					.replace(/[\u0300-\u036f]/g, '')
 					.replace(/[^\w]/gi, '-'),
-				description,
-				imgLink,
-				content,
-				categories: categories ? categories.split(',') : [],
-				date,
-				lang: $locale,
-				comments
+				categories: formData.categories ? formData.categories.split(',') : []
 			};
-			const res = await api({ url: `api/blogs/update`, method, data });
-			blog.next(res.body);
-
-			handleRedirect();
-			goto('/blogs/' + res.body.slug);
-		}
-
-		if (method === 'DELETE' && id) {
-			const res = await api({ url: `api/blogs/delete/` + id, method });
+			const res = await api({ url: `api/blogs/update`, method: 'PATCH', data });
 
 			if (res) {
-				handleRedirect();
-				goto('/blogs');
+				blog.next(res.body);
+				goto('/blogs/' + res.body.slug);
+
+				const resBlogs = await api({ url: `api/blogs/` });
+				if (resBlogs) {
+					blogs.next(resBlogs.body);
+				}
+			}
+		}
+	};
+
+	const removeBlog = async () => {
+		if (id) {
+			const res = await api({ url: `api/blogs/delete/` + id, method: 'DELETE' });
+
+			if (res) {
+				const resBlogs = await api({ url: `api/blogs/` });
+
+				if (resBlogs) {
+					blogs.next(resBlogs.body);
+					goto('/blogs');
+				}
 			}
 		}
 	};
@@ -100,44 +102,25 @@
 </svelte:head>
 
 {#if $blog}
-<div class="container">
-	<h1>{$blog.title}</h1>
+	<div class="container">
+		<h1>{$blog.title}</h1>
 
-	<div class="content">
-		{@html marked(content)}
-	</div>
+		<div class="content">
+			{@html marked($blog.content)}
+		</div>
 
-	<span class="date">{new Date($blog.date).toLocaleDateString()}</span>
+		<span class="date">{new Date($blog.date).toLocaleDateString()}</span>
 
-	{#if $user?.Email === ADMIN_EMAIL}
-		<form on:submit|preventDefault={() => submitForm('PATCH')} class="new">
-			<h1 class="header-title">Update blog</h1>
-			<div class="header-cta">
-				<input type="text" name="title" bind:value={title} placeholder="Title" />
-				<input type="text" name="imgLink" bind:value={imgLink} placeholder="Image link" />
-				<input type="text" name="description" bind:value={description} placeholder="Description" />
-				<input type="text" name="categories" bind:value={categories} placeholder="Categories" />
-				<input type="date" name="date" bind:value={date} placeholder="Date" />
+		<FormWithMarkdown form={blogForm} on:submitForm={submitForm} />
+
+		{#if $user?.Email === ADMIN_EMAIL}
+			<form on:submit|preventDefault={removeBlog}>
 				<input type="hidden" name="id" value={id} />
-				<input type="hidden" name="lang" value={$locale} />
-				<button class="btn submit" disabled={!title || !content}> Save</button>
-			</div>
-			{#if error}
-				<p class="error">
-					{error}
-				</p>
-			{/if}
+				<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
+			</form>
+		{/if}
 
-			<Markdown type={'update'} bind:content={content} />
-		</form>
-
-		<form on:submit|preventDefault={() => submitForm('DELETE')}>
-			<input type="hidden" name="id" value={id} />
-			<button class="btn delete" aria-label="Delete blog"> Delete Blog</button>
-		</form>
-	{/if}
-
-	<Comments host={url.host} slug={params.slug} />
+		<Comments host={url.host} slug={params.slug} />
 	</div>
 {/if}
 
@@ -187,28 +170,9 @@
 		color: var(--secondary-color);
 	}
 
-	.header-title {
-		margin: 0 0 10px 0;
-		text-align: center;
-	}
-
-	.header-cta {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		justify-content: center;
-		width: 100%;
-		position: relative;
-	}
-
-	input {
-		min-width: 50%;
-		border-radius: 4px;
-		padding: 0 10px;
-		box-shadow: 0px 0px 4px #ccc;
-		border: 1px solid transparent;
-		min-height: 35px;
-		outline: none;
-		margin-right: 15px;
+	.btn-delete {
+		display: block;
+		max-width: 200px;
+		margin: 30px auto;
 	}
 </style>

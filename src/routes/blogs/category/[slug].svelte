@@ -10,9 +10,9 @@
 
 <section>
 	<div class="container">
-	<h1>{$page?.params?.slug}</h1>
-	<Blogs category={$page?.params?.slug} blogs={$blogs} />
-</div>
+		<h1>{$page?.params?.slug}</h1>
+		<Blogs category={$page?.params?.slug} blogs={$blogs} />
+	</div>
 </section>
 
 <style>

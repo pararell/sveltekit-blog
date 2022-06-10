@@ -129,8 +129,8 @@ app.use(
 	session({
 		secret: process.env.cookieSecret,
 		name: process.env.cookieName,
-		resave: true,
-		saveUninitialized: true,
+		resave: false,
+		saveUninitialized: false,
 		store: new KnexSessionStore(),
 		cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000, httpOnly: false }
 	})
@@ -165,8 +165,8 @@ app.get('/api/config', async (req, res) => {
 });
 
 app.post('/api/lang', async (req, res) => {
-	try {
 	req.session.lang = req.body.lang;
+	try {
 	res.end(JSON.stringify({ lang: req.body.lang }));
 } catch (err) {
 	res.end(JSON.stringify({ lang: 'en'}));

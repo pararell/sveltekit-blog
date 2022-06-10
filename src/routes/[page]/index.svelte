@@ -1,5 +1,5 @@
 <script context="module">
-	import { pageWithContent } from '$lib/store';
+	import { pages, pageWithContent, user } from '$lib/store';
 
 	export const load = async ({ fetch, url, params }) => {
 		const resPage = await api({ url: `api/pages/${params.page}`, serverFetch: fetch });
@@ -24,7 +24,8 @@
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import { api } from '$lib/api';
 	import { onDestroy } from 'svelte';
-	import { pageModelForm } from '$lib/constants';
+	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
+  import { goto } from '$app/navigation';
 
   let pageForm = Object.entries(pageModelForm);
 	let id = '';
@@ -71,10 +72,25 @@
 			}
 		}
 	};
+
+  const removePage = async () => {
+    if (id) {
+      const res = await api({ url: `api/pages/delete/` + id, method: 'DELETE' });
+
+      if (res) {
+        const resPages = await api({ url: `api/pages/` });
+
+        if (resPages) {
+          pages.next(resPages.body);
+          goto('/');
+        }
+      }
+    }
+  }
 </script>
 
 <svelte:head>
-	<title>{$pageWithContent?.title}</title>
+	<title>{$pageWithContent?.metaTitle}</title>
 </svelte:head>
 
 {#if $pageWithContent}
@@ -83,6 +99,13 @@
 			{@html marked($pageWithContent.content)}
 		</div>
       <FormWithMarkdown form={pageForm} on:submitForm={submitForm} />
+
+      {#if $user?.Email === ADMIN_EMAIL}
+        <form on:submit|preventDefault={removePage}>
+          <input type="hidden" name="id" value={id} />
+          <button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
+        </form>
+      {/if}
 	</div>
 {/if}
 
@@ -123,4 +146,10 @@
 		margin: 0 0 0.5rem 0;
 		font-size: 1.2rem;
 	}
+
+  .btn-delete {
+    display: block;
+    max-width: 200px;
+    margin: 30px auto;
+  }
 </style>

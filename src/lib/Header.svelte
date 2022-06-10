@@ -1,6 +1,5 @@
 <script>
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import { api } from '$lib/api';
 	import { blogs, pages, pageWithContent } from '$lib/store';
 	import { _, locale, locales } from 'svelte-i18n';
@@ -36,15 +35,16 @@
 		locale.set(selected);
 		const langSet = await api({ url: 'api/lang', method: 'POST', data: { lang: selected } });
 		if (langSet) {
-			const resBlogs = await api({ url: 'api/blogs' });
-			const resPages = await api({ url: 'api/pages' });
-			const resHomePage = await api({ url: 'api/pages/home' });
-			if (resBlogs && resPages && resHomePage) {
-				blogs.next(resBlogs.body);
-				pages.next(resPages.body);
-				pageWithContent.next(resHomePage.body);
-				dispatch('toggle');
+			const resBlogs = api({ url: 'api/blogs' });
+			const resPages = api({ url: 'api/pages' });
+			const resHomePage = api({ url: 'api/pages/home' });
+			const data = await Promise.all([resBlogs, resPages, resHomePage]);
 
+			if (data) {
+				blogs.next(data[0].body);
+				pages.next(data[1].body);
+				pageWithContent.next(data[2].body);
+				dispatch('toggle');
 				return;
 			}
 			return;
@@ -68,20 +68,16 @@
 	<div class="container">
 		<div class="header-menu">
 			<a href="/" class="logo">MS</a>
-			<a
-				class="menu-link"
-				class:active={$page.url.pathname === '/blogs'}
-				href="/blogs">Blog</a
-			>
+			<a class="menu-link" class:active={$page.url.pathname === '/blogs'} href="/blogs">Blog</a>
 
 			{#each $pages as pageToShow (pageToShow.id)}
 				{#if pageToShow.url !== '/'}
 					<a
-					class="menu-link"
-					class:active={$page.url.pathname === pageToShow.url}
-					href="/{pageToShow.url}">{pageToShow.title}</a
-				>
-					{/if}
+						class="menu-link"
+						class:active={$page.url.pathname === pageToShow.url}
+						href="/{pageToShow.url}">{pageToShow.title}</a
+					>
+				{/if}
 			{/each}
 			<div class="menu-links">
 				<button class="hamburger hamburger--boring {active}" on:click={toggleMenu} type="button">
@@ -102,7 +98,7 @@
 				<h4>MS</h4>
 				<ul>
 					<li class:active={$page.url.pathname === '/'}>
-						<a  href="/">{$_('home')}</a>
+						<a href="/">{$_('home')}</a>
 					</li>
 					<!-- <li class:active={$page.url.pathname === '/about'}>
 						<a sveltekit:prefetch href="/about">{$_('about')}</a>
@@ -114,11 +110,10 @@
 					{#each $pages as pageToShow (pageToShow.id)}
 						{#if pageToShow.url !== '/'}
 							<li class:active={$page.url.pathname === pageToShow.url}>
-								<a href="{pageToShow.url}">{pageToShow.title}</a>
+								<a href={pageToShow.url}>{pageToShow.title}</a>
 							</li>
 						{/if}
 					{/each}
-
 
 					<!-- <li class:active={$page.url.pathname === '/contact'}>
 						<a sveltekit:prefetch href="/contact">{$_('contact')}</a>
