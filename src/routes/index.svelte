@@ -38,7 +38,7 @@
 			const pageKeys = Object.keys(pageFound);
 			id = pageFound.id;
 
-			pageForm.map((keyval) => {
+			pageForm = pageForm.map((keyval) => {
 				const found = pageKeys.includes(keyval[0]);
 				if (found) {
 					keyval[1].value = pageFound[keyval[0]];

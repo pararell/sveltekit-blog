@@ -45,10 +45,14 @@
 				take(1)
 			)
 			.subscribe((configValue) => {
-				const lang = configValue.lang || getLocaleFromNavigator();
+				const langFromNavigator = getLocaleFromNavigator();
+				const langFound = langFromNavigator && ['en', 'sk'].includes(langFromNavigator)
+					? langFromNavigator
+					: 'en';
+				const lang = configValue.lang || langFound;
 				init({
 					fallbackLocale: 'en',
-					initialLocale: configValue.lang || getLocaleFromNavigator()
+					initialLocale: configValue.lang || langFound
 				});
 
 				if (!configValue.lang) {

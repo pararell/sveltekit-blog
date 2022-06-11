@@ -165,9 +165,12 @@ app.get('/api/config', async (req, res) => {
 });
 
 app.post('/api/lang', async (req, res) => {
-	req.session.lang = req.body.lang;
 	try {
-	res.end(JSON.stringify({ lang: req.body.lang }));
+	const langFromRequest = req.body.lang && ['en','sk'].includes(req.body.lang.toLowerCase())
+		 ? req.body.lang.toLowerCase() 
+		 : 'en';
+	req.session.lang = langFromRequest;
+	res.end(JSON.stringify({ lang: langFromRequest }));
 } catch (err) {
 	res.end(JSON.stringify({ lang: 'en'}));
 }
