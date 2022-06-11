@@ -13,6 +13,47 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 dotenv.config();
 
+export const pageModel = {
+	title: 'string',
+	slug: 'string',
+	description: 'string',
+	url: 'string',
+	content: 'string',
+	image: 'string',
+	position: 'string',
+	metaTitle: 'string',
+	lang: 'string'
+};
+
+export const blogModel = {
+	title: 'string',
+	slug: 'string',
+	description: 'string',
+	content: 'string',
+	imgLink: 'string',
+	author: 'string',
+	date: 'date',
+	categories: 'json',
+	comments: 'json',
+	lang: 'string'
+};
+
+export const userModel = {
+	Username: 'string',
+	Email: 'string',
+	Password: 'string',
+	Salt: 'string',
+	Token: 'string',
+	DateLoggedIn: 'date',
+	DateCreated: 'date'
+};
+
+const databases = [
+	{ name: 'Pages', model: pageModel },
+	{ name: 'blogs', model: blogModel },
+	{ name: 'Users', model: userModel }
+];
+
 import connectKnexSession from 'connect-session-knex';
 const KnexSessionStore = connectKnexSession(session);
 
@@ -24,88 +65,22 @@ const connection = knex({
 	useNullAsDefault: true
 });
 
-connection.schema
-	.hasTable('blogs')
-	.then((exists) => {
-		if (!exists) {
-			return connection.schema
-				.createTable('blogs', (table) => {
-					table.increments('id').primary();
-					table.integer('author');
-					table.string('title');
-					table.string('slug');
-					table.string('description');
-					table.string('imgLink');
-					table.date('date');
-					table.string('content');
-					table.json('categories');
-					table.json('comments');
-					table.string('lang');
-				})
-				.then(() => {
-					console.log("Table 'Blogs' created");
-				})
-				.catch((error) => {
-					console.error(`There was an error creating table: ${error}`);
-				});
-		}
-	})
-	.then(() => {
-		console.log('Blogs checked');
-	})
-	.catch((error) => {
-		console.error(`There was an error setting up the database: ${error}`);
-	});
-
-connection.schema
-	.hasTable('Users')
-	.then((exists) => {
-		if (!exists) {
-			return connection.schema
-				.createTable('Users', (table) => {
-					table.increments('id').primary();
-					table.string('Username');
-					table.string('Email');
-					table.string('Password');
-					table.string('Salt');
-					table.string('Token');
-					table.date('DateLoggedIn');
-					table.date('DateCreated');
-				})
-				.then(() => {
-					console.log("Table 'Users' created");
-				})
-				.catch((error) => {
-					console.error(`There was an error creating table: ${error}`);
-				});
-		}
-	})
-	.then(() => {
-		console.log('Users checked');
-	})
-	.catch((error) => {
-		console.error(`There was an error setting up the database: ${error}`);
-	});
-
+databases.forEach((database) => {
 	connection.schema
-		.hasTable('Pages')
+		.hasTable(database.name)
 		.then((exists) => {
 			if (!exists) {
 				return connection.schema
-					.createTable('Pages', (table) => {
+					.createTable(database.name, (table) => {
 						table.increments('id').primary();
-						table.string('title');
-						table.string('slug');
-						table.string('description');
-						table.string('url');
-						table.string('content');
-						table.string('image');
-						table.string('lang');
-						table.string('position');
-						table.string('metaTitle');
+						Object.entries(database.model).forEach((key) => {
+							const type = key[1];
+							const name = key[0];
+							table[type](name);
+						});
 					})
 					.then(() => {
-						console.log("Table 'Pages' created");
+						console.log(`Table ${database.name} created`);
 					})
 					.catch((error) => {
 						console.error(`There was an error creating table: ${error}`);
@@ -113,17 +88,17 @@ connection.schema
 			}
 		})
 		.then(() => {
-			console.log('Pages checked');
+			console.log(`${database.name} checked`);
 		})
 		.catch((error) => {
 			console.error(`There was an error setting up the database: ${error}`);
 		});
+});
 
 const { PORT } = process.env;
 const portServer = PORT || 4000;
 
 const app = express();
-
 
 app.use(
 	session({
@@ -166,14 +141,15 @@ app.get('/api/config', async (req, res) => {
 
 app.post('/api/lang', async (req, res) => {
 	try {
-	const langFromRequest = req.body.lang && ['en','sk'].includes(req.body.lang.toLowerCase())
-		 ? req.body.lang.toLowerCase() 
-		 : 'en';
-	req.session.lang = langFromRequest;
-	res.end(JSON.stringify({ lang: langFromRequest }));
-} catch (err) {
-	res.end(JSON.stringify({ lang: 'en'}));
-}
+		const langFromRequest =
+			req.body.lang && ['en', 'sk'].includes(req.body.lang.toLowerCase())
+				? req.body.lang.toLowerCase()
+				: 'en';
+		req.session.lang = langFromRequest;
+		res.end(JSON.stringify({ lang: langFromRequest }));
+	} catch (err) {
+		res.end(JSON.stringify({ lang: 'en' }));
+	}
 });
 
 app.get('/api/blogs', async (req, res) => {
@@ -186,7 +162,7 @@ app.get('/api/blogs', async (req, res) => {
 			.orderBy([{ column: 'date', order: 'desc' }]);
 		res.end(JSON.stringify(blogs));
 	} catch {
-		res.end(JSON.stringify({ message: `There was an error retrieving blogs: ${err}` }));
+		res.end(JSON.stringify([]));
 	}
 });
 
@@ -244,7 +220,12 @@ app.get('/api/blogs/:slug', async (req, res) => {
 		const blogs = await connection.select('*').from('blogs').where('slug', slug).first();
 		res.end(JSON.stringify(blogs));
 	} catch {
-		res.end(JSON.stringify({ message: `There was an error retrieving blogs` }));
+		res.end(
+			JSON.stringify({
+				...blogModel,
+				content: 'Something is missing'
+			})
+		);
 	}
 });
 
@@ -273,10 +254,10 @@ app.get('/api/pages', async (req, res) => {
 		const lang = req.session.lang || 'en';
 		const pages = await connection('pages')
 			.where({ lang })
-			.select('id','title', 'metaTitle', 'url', 'slug', 'description', 'position', 'lang');
+			.select('id', 'title', 'metaTitle', 'url', 'slug', 'description', 'position', 'lang');
 		res.end(JSON.stringify(pages));
 	} catch {
-		res.end(JSON.stringify({ message: `There was an error retrieving pages: ${err}` }));
+		res.end(JSON.stringify([]));
 	}
 });
 
@@ -332,13 +313,24 @@ app.get('/api/pages/:slug', async (req, res) => {
 	try {
 		const lang = req.session.lang || 'en';
 		let { slug } = req.params;
-		const pages = await connection.select('*')
+		const page = await connection
+			.select('*')
 			.from('pages')
 			.where({ lang })
-			.where('slug', slug).orWhere('url', slug).first();
-		res.end(JSON.stringify(pages));
+			.where('slug', slug)
+			.orWhere('url', slug)
+			.first();
+		res.end(JSON.stringify(page));
 	} catch {
-		res.end(JSON.stringify({ message: `There was an error retrieving pages` }));
+		res.end(
+			JSON.stringify({
+				...pageModel,
+				title: 'Home',
+				slug: 'home',
+				url: '/',
+				content: 'Something is missing'
+			})
+		);
 	}
 });
 
@@ -478,18 +470,15 @@ app.post('/api/contact', async (req, res) => {
 	}
 });
 
-
 const run = async () => {
 	if (fs.existsSync('../build/handler.js')) {
-		const {handler} = await import('../build/handler.js');
+		const { handler } = await import('../build/handler.js');
 		app.use(handler);
-
 	}
 
 	app.listen(portServer, (err) => {
-	if (err) console.log('error', err);
- }); 
-}
+		if (err) console.log('error', err);
+	});
+};
 
 run();
-

@@ -26,6 +26,7 @@ const config = {
 		methodOverride: {
 			allowed: ['PUT', 'PATCH', 'DELETE']
 		},
+		floc: true,
 		serviceWorker: {
 			register: false,
 		},
