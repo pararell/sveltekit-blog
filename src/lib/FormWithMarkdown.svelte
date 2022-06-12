@@ -80,22 +80,20 @@
 {/if}
 
 <style>
-  .field {
-    max-width: 400px;
-    display: block;
-    margin: 10px auto;
-  }
+	.field {
+		max-width: 400px;
+		display: block;
+		margin: 10px auto;
+	}
 
-  .label {
-    text-transform: capitalize;
-  }
+	.label {
+		text-transform: capitalize;
+	}
 
-  .form :global(.btn) {
-    display: block;
-    border-radius: 6px;
-    max-width: 300px;
-    margin: 20px auto;
-  }
+	.form :global(.btn) {
+		display: block;
+		border-radius: 6px;
+		max-width: 300px;
+		margin: 20px auto;
+	}
 </style>
-
-

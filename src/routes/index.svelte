@@ -20,7 +20,7 @@
 
 <script>
 	import { _ } from 'svelte-i18n';
-	import marked from 'marked';
+	import { marked } from 'marked';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import { api } from '$lib/api';
 	import { onDestroy } from 'svelte';
@@ -75,7 +75,7 @@
 </script>
 
 <svelte:head>
-	<title>{homePage ? homePage.metaTitle : 'Home'}</title>
+	<title>{homePage ? homePage.metaTitle : $_('home')}</title>
 </svelte:head>
 
 {#if homePage}
@@ -87,5 +87,3 @@
 <div class="container">
 	<FormWithMarkdown form={pageForm} on:submitForm={submitForm} />
 </div>
-
-

@@ -13,7 +13,7 @@
 		<h1>{$_('blog_title')}</h1>
 		<h2>{$_('blog_subtitle')}</h2>
 
-		<Blogs blogs="{$blogs}"/>
+		<Blogs blogs={$blogs} />
 	</div>
 </section>
 

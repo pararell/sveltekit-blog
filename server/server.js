@@ -185,7 +185,7 @@ app.post('/api/blogs/create', async (req, res) => {
 	const blogs = await connection('blogs').insert({ ...req.body });
 	try {
 		res.end(JSON.stringify(blogs));
-	} catch {
+	} catch (err) {
 		res.end(JSON.stringify({ message: `There was an error retrieving blogs: ${err}` }));
 	}
 });
@@ -209,7 +209,7 @@ app.patch('/api/blogs/update', async (req, res) => {
 
 	try {
 		res.end(JSON.stringify(blog));
-	} catch {
+	} catch (err) {
 		res.end(JSON.stringify({ message: `There was an error retrieving blogs: ${err}` }));
 	}
 });
@@ -241,7 +241,7 @@ app.delete('/api/blogs/delete/:id', async (req, res) => {
 		return;
 	}
 	const id = req.params['id'];
-	const blogs = await connection('blogs').where('id', id).del();
+	const _blogs = await connection('blogs').where('id', id).del();
 	try {
 		res.end(JSON.stringify({}));
 	} catch {
@@ -280,7 +280,7 @@ app.post('/api/pages/create', async (req, res) => {
 	const blogs = await connection('pages').insert({ ...req.body });
 	try {
 		res.end(JSON.stringify(blogs));
-	} catch {
+	} catch (err) {
 		res.end(JSON.stringify({ message: `There was an error retrieving pages: ${err}` }));
 	}
 });
@@ -304,7 +304,7 @@ app.patch('/api/pages/update', async (req, res) => {
 
 	try {
 		res.end(JSON.stringify(page));
-	} catch {
+	} catch (err) {
 		res.end(JSON.stringify({ message: `There was an error retrieving pages: ${err}` }));
 	}
 });
@@ -346,7 +346,7 @@ app.delete('/api/pages/delete/:id', async (req, res) => {
 		return;
 	}
 	const id = req.params['id'];
-	const blogs = await connection('pages').where('id', id).del();
+	const _page = await connection('pages').where('id', id).del();
 	try {
 		res.end(JSON.stringify({}));
 	} catch {
@@ -455,7 +455,7 @@ app.post('/api/contact', async (req, res) => {
 		html: '<b>' + req.body.note + '</b>'
 	});
 
-	mailTransport.verify(function (error, success) {
+	mailTransport.verify(function (error, _success) {
 		if (error) {
 			console.log(error);
 		} else {

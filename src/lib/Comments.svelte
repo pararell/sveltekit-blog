@@ -1,12 +1,12 @@
 <script>
-  import { onMount } from "svelte";
-  import { setDisqus, resetDisqus } from '$lib/utils';
-  import { config, disqusLoaded } from '$lib/store';
-  import { filter, map, mergeMap, take } from 'rxjs';
-  export let host;
+	import { onMount } from 'svelte';
+	import { setDisqus, resetDisqus } from '$lib/utils';
+	import { config, disqusLoaded } from '$lib/store';
+	import { filter, map, mergeMap, take } from 'rxjs';
+	export let host;
 	export let slug;
 
-  onMount(() => {
+	onMount(() => {
 		config
 			.pipe(
 				mergeMap((config) =>
@@ -27,10 +27,9 @@
 			});
 
 		disqusLoaded.pipe(filter(Boolean), take(1)).subscribe(() => {
-				resetDisqus({host, slug});
+			resetDisqus({ host, slug });
 		});
 	});
 </script>
-
 
 <div id="disqus_thread" />

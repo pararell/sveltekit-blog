@@ -13,11 +13,11 @@
 			email
 		};
 
-		let response = await api({url: `api/contact`, method: 'POST', data});
+		let response = await api({ url: `api/contact`, method: 'POST', data });
 
 		if (response) {
 			result = response.body;
-            subject = '', note = '', email = '';
+			(subject = ''), (note = ''), (email = '');
 		}
 	}
 </script>
@@ -44,7 +44,9 @@
 					<label for="note">{$_('note')}</label>
 					<textarea id="note" name="note" bind:value={note} />
 				</span>
-				<button disabled={!email || !note || !subject} type="submit" class="btn">{$_('send')}</button>
+				<button disabled={!email || !note || !subject} type="submit" class="btn"
+					>{$_('send')}</button
+				>
 			</form>
 			{#if result}
 				<span class="result">

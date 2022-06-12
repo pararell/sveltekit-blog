@@ -19,12 +19,11 @@
 </script>
 
 <script>
-	import marked from 'marked';
+	import { marked } from 'marked';
 	import Comments from '$lib/Comments.svelte';
 	import { api } from '$lib/api';
 	import { goto } from '$app/navigation';
 	import { blogModelForm, ADMIN_EMAIL } from '$lib/constants';
-	import { _ } from 'svelte-i18n';
 	import { onDestroy } from 'svelte';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 

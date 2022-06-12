@@ -1,8 +1,6 @@
 <script>
-	import marked from 'marked';
-	import { createEventDispatcher } from 'svelte';
+	import { marked } from 'marked';
 
-	const dispatch = createEventDispatcher();
 	export let content = '# Subtitle';
 
 	$: markdown = marked(content);
@@ -18,7 +16,6 @@
 </div>
 
 <style>
-
 	.markdown-editor {
 		width: 100%;
 		display: flex;

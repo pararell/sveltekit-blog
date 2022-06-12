@@ -100,9 +100,6 @@
 					<li class:active={$page.url.pathname === '/'}>
 						<a href="/">{$_('home')}</a>
 					</li>
-					<!-- <li class:active={$page.url.pathname === '/about'}>
-						<a sveltekit:prefetch href="/about">{$_('about')}</a>
-					</li> -->
 					<li class:active={$page.url.pathname === '/blogs'}>
 						<a href="/blogs">Blog</a>
 					</li>
@@ -116,7 +113,7 @@
 					{/each}
 
 					<!-- <li class:active={$page.url.pathname === '/contact'}>
-						<a sveltekit:prefetch href="/contact">{$_('contact')}</a>
+						<a href="/contact">{$_('contact')}</a>
 					</li> -->
 				</ul>
 			</div>

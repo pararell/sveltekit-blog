@@ -3,12 +3,12 @@
 	import { blogs, blog, user } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { blogModelForm } from '$lib/constants';
-	import { _, locale } from 'svelte-i18n';
+	import { locale } from 'svelte-i18n';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 
 	let blogForm = Object.entries(blogModelForm);
 
-	const handleRedirect = async (event) => {
+	const handleRedirect = async () => {
 		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
 
 		if (resBlogs) {

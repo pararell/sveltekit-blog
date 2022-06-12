@@ -19,17 +19,16 @@
 </script>
 
 <script>
-	import { _ } from 'svelte-i18n';
-	import marked from 'marked';
+	import { marked } from 'marked';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import { api } from '$lib/api';
 	import { onDestroy } from 'svelte';
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
-  import { goto } from '$app/navigation';
+	import { goto } from '$app/navigation';
 
-  let pageForm = Object.entries(pageModelForm);
+	let pageForm = Object.entries(pageModelForm);
 	let id = '';
-  let pageShow;
+	let pageShow;
 
 	let pageSub = pageWithContent.subscribe((pageFound) => {
 		pageShow = pageFound;
@@ -73,20 +72,20 @@
 		}
 	};
 
-  const removePage = async () => {
-    if (id) {
-      const res = await api({ url: `api/pages/delete/` + id, method: 'DELETE' });
+	const removePage = async () => {
+		if (id) {
+			const res = await api({ url: `api/pages/delete/` + id, method: 'DELETE' });
 
-      if (res) {
-        const resPages = await api({ url: `api/pages/` });
+			if (res) {
+				const resPages = await api({ url: `api/pages/` });
 
-        if (resPages) {
-          pages.next(resPages.body);
-          goto('/');
-        }
-      }
-    }
-  }
+				if (resPages) {
+					pages.next(resPages.body);
+					goto('/');
+				}
+			}
+		}
+	};
 </script>
 
 <svelte:head>
@@ -98,14 +97,14 @@
 		<div class="content">
 			{@html marked($pageWithContent.content)}
 		</div>
-      <FormWithMarkdown form={pageForm} on:submitForm={submitForm} />
+		<FormWithMarkdown form={pageForm} on:submitForm={submitForm} />
 
-      {#if $user?.Email === ADMIN_EMAIL}
-        <form on:submit|preventDefault={removePage}>
-          <input type="hidden" name="id" value={id} />
-          <button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
-        </form>
-      {/if}
+		{#if $user?.Email === ADMIN_EMAIL}
+			<form on:submit|preventDefault={removePage}>
+				<input type="hidden" name="id" value={id} />
+				<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
+			</form>
+		{/if}
 	</div>
 {/if}
 
@@ -147,9 +146,9 @@
 		font-size: 1.2rem;
 	}
 
-  .btn-delete {
-    display: block;
-    max-width: 200px;
-    margin: 30px auto;
-  }
+	.btn-delete {
+		display: block;
+		max-width: 200px;
+		margin: 30px auto;
+	}
 </style>

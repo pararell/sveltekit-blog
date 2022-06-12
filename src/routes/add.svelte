@@ -8,7 +8,7 @@
 
 	let pageForm = Object.entries(pageModelForm);
 
-	const handleRedirect = async (event) => {
+	const handleRedirect = async () => {
 		const resPages = await api({ url: 'api/pages', serverFetch: fetch });
 
 		if (resPages) {
@@ -46,7 +46,7 @@
 </div>
 
 <style>
- .page {
-	 padding-top: 40px;
- }
+	.page {
+		padding-top: 40px;
+	}
 </style>

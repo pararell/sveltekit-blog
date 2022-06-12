@@ -3,7 +3,6 @@
 	import { user, config, blogs, pages } from '$lib/store';
 	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
 	import { filter, take } from 'rxjs/operators';
-	import { browser } from '$app/env';
 
 	export const load = async ({ fetch }) => {
 		const resUser = api({ url: 'api/user', serverFetch: fetch });
@@ -46,9 +45,8 @@
 			)
 			.subscribe((configValue) => {
 				const langFromNavigator = getLocaleFromNavigator();
-				const langFound = langFromNavigator && ['en', 'sk'].includes(langFromNavigator)
-					? langFromNavigator
-					: 'en';
+				const langFound =
+					langFromNavigator && ['en', 'sk'].includes(langFromNavigator) ? langFromNavigator : 'en';
 				const lang = configValue.lang || langFound;
 				init({
 					fallbackLocale: 'en',
