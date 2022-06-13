@@ -433,6 +433,11 @@ app.post('/api/register', async (req, res) => {
 	}
 });
 
+app.get('/api/logout', async (req, res) => {
+	req.session.token = '';
+	res.end(JSON.stringify({ message: `Success logout` }));
+});
+
 app.post('/api/contact', async (req, res) => {
 	let mailTransport = nodemailer.createTransport({
 		host: process.env.emailHost,

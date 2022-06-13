@@ -1,22 +1,20 @@
 <script context="module">
 	import { api } from '$lib/api';
-	import { user, config, blogs, pages } from '$lib/store';
+	import { user, config, pages } from '$lib/store';
 	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
 	import { filter, take } from 'rxjs/operators';
 
 	export const load = async ({ fetch }) => {
 		const resUser = api({ url: 'api/user', serverFetch: fetch });
 		const resConfig = api({ url: 'api/config', serverFetch: fetch });
-		const resBlogs = api({ url: 'api/blogs', serverFetch: fetch });
 		const resPages = api({ url: 'api/pages', serverFetch: fetch });
 
-		const data = await Promise.all([resUser, resConfig, resBlogs, resPages]);
+		const data = await Promise.all([resUser, resConfig, resPages]);
 
 		if (data) {
 			user.next(data[0].body);
 			config.next(data[1].body);
-			blogs.next(data[2].body);
-			pages.next(data[3].body);
+			pages.next(data[2].body);
 
 			return {
 				props: {},

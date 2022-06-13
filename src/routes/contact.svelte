@@ -71,7 +71,7 @@
 	.title {
 		text-align: center;
 		color: var(--text-color);
-		font-family: 'Josefin Sans', sans-serif;
+		font-family: 'Nunito', sans-serif;
 		position: relative;
 	}
 	.content {

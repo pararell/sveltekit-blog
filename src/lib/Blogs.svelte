@@ -34,7 +34,7 @@
 <style>
 	.card {
 		position: relative;
-		font-family: 'Josefin Sans', sans-serif;
+		font-family: 'Nunito', sans-serif;
 		display: flex;
 		flex-wrap: wrap;
 		width: 100%;

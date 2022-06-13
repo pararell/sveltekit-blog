@@ -1,11 +1,12 @@
 <script>
 	import { page } from '$app/stores';
 	import { api } from '$lib/api';
-	import { blogs, pages, pageWithContent } from '$lib/store';
+	import { blogs, pages, pageWithContent, user } from '$lib/store';
 	import { _, locale, locales } from 'svelte-i18n';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fromEvent } from 'rxjs';
 	import { map } from 'rxjs/operators';
+  import { goto } from '$app/navigation';
 
 	const dispatch = createEventDispatcher();
 
@@ -35,7 +36,18 @@
 		locale.set(selected);
 		const langSet = await api({ url: 'api/lang', method: 'POST', data: { lang: selected } });
 		if (langSet) {
-			const resBlogs = api({ url: 'api/blogs' });
+			handleChange();
+			return;
+		}
+	};
+
+	const logout = async() => {
+		const res = api({ url: 'api/logout' });
+		handleChange();
+	}
+
+	const handleChange = async() => {
+		const resBlogs = api({ url: 'api/blogs' });
 			const resPages = api({ url: 'api/pages' });
 			const resHomePage = api({ url: 'api/pages/home' });
 			const data = await Promise.all([resBlogs, resPages, resHomePage]);
@@ -45,15 +57,10 @@
 				pages.next(data[1].body);
 				pageWithContent.next(data[2].body);
 				dispatch('toggle');
+				goto('/');
 				return;
 			}
-			return;
-		}
-
-		return {
-			error: new Error()
-		};
-	};
+	}
 
 	onMount(() => {
 		fromEvent(document.getElementById('main'), 'click').subscribe(() => {
@@ -111,7 +118,11 @@
 							</li>
 						{/if}
 					{/each}
-
+					{#if $user?.Email}
+					<li>
+						<a href="/" on:click={logout}>Logout</a>
+					</li>
+					{/if}
 					<!-- <li class:active={$page.url.pathname === '/contact'}>
 						<a href="/contact">{$_('contact')}</a>
 					</li> -->
