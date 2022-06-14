@@ -360,7 +360,7 @@ app.post('/api/login', async (req, res) => {
 
 		// Make sure there is an Email and Password in the request
 		if (!(Email && Password)) {
-			res.status(400).send('All input is required');
+			res.status(400).json('All input is required');
 		}
 
 		const user = await connection('users').where({ Email: Email }).first();
@@ -382,10 +382,10 @@ app.post('/api/login', async (req, res) => {
 
 				res.end(JSON.stringify(user));
 			} else {
-				return res.status(400).send('No Match');
+				return res.status(400).json('No Match');
 			}
 		} else {
-			return res.status(400).send('No Match');
+			return res.status(400).json('No Match');
 		}
 	} catch (err) {
 		console.log(err);
@@ -426,7 +426,7 @@ app.post('/api/register', async (req, res) => {
 				return res.status(200).json('Success');
 			}
 		} else {
-			return res.status(201).json('Record already exists. Please login');
+			return res.status(400).json('Record already exists. Please login');
 		}
 	} catch (err) {
 		console.log(err);

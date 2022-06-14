@@ -1,42 +1,48 @@
 <script>
-	import { enhance } from '$lib/form';
 	import { goto } from '$app/navigation';
-	import { Button, TextField } from 'attractions';
+	import { api } from '$lib/api';
 
-	export let Email = '';
-	export let Username = '';
-	export let Password = '';
+	let Email = '';
+	let Username = '';
+	let Password = '';
 	let error = '';
+
+	const submitForm = async () => {
+		const data = {
+			Email,
+			Password,
+			Username
+		};
+		try {
+			const res = await api({ url: `api/register`, method: 'POST', data });
+			if (res && res.status === 400) {
+				error = res.body;
+				return;
+			}
+			goto('/auth/login');
+		} catch (e) {
+			error = e;
+		}
+	};
 </script>
 
 <div class="container">
-	<form
-		class="new"
-		action={'/auth/register.json'}
-		method="post"
-		use:enhance={{
-			result: async (res, form) => {
-				goto('/auth/login');
-
-				form.reset();
-			}
-		}}
-	>
+	<form on:submit|preventDefault={() => submitForm()} class="form">
 		<h1 class="header-title">User register</h1>
 		<div class="form">
 			<span class="field">
 				<label class="label" for="Email">Email</label>
-				<TextField name={'Email'} placeholder="Email" type="email" bind:value={Email} />
+				<input type="email" name="Email" bind:value={Email} placeholder="Email" />
 			</span>
 			<span class="field">
 				<label class="label" for="Username">Username</label>
-				<TextField name={'Username'} placeholder="Username" type="text" bind:value={Username} />
+				<input type="text" name="Username" bind:value={Username} placeholder="Username" />
 			</span>
 			<span class="field">
 				<label class="label" for="Password">Password</label>
-				<TextField name={'Password'} placeholder="password" type="password" bind:value={Password} />
+				<input type="password" name="Password" bind:value={Password} placeholder="Password" />
 			</span>
-			<Button class="submit-btn" filled type="submit" disabled={!Email}>Submit</Button>
+			<button class="btn submit" disabled={!Email}> Submit</button>
 		</div>
 		{#if error}
 			<p class="error">
@@ -47,7 +53,30 @@
 </div>
 
 <style>
-	.form :global(.submit-btn) {
-		margin-top: 20px;
+	.form {
+		max-width: 400px;
+		margin: auto;
+	}
+
+	.field {
+		max-width: 400px;
+		margin: 10px auto;
+		display: flex;
+		flex-flow: column;
+	}
+
+	.label {
+		text-transform: capitalize;
+	}
+
+	input {
+		min-width: 50%;
+		border-radius: 4px;
+		padding: 0 10px;
+		box-shadow: 0px 0px 4px #ccc;
+		border: 1px solid transparent;
+		min-height: 35px;
+		outline: none;
+		margin-right: 15px;
 	}
 </style>

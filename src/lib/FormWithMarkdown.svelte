@@ -3,7 +3,6 @@
 	import Markdown from '$lib/Markdown.svelte';
 	import { inputTypes } from './constants';
 	import { createEventDispatcher } from 'svelte';
-	import { Button, TextField, RadioGroup, CheckboxGroup } from 'attractions';
 	import { user } from './store';
 
 	export let form;
@@ -33,37 +32,29 @@
 				{#if inputTypes.includes(item.type)}
 					<span class="field">
 						<label class="label" for={name}>{name}</label>
-						<TextField {name} placeholder={name} type={item.type} bind:value={item.value} />
+						{#if item.type === 'text'}
+						<input type='text' {name} bind:value={item.value} placeholder={name} />
+						{/if}
+						{#if item.type === 'email'}
+						<input type='email' {name} bind:value={item.value} placeholder={name} />
+						{/if}
+						{#if item.type === 'password'}
+						<input type='password' {name} bind:value={item.value} placeholder={name} />
+						{/if}
+						{#if item.type === 'tel'}
+						<input type='tel' {name} bind:value={item.value} placeholder={name} />
+						{/if}
+						{#if item.type === 'date'}
+						<input type='date' {name} bind:value={item.value} placeholder={name} />
+						{/if}
 					</span>
 				{/if}
 				{#if item.type === 'textarea'}
 					<span class="field">
 						<label class="label" for={name}>{name}</label>
-						<TextField
-							{name}
-							placeholder={name}
-							type="text"
-							multiline="true"
-							bind:value={item.value}
-						/>
+						<textarea {name}  id="" cols="30" rows="10" bind:value={item.value} placeholder={name}></textarea>
 					</span>
 				{/if}
-				{#if item.type === 'radio'}
-					<label class="label" for={name}>{name}</label>
-					<br />
-					<span class="field">
-						<RadioGroup class="radio-group" items={item.items} bind:value={item.value} />
-					</span>
-				{/if}
-				{#if item.type === 'checkbox'}
-					<label class="label" for={name}>{name}</label>
-					<br />
-
-					<span class="field">
-						<CheckboxGroup class="checkbox-group" items={item.items} bind:value={item.value} />
-					</span>
-				{/if}
-
 				{#if item.type === 'markdown'}
 					<Markdown bind:content={item.value} />
 				{/if}
@@ -75,25 +66,30 @@
 				{error}
 			</p>
 		{/if}
-		<Button filled type="submit">Submit</Button>
+		<button class="btn submit"> Save</button>
 	</form>
 {/if}
 
 <style>
 	.field {
 		max-width: 400px;
-		display: block;
 		margin: 10px auto;
+		display: flex;
+		flex-flow:column;
 	}
 
 	.label {
 		text-transform: capitalize;
 	}
 
-	.form :global(.btn) {
-		display: block;
-		border-radius: 6px;
-		max-width: 300px;
-		margin: 20px auto;
+	input {
+		min-width: 50%;
+		border-radius: 4px;
+		padding: 0 10px;
+		box-shadow: 0px 0px 4px #ccc;
+		border: 1px solid transparent;
+		min-height: 35px;
+		outline: none;
+		margin-right: 15px;
 	}
 </style>

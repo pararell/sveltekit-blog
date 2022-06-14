@@ -1,5 +1,4 @@
 import node from '@sveltejs/adapter-node';
-import preprocess from 'svelte-preprocess';
 import dotenv from 'dotenv';
 dotenv.config();
 import { readFileSync } from 'fs';
@@ -17,11 +16,6 @@ const ssrObj =
 		: {};
 
 const config = {
-	preprocess: [
-		preprocess({
-			postcss: true
-		})
-	],
 	kit: {
 		adapter: node({ out: 'build' }),
 		methodOverride: {

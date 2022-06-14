@@ -13,5 +13,6 @@ Server and Client run on the same port - it should check if the build exist and 
 - Use language switch with **svelte-i18n**
 - Pages and Blogs creation with **marked**
 - Use **rxjs** for the Store and some subscriptions(optional)
-- Use **attractions** for some styles
   <br>
+
+  <img src="https://res.cloudinary.com/dnpgh1vhi/image/upload/v1655193553/screenshot_2022-06-14_o_9.57.19_kexrkc.png" style="max-width:300px;  display: block; margin: auto;">
