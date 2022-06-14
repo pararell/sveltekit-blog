@@ -92,4 +92,10 @@
 		outline: none;
 		margin-right: 15px;
 	}
+
+	.btn {
+		display: block;
+		margin: 25px auto;
+		max-width: 500px;
+	}
 </style>

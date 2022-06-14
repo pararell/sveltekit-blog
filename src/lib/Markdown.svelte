@@ -7,10 +7,10 @@
 </script>
 
 <div class="markdown-editor">
-	<div class="markdown-editor__right-panel">
+	<div class="markdown-editor__left-panel">
 		<div class="markdown-editor__output">{@html markdown}</div>
 	</div>
-	<div class="markdown-editor__left-panel">
+	<div class="markdown-editor__right-panel">
 		<textarea name="content" bind:value={content} class="markdown-editor__source" />
 	</div>
 </div>
@@ -25,13 +25,14 @@
 
 	.markdown-editor__left-panel,
 	.markdown-editor__right-panel {
-		width: 50%;
+		width: 100%;
 		box-shadow: 0px 0px 4px #ccc;
 		border: 1px solid rgba(0, 0, 0, 0.1);
 		height: 85vh;
 	}
 
-	.markdown-editor__right-panel {
+	.markdown-editor__left-panel {
+		resize: horizontal;
 		overflow: auto;
 	}
 
