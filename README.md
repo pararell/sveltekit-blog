@@ -15,4 +15,4 @@ Server and Client run on the same port - it should check if the build exist and 
 - Use **rxjs** for the Store and some subscriptions(optional)
   <br>
 
-  <img src="https://res.cloudinary.com/dnpgh1vhi/image/upload/v1655193553/screenshot_2022-06-14_o_9.57.19_kexrkc.png" style="max-width:300px;  display: block; margin: auto;">
+  <img width="400" src="https://res.cloudinary.com/dnpgh1vhi/image/upload/v1655193553/screenshot_2022-06-14_o_9.57.19_kexrkc.png">
