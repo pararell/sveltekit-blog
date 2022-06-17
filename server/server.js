@@ -16,41 +16,41 @@ dotenv.config();
 export const pageModel = {
 	title: 'string',
 	slug: 'string',
+	lang: 'string',
 	description: 'string',
-	url: 'string',
 	content: 'string',
 	image: 'string',
+	url: 'string',
 	position: 'string',
-	metaTitle: 'string',
-	lang: 'string'
+	metaTitle: 'string'
 };
 
 export const blogModel = {
 	title: 'string',
 	slug: 'string',
+	lang: 'string',
 	description: 'string',
 	content: 'string',
-	imgLink: 'string',
+	image: 'string',
 	author: 'string',
 	date: 'date',
 	categories: 'json',
-	comments: 'json',
-	lang: 'string'
+	comments: 'json'
 };
 
 export const userModel = {
-	Username: 'string',
-	Email: 'string',
-	Password: 'string',
-	Salt: 'string',
-	Token: 'string',
-	DateLoggedIn: 'date',
-	DateCreated: 'date'
+	username: 'string',
+	email: 'string',
+	password: 'string',
+	salt: 'string',
+	token: 'string',
+	dateloggedin: 'date',
+	datecreated: 'date'
 };
 
 const databases = [
 	{ name: 'Pages', model: pageModel },
-	{ name: 'blogs', model: blogModel },
+	{ name: 'Blogs', model: blogModel },
 	{ name: 'Users', model: userModel }
 ];
 
@@ -156,7 +156,7 @@ app.get('/api/blogs', async (req, res) => {
 	try {
 		const lang = req.session.lang || 'en';
 		const blogs = await connection
-			.select('title', 'slug', 'description', 'imgLink', 'author', 'date', 'categories', 'lang')
+			.select('title', 'slug', 'description', 'image', 'author', 'date', 'categories', 'lang')
 			.from('blogs')
 			.where({ lang })
 			.orderBy([{ column: 'date', order: 'desc' }]);
@@ -172,7 +172,7 @@ app.post('/api/blogs/create', async (req, res) => {
 		return;
 	}
 	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.Email === process.env.adminEmail;
+	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -196,7 +196,7 @@ app.patch('/api/blogs/update', async (req, res) => {
 		return;
 	}
 	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.Email === process.env.adminEmail;
+	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -235,7 +235,7 @@ app.delete('/api/blogs/delete/:id', async (req, res) => {
 		return;
 	}
 	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.Email === process.env.adminEmail;
+	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -267,7 +267,7 @@ app.post('/api/pages/create', async (req, res) => {
 		return;
 	}
 	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.Email === process.env.adminEmail;
+	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -277,9 +277,9 @@ app.post('/api/pages/create', async (req, res) => {
 		res.end(JSON.stringify({ message: `Page already exist` }));
 		return;
 	}
-	const blogs = await connection('pages').insert({ ...req.body });
+	const pages = await connection('pages').insert({ ...req.body });
 	try {
-		res.end(JSON.stringify(blogs));
+		res.end(JSON.stringify(pages));
 	} catch (err) {
 		res.end(JSON.stringify({ message: `There was an error retrieving pages: ${err}` }));
 	}
@@ -291,7 +291,7 @@ app.patch('/api/pages/update', async (req, res) => {
 		return;
 	}
 	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.Email === process.env.adminEmail;
+	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -310,9 +310,18 @@ app.patch('/api/pages/update', async (req, res) => {
 });
 
 app.get('/api/pages/:slug', async (req, res) => {
+	const lang =  req.session ? req.session.lang : 'en';
+	let { slug } = req.params;
+	const defaultEmpty = {
+		...pageModel,
+		title: 'Home',
+		slug: 'home',
+		metaTitle: 'Home | SvelteKit',
+		url: '/',
+		lang,
+		content: `<style>.home {min-height: 100vh; margin-top: -50px; padding-top: 50px; background: rgba(0,0,0,0.1); width: 100%;}</style><div class="home"><h1 style="text-align: center;">Welcome to SvelteKit template</h1><h2 style="text-align: center;"><strong>Feel free to edit page with markdown or editor</strong></h2><br><p style="text-align: center;"> <span style="font-size: 18px;">Add more pages =</span><span style="font-size: 18px;"><a href="/add"> /add</a></span><span style="font-size: 18px;"> , add blog </span><span style="font-size: 18px;"><a href="/blogs/add">/blogs/add</a></span></p><div><br></div><p style="text-align: center;"> <br> <strong style="font-size: 18px;">Good luck!</strong> <br> </p></div>`
+	};
 	try {
-		const lang = req.session.lang || 'en';
-		let { slug } = req.params;
 		const page = await connection
 			.select('*')
 			.from('pages')
@@ -320,16 +329,16 @@ app.get('/api/pages/:slug', async (req, res) => {
 			.where('slug', slug)
 			.orWhere('url', slug)
 			.first();
-		res.end(JSON.stringify(page));
-	} catch {
-		res.end(
-			JSON.stringify({
-				...pageModel,
-				title: 'Home',
-				slug: 'home',
-				url: '/',
-				content: 'Something is missing'
-			})
+
+			if (page) {
+				res.end(JSON.stringify(page));
+			} else {
+				const _pages = await connection('pages').insert({ ...defaultEmpty });
+				res.end(JSON.stringify(defaultEmpty));
+			}
+
+	} catch(e) {
+		res.end(JSON.stringify(defaultEmpty)
 		);
 	}
 });
@@ -340,7 +349,7 @@ app.delete('/api/pages/delete/:id', async (req, res) => {
 		return;
 	}
 	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.Email === process.env.adminEmail;
+	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -356,28 +365,28 @@ app.delete('/api/pages/delete/:id', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
 	try {
-		const { Email, Password } = req.body;
+		const { email, password } = req.body;
 
 		// Make sure there is an Email and Password in the request
-		if (!(Email && Password)) {
+		if (!(email && password)) {
 			res.status(400).json('All input is required');
 		}
 
-		const user = await connection('users').where({ Email: Email }).first();
+		const user = await connection('users').where({ email }).first();
 		if (user) {
-			const PHash = bcrypt.hashSync(Password, user.Salt);
+			const PHash = bcrypt.hashSync(password, user.salt);
 
-			if (PHash === user.Password) {
+			if (PHash === user.password) {
 				// * CREATE JWT TOKEN
 				const token = jwt.sign(
-					{ user_id: user.id, username: user.Username, Email },
+					{ user_id: user.id, username: user.username, email },
 					process.env.TOKEN_KEY,
 					{
 						expiresIn: '1000d'
 					}
 				);
 
-				user.Token = token;
+				user.token = token;
 				req.session.token = token;
 
 				res.end(JSON.stringify(user));
@@ -395,12 +404,12 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/register', async (req, res) => {
 	var errors = [];
 	try {
-		const { Username, Email, Password } = req.body;
+		const { username, email, password } = req.body;
 
-		if (!Username) {
+		if (!username) {
 			errors.push('Username is missing');
 		}
-		if (!Email) {
+		if (!email) {
 			errors.push('Email is missing');
 		}
 		if (errors.length) {
@@ -408,17 +417,17 @@ app.post('/api/register', async (req, res) => {
 			return;
 		}
 
-		const user = await connection('users').where({ Email: Email }).first();
+		const user = await connection('users').where({ email }).first();
 
 		if (!user) {
 			var salt = bcrypt.genSaltSync(10);
 
 			var data = {
-				Username: Username,
-				Email: Email,
-				Password: bcrypt.hashSync(Password, salt),
-				Salt: salt,
-				DateCreated: Date('now')
+				username,
+				email,
+				password: bcrypt.hashSync(password, salt),
+				salt,
+				datecreated: Date('now')
 			};
 
 			const users = await connection('users').insert({ ...data });

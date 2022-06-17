@@ -1,5 +1,5 @@
 <script context="module">
-	import { pageWithContent } from '$lib/store';
+	import { pageWithContent, user } from '$lib/store';
 
 	export const load = async ({ fetch, url, params }) => {
 		const resPages = await api({ url: 'api/pages/home', serverFetch: fetch });
@@ -24,7 +24,7 @@
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import { api } from '$lib/api';
 	import { onDestroy } from 'svelte';
-	import { pageModelForm } from '$lib/constants';
+	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
 
 	let pageForm = Object.entries(pageModelForm);
 
@@ -85,9 +85,12 @@
 		{@html marked(homePage.content)}
 	</div>
 
+	{#if $user?.email === ADMIN_EMAIL}
 	<div class="container">
 		<FormWithMarkdown form={pageForm} content={homePage.content} on:submitForm={submitForm} />
 	</div>
+	{/if}
+
 {/if}
 
 

@@ -120,7 +120,7 @@
 							</li>
 						{/if}
 					{/each}
-					{#if $user?.Email}
+					{#if $user?.email}
 					<li>
 						<a href="/" on:click={logout}>Logout</a>
 					</li>

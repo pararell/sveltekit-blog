@@ -2,16 +2,16 @@
 	import { goto } from '$app/navigation';
 	import { api } from '$lib/api';
 
-	let Email = '';
-	let Username = '';
-	let Password = '';
+	let email = '';
+	let username = '';
+	let password = '';
 	let error = '';
 
 	const submitForm = async () => {
 		const data = {
-			Email,
-			Password,
-			Username
+			email,
+			password,
+			username
 		};
 		try {
 			const res = await api({ url: `api/register`, method: 'POST', data });
@@ -31,18 +31,18 @@
 		<h1 class="header-title">User register</h1>
 		<div class="form">
 			<span class="field">
-				<label class="label" for="Email">Email</label>
-				<input type="email" name="Email" bind:value={Email} placeholder="Email" />
+				<label class="label" for="email">Email</label>
+				<input type="email" name="email" bind:value={email} placeholder="Email" />
 			</span>
 			<span class="field">
-				<label class="label" for="Username">Username</label>
-				<input type="text" name="Username" bind:value={Username} placeholder="Username" />
+				<label class="label" for="username">Username</label>
+				<input type="text" name="username" bind:value={username} placeholder="Username" />
 			</span>
 			<span class="field">
-				<label class="label" for="Password">Password</label>
-				<input type="password" name="Password" bind:value={Password} placeholder="Password" />
+				<label class="label" for="password">Password</label>
+				<input type="password" name="password" bind:value={password} placeholder="Password" />
 			</span>
-			<button class="btn submit" disabled={!Email}> Submit</button>
+			<button class="btn submit" disabled={!email}> Submit</button>
 		</div>
 		{#if error}
 			<p class="error">

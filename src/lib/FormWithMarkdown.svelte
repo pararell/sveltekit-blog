@@ -66,7 +66,7 @@
 	};
 </script>
 
-{#if $user?.Email === ADMIN_EMAIL}
+{#if $user?.email === ADMIN_EMAIL}
 	<form class="form" on:submit|preventDefault={handleSubmit}>
 		{#if form}
 			{#each form as [name, item]}

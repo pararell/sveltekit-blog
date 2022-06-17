@@ -27,7 +27,7 @@
 					.replace(/[\u0300-\u036f]/g, '')
 					.replace(/[^\w]/gi, '-'),
 				categories: formData.categories ? formData.categories.split(',') : [],
-				author: user.value.Email,
+				author: user.value.email,
 				lang: $locale,
 				comments: []
 			};

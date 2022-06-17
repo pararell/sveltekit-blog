@@ -39,7 +39,7 @@ export const blogModelForm = {
 		type: 'text',
 		value: ''
 	},
-	imgLink: {
+	image: {
 		type: 'text',
 		value: ''
 	},

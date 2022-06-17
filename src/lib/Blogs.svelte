@@ -12,7 +12,7 @@
 			<div class="card-left">
 				<div class="card-left-top">
 					<div class="thumbnail">
-						<img class="card-left-img" alt={blog.slug} src={blog.imgLink} loading="lazy" />
+						<img class="card-left-img" alt={blog.slug} src={blog.image} loading="lazy" />
 					</div>
 				</div>
 				<div class="card-left-bottom">
