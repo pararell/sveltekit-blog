@@ -3,10 +3,28 @@
 ## Svelte blog which using Markdown, FE Svelte - SvelteKit, BE Express + SQLite
 
 Server and Client run on the same port - it should check if the build exist and if yes, it will include SSR Sveltekit
-<br>
+<br/>
 ` if (fs.existsSync('../build/handler.js')) { const {handler} = await import('../build/handler.js'); app.use(handler); }`
 
-<br>
+<br/>
+
+<code>git clone https://github.com/pararell/svelte-blog.git </code>
+<br/>
+<code>npm i</code>
+<br/>
+<code>cd server npm i</code>
+<br/>
+
+Set .env in main directory and in /server
+- adminEmail - email which can add/edit/remove pages and blogs
+- disqusSrc - optional to have comments from disqus
+- cookieSecret, cookieName, TOKEN_KEY - random string
+
+<code>npm run build</code>
+<br/>
+<code>cd server npm run dev</code>
+<br/>
+<br/>
 
 - Use **jsonwebtoken** for the Authorization
 - Use **express-session** for the session management in Express
