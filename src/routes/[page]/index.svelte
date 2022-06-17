@@ -97,7 +97,8 @@
 		<div class="content">
 			{@html marked($pageWithContent.content)}
 		</div>
-		{#if $user?.email === ADMIN_EMAIL}
+
+		{#if $user?.email === ADMIN_EMAIL && $pageWithContent.url !== '/'}
 		  <FormWithMarkdown form={pageForm} content={$pageWithContent.content} on:submitForm={submitForm} />
 
 			<form on:submit|preventDefault={removePage}>
@@ -105,6 +106,7 @@
 				<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
 			</form>
 		{/if}
+
 	</div>
 {/if}
 

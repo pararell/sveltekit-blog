@@ -333,8 +333,12 @@ app.get('/api/pages/:slug', async (req, res) => {
 			if (page) {
 				res.end(JSON.stringify(page));
 			} else {
-				const _pages = await connection('pages').insert({ ...defaultEmpty });
-				res.end(JSON.stringify(defaultEmpty));
+				if (slug === 'home') {
+					const _pages = await connection('pages').insert({ ...defaultEmpty });
+					res.end(JSON.stringify(defaultEmpty));
+				} else {
+					res.end(JSON.stringify(defaultEmpty));
+				}
 			}
 
 	} catch(e) {
