@@ -20,6 +20,8 @@ Set .env in main directory and in /server
 - disqusSrc - optional to have comments from disqus
 - cookieSecret, cookieName, TOKEN_KEY - random string
 
+- works with Node.js v.16+
+
 <code>npm run build</code>
 <br/>
 <code>cd server npm run dev</code>
