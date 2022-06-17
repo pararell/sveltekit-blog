@@ -11,9 +11,9 @@ Server and Client run on the same port - it should check if the build exist and 
 <code>git clone https://github.com/pararell/svelte-blog.git </code>
 <br/>
 <code>npm i</code>
-
 <br/>
 <code>cd server npm i</code>
+<br/>
 
 Set .env in main directory and in /server
 - adminEmail - email which can add/edit/remove pages and blogs
