@@ -72,6 +72,8 @@
 			}
 		}
 	};
+
+
 </script>
 
 <svelte:head>
@@ -82,8 +84,11 @@
 	<div class="homePage">
 		{@html marked(homePage.content)}
 	</div>
+
+	<div class="container">
+		<FormWithMarkdown form={pageForm} content={homePage.content} on:submitForm={submitForm} />
+	</div>
 {/if}
 
-<div class="container">
-	<FormWithMarkdown form={pageForm} on:submitForm={submitForm} />
-</div>
+
+

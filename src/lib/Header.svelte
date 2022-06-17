@@ -75,8 +75,9 @@
 	<div class="container">
 		<div class="header-menu">
 			<a href="/" class="logo">MS</a>
+			{#if $blogs?.length}
 			<a class="menu-link" class:active={$page.url.pathname === '/blogs'} href="/blogs">Blog</a>
-
+			{/if}
 			{#each $pages as pageToShow (pageToShow.id)}
 				{#if pageToShow.url !== '/'}
 					<a
@@ -107,10 +108,11 @@
 					<li class:active={$page.url.pathname === '/'}>
 						<a href="/">{$_('home')}</a>
 					</li>
+					{#if $blogs?.length}
 					<li class:active={$page.url.pathname === '/blogs'}>
 						<a href="/blogs">Blog</a>
 					</li>
-
+					{/if}
 					{#each $pages as pageToShow (pageToShow.id)}
 						{#if pageToShow.url !== '/'}
 							<li class:active={$page.url.pathname === pageToShow.url}>
@@ -128,6 +130,7 @@
 					</li> -->
 				</ul>
 			</div>
+			{#if $blogs?.length}
 			<div class="col">
 				<h4>Blog</h4>
 				<ul>
@@ -138,14 +141,17 @@
 					{/if}
 				</ul>
 			</div>
+			{/if}
+			{#if $categories?.length}
 			<div class="col">
-				<h4>Categories</h4>
+				<h4>{$_('categories')}</h4>
 				<ul>
 					{#each $categories as category}
 						<li><a href="/blogs/category/{category}">{category}</a></li>
 					{/each}
 				</ul>
 			</div>
+			{/if}
 			<div class="col">
 				<div class="switcher">
 					<!-- svelte-ignore a11y-no-onchange -->

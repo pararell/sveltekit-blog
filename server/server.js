@@ -156,7 +156,7 @@ app.get('/api/blogs', async (req, res) => {
 	try {
 		const lang = req.session.lang || 'en';
 		const blogs = await connection
-			.select('*')
+			.select('title', 'slug', 'description', 'imgLink', 'author', 'date', 'categories', 'lang')
 			.from('blogs')
 			.where({ lang })
 			.orderBy([{ column: 'date', order: 'desc' }]);

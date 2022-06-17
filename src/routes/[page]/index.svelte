@@ -97,7 +97,7 @@
 		<div class="content">
 			{@html marked($pageWithContent.content)}
 		</div>
-		<FormWithMarkdown form={pageForm} on:submitForm={submitForm} />
+		<FormWithMarkdown form={pageForm} content={$pageWithContent.content} on:submitForm={submitForm} />
 
 		{#if $user?.Email === ADMIN_EMAIL}
 			<form on:submit|preventDefault={removePage}>

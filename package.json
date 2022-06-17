@@ -25,9 +25,9 @@
 		"svelte-preprocess": "^4.10.7"
 	},
 	"dependencies": {
-		"rxjs": "^7.5.5",
+		"cookie-universal": "^2.2.1",
 		"marked": "^4.0.16",
-		"cookie-universal": "^2.2.1"
+		"rxjs": "^7.5.5"
 	},
 	"type": "module"
 }

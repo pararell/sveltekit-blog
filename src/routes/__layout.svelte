@@ -1,6 +1,6 @@
 <script context="module">
 	import { api } from '$lib/api';
-	import { user, config, pages } from '$lib/store';
+	import { user, config, pages, blogs } from '$lib/store';
 	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
 	import { filter, take } from 'rxjs/operators';
 
@@ -8,18 +8,20 @@
 		const resUser = api({ url: 'api/user', serverFetch: fetch });
 		const resConfig = api({ url: 'api/config', serverFetch: fetch });
 		const resPages = api({ url: 'api/pages', serverFetch: fetch });
+		const resBlogs = api({ url: 'api/blogs', serverFetch: fetch });
 
-		const data = await Promise.all([resUser, resConfig, resPages]);
+		const data = await Promise.all([resUser, resConfig, resPages, resBlogs]);
 
 		if (data) {
 			user.next(data[0].body);
 			config.next(data[1].body);
 			pages.next(data[2].body);
+			blogs.next(data[3].body);
 
 			return {
 				props: {},
 				cache: {
-					maxage: 0
+					maxage: 240
 				}
 			};
 		}
