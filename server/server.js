@@ -272,7 +272,8 @@ app.post('/api/pages/create', async (req, res) => {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const ifExist = await connection('pages').where({ slug: req.body.slug });
+	const lang =  req.session && req.session.lang ? req.session.lang : 'en';
+	const ifExist = await connection('pages').where({lang, slug: req.body.slug });
 	if (ifExist && !!ifExist.length) {
 		res.end(JSON.stringify({ message: `Page already exist` }));
 		return;
@@ -310,8 +311,9 @@ app.patch('/api/pages/update', async (req, res) => {
 });
 
 app.get('/api/pages/:slug', async (req, res) => {
-	const lang =  req.session ? req.session.lang : 'en';
+	const lang =  req.session && req.session.lang ? req.session.lang : 'en';
 	let { slug } = req.params;
+
 	const defaultEmpty = {
 		...pageModel,
 		title: 'Home',
@@ -325,9 +327,8 @@ app.get('/api/pages/:slug', async (req, res) => {
 		const page = await connection
 			.select('*')
 			.from('pages')
-			.where({ lang })
-			.where('slug', slug)
-			.orWhere('url', slug)
+			.where({ lang, slug })
+			.orWhere({ lang, url: slug })
 			.first();
 
 			if (page) {
