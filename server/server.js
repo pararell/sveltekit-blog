@@ -132,8 +132,13 @@ app.get('/api/user', async (req, res) => {
 });
 
 app.get('/api/config', async (req, res) => {
+	const lang = req.session && req.session.lang
+		? req.session.lang
+		: req.headers["accept-language"] && req.headers["accept-language"].includes('sk')
+			? 'sk'
+			: 'en';
 	try {
-		res.end(JSON.stringify({ disqusSrc: process.env.disqusSrc, lang: req.session.lang }));
+		res.end(JSON.stringify({ disqusSrc: process.env.disqusSrc, lang }));
 	} catch (err) {
 		res.end(JSON.stringify({}));
 	}
