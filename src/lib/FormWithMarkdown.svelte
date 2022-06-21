@@ -88,6 +88,9 @@
 						{#if item.type === 'date'}
 							<input type="date" {name} bind:value={item.value} placeholder={name} />
 						{/if}
+						{#if item.type === 'number'}
+						<input type="number" {name} bind:value={item.value} placeholder={name} />
+						{/if}
 					</span>
 				{/if}
 				{#if item.type === 'textarea'}

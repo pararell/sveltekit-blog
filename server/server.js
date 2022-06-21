@@ -353,6 +353,39 @@ app.get('/api/pages/:slug', async (req, res) => {
 	}
 });
 
+app.get('/api/pages/:slug/:subpage', async (req, res) => {
+	const lang =  req.session && req.session.lang ? req.session.lang : 'en';
+	let { slug } = req.params;
+	let { subpage } = req.params;
+
+	const defaultEmpty = {
+		...pageModel,
+		title: 'Page',
+		slug: 'Page',
+		metaTitle: 'Page | SvelteKit',
+		url: '/',
+		lang,
+		content: `<style>.home {min-height: 100vh; margin-top: -50px; padding-top: 50px; background: rgba(0,0,0,0.1); width: 100%;}</style><div class="home"><h1 style="text-align: center;">Welcome to SvelteKit template</h1><h2 style="text-align: center;"><strong>Feel free to edit page with markdown or editor</strong></h2><br><p style="text-align: center;"> <span style="font-size: 18px;">Add more pages =</span><span style="font-size: 18px;"><a href="/add"> /add</a></span><span style="font-size: 18px;"> , add blog </span><span style="font-size: 18px;"><a href="/blogs/add">/blogs/add</a></span></p><div><br></div><p style="text-align: center;"> <br> <strong style="font-size: 18px;">Good luck!</strong> <br> </p></div>`
+	};
+	try {
+		const page = await connection
+			.select('*')
+			.from('pages')
+			.where({ lang, url: slug + '/' + subpage  })
+			.first();
+
+			if (page) {
+				res.end(JSON.stringify(page));
+			} else {
+				res.end(JSON.stringify(defaultEmpty));
+			}
+
+	} catch(e) {
+		res.end(JSON.stringify(defaultEmpty)
+		);
+	}
+});
+
 app.delete('/api/pages/delete/:id', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));

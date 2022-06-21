@@ -25,7 +25,7 @@ export const pageModelForm = {
 		value: ''
 	},
 	position: {
-		type: 'number',
+		type: 'text',
 		value: ''
 	},
 	content: {

@@ -6,12 +6,31 @@
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fromEvent } from 'rxjs';
 	import { map } from 'rxjs/operators';
-  import { goto } from '$app/navigation';
+	import { goto } from '$app/navigation';
 
 	const dispatch = createEventDispatcher();
 
 	let selected;
 	export let active = '';
+
+	let pagesInMenu = pages.pipe(
+		map((allPages) => {
+			const basicPages = allPages.filter((onePage) => onePage.url.split('/').length <= 1);
+			const subPages = allPages.filter((onePage) => onePage.url.split('/').length > 1);
+			return basicPages
+				.sort((a, b) => a.position > b.position)
+				.map((basicPage) => {
+					const subpagesForPage = subPages.filter((subP) => subP.url.split('/')[0] === basicPage.url);
+					if (subpagesForPage.length) {
+						return {
+							...basicPage,
+							subPages: subpagesForPage.map(subPage => ({...subPage, subpage: true}))
+						};
+					}
+					return basicPage;
+				});
+		})
+	);
 
 	locale.subscribe((value) => {
 		selected = value;
@@ -41,26 +60,26 @@
 		}
 	};
 
-	const logout = async() => {
+	const logout = async () => {
 		const res = api({ url: 'api/logout' });
 		handleChange();
-	}
+	};
 
-	const handleChange = async() => {
+	const handleChange = async () => {
 		const resBlogs = api({ url: 'api/blogs' });
-			const resPages = api({ url: 'api/pages' });
-			const resHomePage = api({ url: 'api/pages/home' });
-			const data = await Promise.all([resBlogs, resPages, resHomePage]);
+		const resPages = api({ url: 'api/pages' });
+		const resHomePage = api({ url: 'api/pages/home' });
+		const data = await Promise.all([resBlogs, resPages, resHomePage]);
 
-			if (data) {
-				blogs.next(data[0].body);
-				pages.next(data[1].body);
-				pageWithContent.next(data[2].body);
-				dispatch('toggle');
-				goto('/');
-				return;
-			}
-	}
+		if (data) {
+			blogs.next(data[0].body);
+			pages.next(data[1].body);
+			pageWithContent.next(data[2].body);
+			dispatch('toggle');
+			goto('/');
+			return;
+		}
+	};
 
 	onMount(() => {
 		fromEvent(document.getElementById('main'), 'click').subscribe(() => {
@@ -76,10 +95,10 @@
 		<div class="header-menu">
 			<a href="/" class="logo">MS</a>
 			{#if $blogs?.length}
-			<a class="menu-link" class:active={$page.url.pathname === '/blogs'} href="/blogs">Blog</a>
+				<a class="menu-link" class:active={$page.url.pathname === '/blogs'} href="/blogs">Blog</a>
 			{/if}
-			{#each $pages as pageToShow (pageToShow.id)}
-				{#if pageToShow.url !== '/'}
+			{#each $pagesInMenu as pageToShow (pageToShow.id)}
+				{#if pageToShow.url !== '/' && !pageToShow.subpage}
 					<a
 						class="menu-link"
 						class:active={$page.url.pathname === pageToShow.url}
@@ -109,21 +128,28 @@
 						<a href="/">{$_('home')}</a>
 					</li>
 					{#if $blogs?.length}
-					<li class:active={$page.url.pathname === '/blogs'}>
-						<a href="/blogs">Blog</a>
-					</li>
+						<li class:active={$page.url.pathname === '/blogs'}>
+							<a href="/blogs">Blog</a>
+						</li>
 					{/if}
-					{#each $pages as pageToShow (pageToShow.id)}
+					{#each $pagesInMenu as pageToShow (pageToShow.id)}
 						{#if pageToShow.url !== '/'}
 							<li class:active={$page.url.pathname === pageToShow.url}>
-								<a href={pageToShow.url}>{pageToShow.title}</a>
+								<a href="/{pageToShow.url}">{pageToShow.title}</a>
+								{#if pageToShow.subPages?.length}
+									{#each pageToShow.subPages as subpageToShow (subpageToShow.id)}
+										<li class:active={$page.url.pathname === subpageToShow.url}>
+											<a href="/{subpageToShow.url}">{subpageToShow.title}</a>
+										</li>
+									{/each}
+								{/if}
 							</li>
 						{/if}
 					{/each}
 					{#if $user?.email}
-					<li>
-						<a href="/" on:click={logout}>Logout</a>
-					</li>
+						<li>
+							<a href="/" on:click={logout}>Logout</a>
+						</li>
 					{/if}
 					<!-- <li class:active={$page.url.pathname === '/contact'}>
 						<a href="/contact">{$_('contact')}</a>
@@ -131,26 +157,26 @@
 				</ul>
 			</div>
 			{#if $blogs?.length}
-			<div class="col">
-				<h4>Blog</h4>
-				<ul>
-					{#if $blogs}
-						{#each $blogs.slice(0, 3) as blog}
-							<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
-						{/each}
-					{/if}
-				</ul>
-			</div>
+				<div class="col">
+					<h4>Blog</h4>
+					<ul>
+						{#if $blogs}
+							{#each $blogs.slice(0, 3) as blog}
+								<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
+							{/each}
+						{/if}
+					</ul>
+				</div>
 			{/if}
 			{#if $categories?.length}
-			<div class="col">
-				<h4>{$_('categories')}</h4>
-				<ul>
-					{#each $categories as category}
-						<li><a href="/blogs/category/{category}">{category}</a></li>
-					{/each}
-				</ul>
-			</div>
+				<div class="col">
+					<h4>{$_('categories')}</h4>
+					<ul>
+						{#each $categories as category}
+							<li><a href="/blogs/category/{category}">{category}</a></li>
+						{/each}
+					</ul>
+				</div>
 			{/if}
 			<div class="col">
 				<div class="switcher">
@@ -442,6 +468,10 @@
 
 	#site-nav li {
 		margin-bottom: 0.3125em;
+	}
+
+	#site-nav li li {
+		padding-left: 20px;
 	}
 
 	#site-nav li a:hover,

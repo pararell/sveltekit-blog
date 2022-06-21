@@ -2,7 +2,7 @@
 	import { pages, pageWithContent, user } from '$lib/store';
 
 	export const load = async ({ fetch, url, params }) => {
-		const resPage = await api({ url: `api/pages/${params.page}`, serverFetch: fetch });
+		const resPage = await api({ url: `api/pages/${params.page}/${params.sub}`, serverFetch: fetch });
 
 		if (resPage) {
 			pageWithContent.next(resPage.body);
