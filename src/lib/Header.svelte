@@ -7,6 +7,7 @@
 	import { fromEvent } from 'rxjs';
 	import { map } from 'rxjs/operators';
 	import { goto } from '$app/navigation';
+  import { HEADER_LOGO } from './constants';
 
 	const dispatch = createEventDispatcher();
 
@@ -93,7 +94,7 @@
 <header id="header" class={active}>
 	<div class="container">
 		<div class="header-menu">
-			<a href="/" class="logo">MS</a>
+			<a href="/" class="logo">{HEADER_LOGO}</a>
 			{#if $blogs?.length}
 				<a class="menu-link" class:active={$page.url.pathname === '/blogs'} href="/blogs">Blog</a>
 			{/if}
