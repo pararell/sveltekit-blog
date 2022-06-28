@@ -4,7 +4,6 @@
 	import { inputTypes } from './constants';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { user } from './store';
-
 	export let form;
 	export let content = '';
 	let editor;
@@ -37,6 +36,20 @@
 	});
 
 	const dispatch = createEventDispatcher();
+
+	const prettifyHTML = async () => {
+		if (content) {
+			const {default:prettier} = await import('https://unpkg.com/prettier@2.7.1/esm/standalone.mjs');
+			const {default:parserHTML} = await import('https://unpkg.com/prettier@2.7.1/esm/parser-html.mjs');
+			const prettifyContent = prettier.format(content, {
+				parser: 'html',
+				plugins: [parserHTML]
+			});
+			if (editor) {
+				editor.value = prettifyContent;
+			}
+		}
+	};
 
 	const handleSubmit = () => {
 		dispatch('submitForm', {
@@ -89,7 +102,7 @@
 							<input type="date" {name} bind:value={item.value} placeholder={name} />
 						{/if}
 						{#if item.type === 'number'}
-						<input type="number" {name} bind:value={item.value} placeholder={name} />
+							<input type="number" {name} bind:value={item.value} placeholder={name} />
 						{/if}
 					</span>
 				{/if}
@@ -115,6 +128,8 @@
 
 	<textarea id="editor" />
 	<button class="btn submit" on:click={saveWithEditor}> Save with editor</button>
+
+	<button class="btn" on:click={prettifyHTML}> Prettify HTML</button>
 {/if}
 
 <style>
