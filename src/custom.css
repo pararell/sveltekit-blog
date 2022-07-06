@@ -1,0 +1,8 @@
+:root {
+	font-family: 'Nunito', sans-serif;
+	--primary-color: #000;
+	--secondary-color: #b1bbbc;
+	--text-color: #444444;
+	--text-color-header: #fff;
+	--header-height: 35px;
+}

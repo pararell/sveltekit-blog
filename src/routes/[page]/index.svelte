@@ -6,13 +6,12 @@
 
 		if (resPage) {
 			pageWithContent.next(resPage.body);
-			return { props: { url, params } };
+			return { props: { paramsPage: params.page } };
 		}
 
 		return {
 			props: {
-				url,
-				params
+				paramsPage:  params.page
 			}
 		};
 	};
@@ -21,6 +20,7 @@
 <script>
 	import { marked } from 'marked';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
+	import ContactForm from '$lib/ContactForm.svelte';
 	import { api } from '$lib/api';
 	import { onDestroy } from 'svelte';
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
@@ -29,6 +29,7 @@
 	let pageForm = Object.entries(pageModelForm);
 	let id = '';
 	let pageShow;
+	export let paramsPage;
 
 	let pageSub = pageWithContent.subscribe((pageFound) => {
 		pageShow = pageFound;
@@ -94,6 +95,12 @@
 
 {#if $pageWithContent}
 {@html marked($pageWithContent.content)}
+
+{#if paramsPage === 'contact'}
+<div class="container">
+	<ContactForm />
+</div>
+{/if}
 
 <div class="edit-wrap">
 	<div class="container">

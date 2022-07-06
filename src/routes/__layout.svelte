@@ -65,6 +65,7 @@
 
 <script>
 	import '../app.css';
+	import '../custom.css';
 	import Header from '$lib/Header.svelte';
 	import { page } from '$app/stores';
 	export let openHeader = '';
@@ -89,7 +90,7 @@
 {#if $isLoading}
 	<div class="loading" />
 {:else}
-	<div class="hero">
+	<div class="header-wrap">
 		<Header on:toggle={toggleMenu} active={openHeader} />
 	</div>
 	<main id="main">
@@ -120,8 +121,7 @@
 		align-items: center;
 		padding: 40px;
 		min-height: 100px;
-		background-color: #485461;
-		background-image: linear-gradient(315deg, #485461 0%, #28313b 74%);
+		background-color: var(--primary-color);
 	}
 
 	.loading {

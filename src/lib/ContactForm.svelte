@@ -22,58 +22,32 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{$_('contact')}</title>
-</svelte:head>
-
-<div class="full" />
-<div class="container">
-	<div class="flex">
-		<div class="col">
-			<h1 class="title">{$_('contact')}</h1>
-			<form class="content" on:submit|preventDefault={handleSubmit}>
-				<span class="field">
-					<label for="subject">{$_('subject')}</label>
-					<input id="subject" name="subject" type="text" bind:value={subject} />
-				</span>
-				<span class="field">
-					<label for="email">Email</label>
-					<input id="email" name="email" type="text" bind:value={email} />
-				</span>
-				<span class="field">
-					<label for="note">{$_('note')}</label>
-					<textarea id="note" name="note" bind:value={note} />
-				</span>
-				<button disabled={!email || !note || !subject} type="submit" class="btn"
-					>{$_('send')}</button
-				>
-			</form>
-			{#if result}
-				<span class="result">
-					{result.message}
-				</span>
-			{/if}
-		</div>
+<div class="flex">
+	<div class="col">
+		<form class="content" on:submit|preventDefault={handleSubmit}>
+			<span class="field">
+				<label for="subject">{$_('subject')}</label>
+				<input id="subject" name="subject" type="text" bind:value={subject} />
+			</span>
+			<span class="field">
+				<label for="email">Email</label>
+				<input id="email" name="email" type="text" bind:value={email} />
+			</span>
+			<span class="field">
+				<label for="note">{$_('note')}</label>
+				<textarea id="note" name="note" bind:value={note} />
+			</span>
+			<button disabled={!email || !note || !subject} type="submit" class="btn">{$_('send')}</button>
+		</form>
+		{#if result}
+			<span class="result">
+				{result.message}
+			</span>
+		{/if}
 	</div>
 </div>
 
 <style>
-	.full {
-		padding: 0;
-		margin: 0;
-		position: absolute;
-		top: 0;
-		left: 0;
-		z-index: 0;
-		width: 100%;
-		height: 100%;
-	}
-	.title {
-		text-align: center;
-		color: var(--text-color);
-		font-family: 'Nunito', sans-serif;
-		position: relative;
-	}
 	.content {
 		display: flex;
 		flex-flow: column;

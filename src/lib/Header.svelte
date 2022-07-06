@@ -115,10 +115,10 @@
 					<span class="hamburger-label">Menu</span>
 				</button>
 			</div>
-			<form id="header-search" style="opacity: 0;width:1px;">
+			<!-- <form id="header-search" style="opacity: 0;width:1px;">
 				<input type="search" name="s" placeholder="{$_('search')}&hellip;" class="draw" />
 				<button type="submit">&rarr;</button>
-			</form>
+			</form> -->
 		</div>
 
 		<nav id="site-nav" class={active}>
@@ -199,7 +199,7 @@
 	.logo {
 		color: #fff;
 		font-weight: 700;
-		font-size: 40px;
+		font-size:calc(var(--header-height) - 10px);
 		line-height: 1;
 		border-radius: 50%;
 		width: 80px;
@@ -218,6 +218,7 @@
 		margin: 0 0 0 auto;
 		display: flex;
 		align-items: center;
+		height: var(--header-height);
 	}
 
 	.menu-links {
@@ -226,7 +227,7 @@
 	}
 
 	.menu-link {
-		color: #fff;
+		color: var(--text-color-header);
 		font-weight: 600;
 		letter-spacing: 0.08em;
 		line-height: 1;
