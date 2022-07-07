@@ -11,7 +11,7 @@
 
 		return {
 			props: {
-				paramsPage:  params.page
+				paramsPage: params.page
 			}
 		};
 	};
@@ -94,28 +94,30 @@
 </svelte:head>
 
 {#if $pageWithContent}
-{@html marked($pageWithContent.content)}
+	{@html marked($pageWithContent.content)}
 
-{#if paramsPage === 'contact'}
-<div class="container">
-	<ContactForm />
-</div>
-{/if}
+	{#if paramsPage === 'contact'}
+		<div class="container">
+			<ContactForm />
+		</div>
+	{/if}
 
-<div class="edit-wrap">
-	<div class="container">
+	<div class="edit-wrap">
+		<div class="container">
+			{#if $user?.email === ADMIN_EMAIL && $pageWithContent.url !== '/'}
+				<FormWithMarkdown
+					form={pageForm}
+					content={$pageWithContent.content}
+					on:submitForm={submitForm}
+				/>
 
-		{#if $user?.email === ADMIN_EMAIL && $pageWithContent.url !== '/'}
-		  <FormWithMarkdown form={pageForm} content={$pageWithContent.content} on:submitForm={submitForm} />
-
-			<form on:submit|preventDefault={removePage}>
-				<input type="hidden" name="id" value={id} />
-				<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
-			</form>
-		{/if}
-
+				<form on:submit|preventDefault={removePage}>
+					<input type="hidden" name="id" value={id} />
+					<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
+				</form>
+			{/if}
+		</div>
 	</div>
-</div>
 {/if}
 
 <style>

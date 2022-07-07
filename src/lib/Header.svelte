@@ -100,7 +100,7 @@
 			{/if}
 			{#each $pagesInMenu as pageToShow (pageToShow.id)}
 				{#if pageToShow.url !== '/' && !pageToShow.subpage}
-					<a
+					<a rel={pageToShow.description === 'reload' ? 'external' : ''}
 						class="menu-link"
 						class:active={$page.url.pathname === pageToShow.url}
 						href="/{pageToShow.url}">{pageToShow.title}</a
@@ -481,14 +481,14 @@
 		color: #686d6e;
 	}
 
-	#header-search {
+	/* #header-search {
 		margin: 0.6em 0 0.6em 2em;
 		max-width: 10em;
 		position: relative;
 		-webkit-appearance: none;
-	}
+	} */
 
-	#header-search input {
+	/* #header-search input {
 		background: transparent;
 		border: none;
 		border-color: #fff;
@@ -507,9 +507,9 @@
 
 	#header-search input::-webkit-search-cancel-button {
 		display: none;
-	}
+	} */
 
-	#header-search button {
+	/* #header-search button {
 		background: none;
 		border: none;
 		color: #fff;
@@ -532,21 +532,7 @@
 
 	#header-search ::-webkit-input-placeholder {
 		color: #fff;
-	}
-
-	#header-search :-moz-placeholder {
-		color: #fff;
-		opacity: 1;
-	}
-
-	#header-search ::-moz-placeholder {
-		color: #fff;
-		opacity: 1;
-	}
-
-	#header-search :-ms-input-placeholder {
-		color: #fff;
-	}
+	} */
 
 	#header.is-active #header-search ::-webkit-input-placeholder {
 		color: #b4b9ba;
