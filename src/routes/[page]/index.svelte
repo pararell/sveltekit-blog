@@ -29,6 +29,7 @@
 	let pageForm = Object.entries(pageModelForm);
 	let id = '';
 	let pageShow;
+	let showEdit = true;
 	export let paramsPage;
 
 	let pageSub = pageWithContent.subscribe((pageFound) => {
@@ -102,9 +103,10 @@
 		</div>
 	{/if}
 
-	<div class="edit-wrap">
-		<div class="container">
-			{#if $user?.email === ADMIN_EMAIL && $pageWithContent.url !== '/'}
+	{#if $user?.email === ADMIN_EMAIL && $pageWithContent.url !== '/'}
+	 {#if showEdit}
+		<div class="edit-wrap">
+			<div class="container">
 				<FormWithMarkdown
 					form={pageForm}
 					content={$pageWithContent.content}
@@ -115,9 +117,11 @@
 					<input type="hidden" name="id" value={id} />
 					<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
 				</form>
-			{/if}
+			</div>
 		</div>
-	</div>
+		{/if}
+		<button class="btn btn-edit" on:click={() => showEdit = !showEdit}>Toggle Edit</button>
+	{/if}
 {/if}
 
 <style>
@@ -132,5 +136,6 @@
 		background: #fff;
 		overflow: visible;
 		width: 100%;
+		z-index: 100;
 	}
 </style>

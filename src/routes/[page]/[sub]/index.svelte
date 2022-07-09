@@ -2,7 +2,10 @@
 	import { pages, pageWithContent, user } from '$lib/store';
 
 	export const load = async ({ fetch, url, params }) => {
-		const resPage = await api({ url: `api/pages/${params.page}/${params.sub}`, serverFetch: fetch });
+		const resPage = await api({
+			url: `api/pages/${params.page}/${params.sub}`,
+			serverFetch: fetch
+		});
 
 		if (resPage) {
 			pageWithContent.next(resPage.body);
@@ -29,6 +32,7 @@
 	let pageForm = Object.entries(pageModelForm);
 	let id = '';
 	let pageShow;
+	let showEdit = true;
 
 	let pageSub = pageWithContent.subscribe((pageFound) => {
 		pageShow = pageFound;
@@ -93,22 +97,27 @@
 </svelte:head>
 
 {#if $pageWithContent}
-{@html marked($pageWithContent.content)}
+	{@html marked($pageWithContent.content)}
 
-<div class="edit-wrap">
-	<div class="container">
+	{#if $user?.email === ADMIN_EMAIL && $pageWithContent.url !== '/'}
+		{#if showEdit}
+			<div class="edit-wrap">
+				<div class="container">
+					<FormWithMarkdown
+						form={pageForm}
+						content={$pageWithContent.content}
+						on:submitForm={submitForm}
+					/>
 
-		{#if $user?.email === ADMIN_EMAIL && $pageWithContent.url !== '/'}
-		  <FormWithMarkdown form={pageForm} content={$pageWithContent.content} on:submitForm={submitForm} />
-
-			<form on:submit|preventDefault={removePage}>
-				<input type="hidden" name="id" value={id} />
-				<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
-			</form>
+					<form on:submit|preventDefault={removePage}>
+						<input type="hidden" name="id" value={id} />
+						<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
+					</form>
+				</div>
+			</div>
 		{/if}
-
-	</div>
-</div>
+	{/if}
+	<button class="btn btn-edit" on:click={() => (showEdit = !showEdit)}>Toggle Edit</button>
 {/if}
 
 <style>
@@ -123,5 +132,6 @@
 		background: #fff;
 		overflow: visible;
 		width: 100%;
+		z-index: 100;
 	}
 </style>
