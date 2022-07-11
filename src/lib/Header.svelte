@@ -19,7 +19,7 @@
 			const basicPages = allPages.filter((onePage) => onePage.url.split('/').length <= 1);
 			const subPages = allPages.filter((onePage) => onePage.url.split('/').length > 1);
 			return basicPages
-				.sort((a, b) => a.position > b.position)
+				.sort((a, b) => +a.position - +b.position)
 				.map((basicPage) => {
 					const subpagesForPage = subPages.filter((subP) => subP.url.split('/')[0] === basicPage.url);
 					if (subpagesForPage.length) {
