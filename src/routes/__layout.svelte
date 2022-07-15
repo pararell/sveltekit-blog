@@ -33,7 +33,7 @@
 
 	const setJSONLangs = (langs) => {
 		langs.forEach((lang) => {
-			register(lang, () => import('../translations/' + lang + '.json'));
+			register(lang, () => import('@/translations/' + lang + '.json'));
 		});
 	};
 

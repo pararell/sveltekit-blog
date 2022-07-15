@@ -2,17 +2,16 @@
 	"name": "blog",
 	"version": "0.2.0",
 	"scripts": {
-		"dev": "svelte-kit dev",
-		"build": "svelte-kit build",
+		"dev": "vite dev",
+		"build": "vite build",
 		"start": "PORT=3000 node ./build/index.js",
-		"preview": "svelte-kit preview",
-		"prepare": "svelte-kit sync",
+		"preview": "vite preview",
 		"lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
 		"format": "prettier --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-node": "^1.0.0-next.78",
-		"@sveltejs/kit": "^1.0.0-next.355",
+		"@sveltejs/adapter-node": "^1.0.0-next.81",
+		"@sveltejs/kit": "^1.0.0-next.375",
 		"dotenv": "^16.0.1",
 		"eslint": "^8.18.0",
 		"eslint-config-prettier": "^8.5.0",
@@ -20,7 +19,7 @@
 		"prettier": "~2.7.1",
 		"prettier-plugin-svelte": "^2.7.0",
 		"sass": "^1.53.0",
-		"svelte": "^3.48.0",
+		"svelte": "^3.49.0",
 		"svelte-i18n": "^3.4.0",
 		"svelte-preprocess": "^4.10.7"
 	},
