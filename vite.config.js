@@ -1,4 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
 import dotenv from 'dotenv';
 dotenv.config();
 import { readFileSync } from 'fs';
@@ -7,30 +8,26 @@ const file = fileURLToPath(new URL('package.json', import.meta.url));
 const json = readFileSync(file, 'utf8');
 const pkg = JSON.parse(json);
 
-const ssrObj =
-	process.env.NODE_ENV !== 'development'
-		? {
-				ssr: {
-					noExternal: Object.keys(pkg.dependencies || {})
-				}
-		  }
-		: {};
-const config = {
-	logLevel: 'info',
-
-	plugins: [
-      sveltekit(),       
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
-
-  server: {
-    cors: false
-  },
-  ...ssrObj
-};
-
-export default config;
+export default defineConfig(({ command }) => {
+  const ssrObj = command === 'build'
+      ? {
+          ssr: {
+            noExternal: Object.keys(pkg.dependencies || {})
+          }
+        }
+      : {};
+    return {
+      logLevel: 'info',
+      plugins: [
+        sveltekit()
+      ],
+      ...ssrObj,
+      server: {
+        port : 3000,
+        fs: {
+          strict: false
+        },
+        cors: false
+      },
+    }
+})

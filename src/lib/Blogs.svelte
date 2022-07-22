@@ -7,7 +7,7 @@
 </script>
 
 {#if blogsToShow}
-	{#each blogsToShow as blog (blog.id)}
+	{#each blogsToShow as blog (blog.slug)}
 		<a class="card" rel="prefetch" href="/blogs/{blog.slug}">
 			<div class="card-left">
 				<div class="card-left-top">
