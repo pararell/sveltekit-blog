@@ -13,7 +13,8 @@ export default defineConfig(({ command }) => {
       ? {
           ssr: {
             noExternal: Object.keys(pkg.dependencies || {})
-          }
+          },
+          legacy: { buildSsrCjsExternalHeuristics: true },
         }
       : {};
     return {
