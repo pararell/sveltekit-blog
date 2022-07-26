@@ -10,20 +10,18 @@
 		"format": "prettier --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-node": "1.0.0-next.83",
-		"@sveltejs/kit": "1.0.0-next.390",
+		"@sveltejs/adapter-node": "1.0.0-next.84",
+		"@sveltejs/kit": "1.0.0-next.394",
 		"dotenv": "^16.0.1",
-		"eslint": "^8.18.0",
+		"eslint": "^8.20.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"prettier": "~2.7.1",
 		"prettier-plugin-svelte": "^2.7.0",
-		"sass": "^1.53.0",
+		"sass": "^1.54.0",
 		"svelte": "^3.49.0",
 		"svelte-i18n": "^3.4.0",
-		"svelte-preprocess": "^4.10.7",
-		"vite-plugin-dynamic-import": "^1.0.0",
-		"vite-plugin-dynamic-import-module": "^0.2.1"
+		"svelte-preprocess": "^4.10.7"
 	},
 	"dependencies": {
 		"cookie-universal": "^2.2.1",
