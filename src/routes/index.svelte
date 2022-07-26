@@ -72,8 +72,6 @@
 			}
 		}
 	};
-
-
 </script>
 
 <svelte:head>
@@ -86,12 +84,8 @@
 	</div>
 
 	{#if $user?.email === ADMIN_EMAIL}
-	<div class="container">
-		<FormWithMarkdown form={pageForm} content={homePage.content} on:submitForm={submitForm} />
-	</div>
+		<div class="container">
+			<FormWithMarkdown form={pageForm} content={homePage.content} on:submitForm={submitForm} />
+		</div>
 	{/if}
-
 {/if}
-
-
-

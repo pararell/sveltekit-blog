@@ -8,7 +8,7 @@
 	export let content = '';
 	let editor;
 	let error = '';
-
+	
 	$: {
 		if (editor) {
 			editor.value = content;
@@ -17,7 +17,9 @@
 
 	onMount(async () => {
 		try {
-			await import('https://cdnjs.cloudflare.com/ajax/libs/jodit/3.18.9/jodit.es2018.min.js');
+			await import(
+				'https://cdnjs.cloudflare.com/ajax/libs/jodit/3.18.9/jodit.es2018.min.js'
+			);
 
 			if (Jodit) {
 				editor = Jodit.make('#editor', {
@@ -39,8 +41,12 @@
 
 	const prettifyHTML = async () => {
 		if (content) {
-			const {default:prettier} = await import('https://unpkg.com/prettier@2.7.1/esm/standalone.mjs');
-			const {default:parserHTML} = await import('https://unpkg.com/prettier@2.7.1/esm/parser-html.mjs');
+			const { default: prettier } = await import(
+				'https://unpkg.com/prettier@2.7.1/esm/standalone.mjs'
+			);
+			const { default: parserHTML } = await import(
+				'https://unpkg.com/prettier@2.7.1/esm/parser-html.mjs'
+			);
 			const prettifyContent = prettier.format(content, {
 				parser: 'html',
 				plugins: [parserHTML]

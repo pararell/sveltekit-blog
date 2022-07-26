@@ -1,7 +1,7 @@
 <script context="module">
 	import { pages, pageWithContent, user } from '$lib/store';
 
-	export const load = async ({ fetch, url, params }) => {
+	export const load = async ({ fetch, params }) => {
 		const resPage = await api({ url: `api/pages/${params.page}`, serverFetch: fetch });
 
 		if (resPage) {
@@ -104,23 +104,23 @@
 	{/if}
 
 	{#if $user?.email === ADMIN_EMAIL && $pageWithContent.url !== '/'}
-	 {#if showEdit}
-		<div class="edit-wrap">
-			<div class="container">
-				<FormWithMarkdown
-					form={pageForm}
-					content={$pageWithContent.content}
-					on:submitForm={submitForm}
-				/>
+		{#if showEdit}
+			<div class="edit-wrap">
+				<div class="container">
+					<FormWithMarkdown
+						form={pageForm}
+						content={$pageWithContent.content}
+						on:submitForm={submitForm}
+					/>
 
-				<form on:submit|preventDefault={removePage}>
-					<input type="hidden" name="id" value={id} />
-					<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
-				</form>
+					<form on:submit|preventDefault={removePage}>
+						<input type="hidden" name="id" value={id} />
+						<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
+					</form>
+				</div>
 			</div>
-		</div>
 		{/if}
-		<button class="btn btn-edit" on:click={() => showEdit = !showEdit}>Toggle Edit</button>
+		<button class="btn btn-edit" on:click={() => (showEdit = !showEdit)}>Toggle Edit</button>
 	{/if}
 {/if}
 

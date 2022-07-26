@@ -9,26 +9,25 @@ const json = readFileSync(file, 'utf8');
 const pkg = JSON.parse(json);
 
 export default defineConfig(({ command }) => {
-  const ssrObj = command === 'build'
-      ? {
-          ssr: {
-            noExternal: Object.keys(pkg.dependencies || {})
-          },
-          legacy: { buildSsrCjsExternalHeuristics: true },
-        }
-      : {};
-    return {
-      logLevel: 'info',
-      plugins: [
-        sveltekit()
-      ],
-      ...ssrObj,
-      server: {
-        port : 3000,
-        fs: {
-          strict: false
-        },
-        cors: false
-      },
-    }
-})
+	const ssrObj =
+		command === 'build'
+			? {
+					ssr: {
+						noExternal: Object.keys(pkg.dependencies || {})
+					},
+					legacy: { buildSsrCjsExternalHeuristics: true }
+			  }
+			: {};
+	return {
+		logLevel: 'info',
+		plugins: [sveltekit()],
+		...ssrObj,
+		server: {
+			port: 3000,
+			fs: {
+				strict: false
+			},
+			cors: false
+		}
+	};
+});

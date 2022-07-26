@@ -16,6 +16,7 @@ Server and Client run on the same port - it should check if the build exist and 
 <br/>
 
 Set .env in main directory and in /server
+
 - adminEmail - email which can add/edit/remove pages and blogs
 - disqusSrc - optional to have comments from disqus
 - cookieSecret, cookieName, TOKEN_KEY - random string

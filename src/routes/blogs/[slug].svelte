@@ -111,7 +111,7 @@
 		<span class="date">{new Date($blog.date).toLocaleDateString()}</span>
 
 		{#if $user?.email === ADMIN_EMAIL}
-		<FormWithMarkdown form={blogForm} content={$blog.content} on:submitForm={submitForm} />
+			<FormWithMarkdown form={blogForm} content={$blog.content} on:submitForm={submitForm} />
 
 			<form on:submit|preventDefault={removeBlog}>
 				<input type="hidden" name="id" value={id} />

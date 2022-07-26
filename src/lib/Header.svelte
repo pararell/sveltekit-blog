@@ -7,7 +7,7 @@
 	import { fromEvent } from 'rxjs';
 	import { map } from 'rxjs/operators';
 	import { goto } from '$app/navigation';
-  import { HEADER_LOGO } from './constants';
+	import { HEADER_LOGO } from './constants';
 
 	const dispatch = createEventDispatcher();
 
@@ -21,11 +21,13 @@
 			return basicPages
 				.sort((a, b) => +a.position - +b.position)
 				.map((basicPage) => {
-					const subpagesForPage = subPages.filter((subP) => subP.url.split('/')[0] === basicPage.url);
+					const subpagesForPage = subPages.filter(
+						(subP) => subP.url.split('/')[0] === basicPage.url
+					);
 					if (subpagesForPage.length) {
 						return {
 							...basicPage,
-							subPages: subpagesForPage.map(subPage => ({...subPage, subpage: true}))
+							subPages: subpagesForPage.map((subPage) => ({ ...subPage, subpage: true }))
 						};
 					}
 					return basicPage;
@@ -62,7 +64,7 @@
 	};
 
 	const logout = async () => {
-		const res = api({ url: 'api/logout' });
+		const _res = api({ url: 'api/logout' });
 		handleChange();
 	};
 
@@ -100,7 +102,8 @@
 			{/if}
 			{#each $pagesInMenu as pageToShow (pageToShow.id)}
 				{#if pageToShow.url !== '/' && !pageToShow.subpage}
-					<a rel={pageToShow.description === 'reload' ? 'external' : ''}
+					<a
+						rel={pageToShow.description === 'reload' ? 'external' : ''}
 						class="menu-link"
 						class:active={$page.url.pathname === pageToShow.url}
 						href="/{pageToShow.url}">{pageToShow.title}</a
@@ -199,7 +202,7 @@
 	.logo {
 		color: #fff;
 		font-weight: 700;
-		font-size:calc(var(--header-height) - 10px);
+		font-size: calc(var(--header-height) - 10px);
 		line-height: 1;
 		border-radius: 50%;
 		width: 80px;

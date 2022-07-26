@@ -132,9 +132,10 @@ app.get('/api/user', async (req, res) => {
 });
 
 app.get('/api/config', async (req, res) => {
-	const lang = req.session && req.session.lang
-		? req.session.lang
-		: req.headers["accept-language"] && req.headers["accept-language"].includes('sk')
+	const lang =
+		req.session && req.session.lang
+			? req.session.lang
+			: req.headers['accept-language'] && req.headers['accept-language'].includes('sk')
 			? 'sk'
 			: 'en';
 	try {
@@ -277,8 +278,8 @@ app.post('/api/pages/create', async (req, res) => {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const lang =  req.session && req.session.lang ? req.session.lang : 'en';
-	const ifExist = await connection('pages').where({lang, slug: req.body.slug });
+	const lang = req.session && req.session.lang ? req.session.lang : 'en';
+	const ifExist = await connection('pages').where({ lang, slug: req.body.slug });
 	if (ifExist && !!ifExist.length) {
 		res.end(JSON.stringify({ message: `Page already exist` }));
 		return;
@@ -316,7 +317,7 @@ app.patch('/api/pages/update', async (req, res) => {
 });
 
 app.get('/api/pages/:slug', async (req, res) => {
-	const lang =  req.session && req.session.lang ? req.session.lang : 'en';
+	const lang = req.session && req.session.lang ? req.session.lang : 'en';
 	let { slug } = req.params;
 
 	const defaultEmpty = {
@@ -336,25 +337,23 @@ app.get('/api/pages/:slug', async (req, res) => {
 			.orWhere({ lang, url: slug })
 			.first();
 
-			if (page) {
-				res.end(JSON.stringify(page));
+		if (page) {
+			res.end(JSON.stringify(page));
+		} else {
+			if (slug === 'home') {
+				const _pages = await connection('pages').insert({ ...defaultEmpty });
+				res.end(JSON.stringify(defaultEmpty));
 			} else {
-				if (slug === 'home') {
-					const _pages = await connection('pages').insert({ ...defaultEmpty });
-					res.end(JSON.stringify(defaultEmpty));
-				} else {
-					res.end(JSON.stringify(defaultEmpty));
-				}
+				res.end(JSON.stringify(defaultEmpty));
 			}
-
-	} catch(e) {
-		res.end(JSON.stringify(defaultEmpty)
-		);
+		}
+	} catch (e) {
+		res.end(JSON.stringify(defaultEmpty));
 	}
 });
 
 app.get('/api/pages/:slug/:subpage', async (req, res) => {
-	const lang =  req.session && req.session.lang ? req.session.lang : 'en';
+	const lang = req.session && req.session.lang ? req.session.lang : 'en';
 	let { slug } = req.params;
 	let { subpage } = req.params;
 
@@ -371,18 +370,16 @@ app.get('/api/pages/:slug/:subpage', async (req, res) => {
 		const page = await connection
 			.select('*')
 			.from('pages')
-			.where({ lang, url: slug + '/' + subpage  })
+			.where({ lang, url: slug + '/' + subpage })
 			.first();
 
-			if (page) {
-				res.end(JSON.stringify(page));
-			} else {
-				res.end(JSON.stringify(defaultEmpty));
-			}
-
-	} catch(e) {
-		res.end(JSON.stringify(defaultEmpty)
-		);
+		if (page) {
+			res.end(JSON.stringify(page));
+		} else {
+			res.end(JSON.stringify(defaultEmpty));
+		}
+	} catch (e) {
+		res.end(JSON.stringify(defaultEmpty));
 	}
 });
 

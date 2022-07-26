@@ -20,7 +20,6 @@
 			error: new Error()
 		};
 	};
-
 </script>
 
 <script>
@@ -33,14 +32,14 @@
 </svelte:head>
 
 {#if $blogs}
-<section>
-	<div class="container">
-		<h1>{$_('blog_title')}</h1>
-		<h2>{$_('blog_subtitle')}</h2>
+	<section>
+		<div class="container">
+			<h1>{$_('blog_title')}</h1>
+			<h2>{$_('blog_subtitle')}</h2>
 
-		<Blogs blogs={$blogs} />
-	</div>
-</section>
+			<Blogs blogs={$blogs} />
+		</div>
+	</section>
 {/if}
 
 <style>

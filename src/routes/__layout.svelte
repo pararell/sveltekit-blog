@@ -32,17 +32,15 @@
 	};
 
 	const setJSONLangs = (langs) => {
-	  const translationsPath = import.meta.glob('../translations/*.json');
-			langs.forEach((lang) => {
-			register(lang, async() => {
-				const langKey = Object.keys(translationsPath).find(l => l.includes(lang));
+		const translationsPath = import.meta.glob('../translations/*.json');
+		langs.forEach((lang) => {
+			register(lang, async () => {
+				const langKey = Object.keys(translationsPath).find((l) => l.includes(lang));
 				if (langKey) {
-					return await translationsPath[langKey]()
+					return await translationsPath[langKey]();
 				}
 			});
 		});
-		
-
 	};
 
 	const setLang = () => {
@@ -76,7 +74,7 @@
 	import '../custom.css';
 	import Header from '$lib/Header.svelte';
 	import { page } from '$app/stores';
-import { browser } from '$app/env';
+
 	export let openHeader = '';
 
 	page.subscribe(() => {

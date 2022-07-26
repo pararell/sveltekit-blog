@@ -14,9 +14,9 @@
 		};
 		const res = await api({ url: `api/login`, method: 'POST', data });
 		if (res && res.status === 400) {
-				error = res.body;
-				return;
-			}
+			error = res.body;
+			return;
+		}
 		user.next(res.body);
 		goto('/blogs');
 	};
