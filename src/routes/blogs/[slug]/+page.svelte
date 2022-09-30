@@ -1,23 +1,3 @@
-<script context="module">
-	import { blog, blogs, user } from '$lib/store';
-
-	export const load = async ({ fetch, url, params }) => {
-		const resBlog = await api({ url: `api/blogs/${params.slug}`, serverFetch: fetch });
-
-		if (resBlog) {
-			blog.next(resBlog.body);
-			return { props: { url, params } };
-		}
-
-		return {
-			props: {
-				url,
-				params
-			}
-		};
-	};
-</script>
-
 <script>
 	import { marked } from 'marked';
 	import Comments from '$lib/Comments.svelte';
@@ -26,8 +6,9 @@
 	import { blogModelForm, ADMIN_EMAIL } from '$lib/constants';
 	import { onDestroy } from 'svelte';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
+	import { blog, blogs, user } from '$lib/store';
 
-	export let url, params;
+	export let data;
 	let id = '';
 	let blogForm = Object.entries(blogModelForm);
 	let blogShow;
@@ -119,7 +100,7 @@
 			</form>
 		{/if}
 
-		<Comments host={url.host} slug={params.slug} />
+		<Comments host={data.url.host} slug={data.params.slug} />
 	</div>
 {/if}
 

@@ -1,26 +1,3 @@
-<script context="module">
-	import { pages, pageWithContent, user } from '$lib/store';
-
-	export const load = async ({ fetch, url, params }) => {
-		const resPage = await api({
-			url: `api/pages/${params.page}/${params.sub}`,
-			serverFetch: fetch
-		});
-
-		if (resPage) {
-			pageWithContent.next(resPage.body);
-			return { props: { url, params } };
-		}
-
-		return {
-			props: {
-				url,
-				params
-			}
-		};
-	};
-</script>
-
 <script>
 	import { marked } from 'marked';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
@@ -28,6 +5,7 @@
 	import { onDestroy } from 'svelte';
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
 	import { goto } from '$app/navigation';
+	import { pages, pageWithContent, user } from '$lib/store';
 
 	let pageForm = Object.entries(pageModelForm);
 	let id = '';

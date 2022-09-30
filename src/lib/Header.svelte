@@ -5,7 +5,7 @@
 	import { _, locale, locales } from 'svelte-i18n';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fromEvent } from 'rxjs';
-	import { map } from 'rxjs/operators';
+	import { map, filter } from 'rxjs/operators';
 	import { goto } from '$app/navigation';
 	import { HEADER_LOGO } from './constants';
 
@@ -15,6 +15,7 @@
 	export let active = '';
 
 	let pagesInMenu = pages.pipe(
+		filter(Boolean),
 		map((allPages) => {
 			const basicPages = allPages.filter((onePage) => onePage.url.split('/').length <= 1);
 			const subPages = allPages.filter((onePage) => onePage.url.split('/').length > 1);

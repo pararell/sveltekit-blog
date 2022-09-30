@@ -1,28 +1,10 @@
-<script context="module">
-	import { pages, pageWithContent, user } from '$lib/store';
-
-	export const load = async ({ fetch, params }) => {
-		const resPage = await api({ url: `api/pages/${params.page}`, serverFetch: fetch });
-
-		if (resPage) {
-			pageWithContent.next(resPage.body);
-			return { props: { paramsPage: params.page } };
-		}
-
-		return {
-			props: {
-				paramsPage: params.page
-			}
-		};
-	};
-</script>
-
 <script>
 	import { marked } from 'marked';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import ContactForm from '$lib/ContactForm.svelte';
 	import { api } from '$lib/api';
 	import { onDestroy } from 'svelte';
+	import { pages, pageWithContent, user } from '$lib/store';
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
 	import { goto } from '$app/navigation';
 
@@ -30,7 +12,7 @@
 	let id = '';
 	let pageShow;
 	let showEdit = true;
-	export let paramsPage;
+	export let data;
 
 	let pageSub = pageWithContent.subscribe((pageFound) => {
 		pageShow = pageFound;
@@ -97,7 +79,7 @@
 {#if $pageWithContent}
 	{@html marked($pageWithContent.content)}
 
-	{#if paramsPage === 'contact'}
+	{#if data.paramsPage === 'contact'}
 		<div class="container">
 			<ContactForm />
 		</div>

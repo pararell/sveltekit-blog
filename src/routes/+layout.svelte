@@ -1,35 +1,14 @@
-<script context="module">
+<script>
 	import { api } from '$lib/api';
-	import { user, config, pages, blogs } from '$lib/store';
+	import { config } from '$lib/store';
 	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
 	import { filter, take } from 'rxjs/operators';
+	import '../app.css';
+	import '../custom.css';
+	import Header from '$lib/Header.svelte';
+	import { page } from '$app/stores';
 
-	export const load = async ({ fetch }) => {
-		const resUser = api({ url: 'api/user', serverFetch: fetch });
-		const resConfig = api({ url: 'api/config', serverFetch: fetch });
-		const resPages = api({ url: 'api/pages', serverFetch: fetch });
-		const resBlogs = api({ url: 'api/blogs', serverFetch: fetch });
-
-		const data = await Promise.all([resUser, resConfig, resPages, resBlogs]);
-
-		if (data) {
-			user.next(data[0].body);
-			config.next(data[1].body);
-			pages.next(data[2].body);
-			blogs.next(data[3].body);
-
-			return {
-				props: {},
-				cache: {
-					maxage: 240
-				}
-			};
-		}
-
-		return {
-			error: new Error()
-		};
-	};
+	export let openHeader = '';
 
 	const setJSONLangs = (langs) => {
 		const translationsPath = import.meta.glob('../translations/*.json');
@@ -67,15 +46,7 @@
 
 	setJSONLangs(['en', 'sk']);
 	setLang();
-</script>
 
-<script>
-	import '../app.css';
-	import '../custom.css';
-	import Header from '$lib/Header.svelte';
-	import { page } from '$app/stores';
-
-	export let openHeader = '';
 
 	page.subscribe(() => {
 		openHeader = '';

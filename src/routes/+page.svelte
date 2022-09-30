@@ -1,26 +1,7 @@
-<script context="module">
-	import { pageWithContent, user } from '$lib/store';
-
-	export const load = async ({ fetch, url, params }) => {
-		const resPages = await api({ url: 'api/pages/home', serverFetch: fetch });
-
-		if (resPages) {
-			pageWithContent.next(resPages.body);
-			return { props: { url, params } };
-		}
-
-		return {
-			props: {
-				url,
-				params
-			}
-		};
-	};
-</script>
-
 <script>
 	import { _ } from 'svelte-i18n';
 	import { marked } from 'marked';
+	import { pageWithContent, user } from '$lib/store';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import { api } from '$lib/api';
 	import { onDestroy } from 'svelte';
