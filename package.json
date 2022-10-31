@@ -4,22 +4,22 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"start": "PORT=3000 node ./build/index.js",
+		"start": "PORT=7000 node ./build/index.js",
 		"preview": "vite preview",
 		"lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
 		"format": "prettier --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-node": "1.0.0-next.96",
-		"@sveltejs/kit": "1.0.0-next.505",
-		"dotenv": "^16.0.2",
-		"eslint": "^8.24.0",
+		"@sveltejs/adapter-node": "1.0.0-next.99",
+		"@sveltejs/kit": "1.0.0-next.528",
+		"dotenv": "^16.0.3",
+		"eslint": "^8.26.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"prettier": "~2.7.1",
 		"prettier-plugin-svelte": "^2.7.1",
 		"sass": "^1.55.0",
-		"svelte": "^3.50.1",
+		"svelte": "^3.52.0",
 		"svelte-i18n": "^3.4.0",
 		"svelte-preprocess": "^4.10.7"
 	},
