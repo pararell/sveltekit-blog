@@ -1,52 +1,11 @@
 <script>
-	import { api } from '$lib/api';
-	import { config } from '$lib/store';
-	import { register, init, isLoading, getLocaleFromNavigator } from 'svelte-i18n';
-	import { filter, take } from 'rxjs/operators';
+	import { isLoading } from 'svelte-i18n';
 	import '../app.css';
 	import '../custom.css';
 	import Header from '$lib/Header.svelte';
 	import { page } from '$app/stores';
 
 	export let openHeader = '';
-
-	const setJSONLangs = (langs) => {
-		const translationsPath = import.meta.glob('../translations/*.json');
-		langs.forEach((lang) => {
-			register(lang, async () => {
-				const langKey = Object.keys(translationsPath).find((l) => l.includes(lang));
-				if (langKey) {
-					return await translationsPath[langKey]();
-				}
-			});
-		});
-	};
-
-	const setLang = () => {
-		config
-			.pipe(
-				filter((configValue) => !!configValue),
-				take(1)
-			)
-			.subscribe((configValue) => {
-				const langFromNavigator = getLocaleFromNavigator();
-				const langFound =
-					langFromNavigator && ['en', 'sk'].includes(langFromNavigator) ? langFromNavigator : 'en';
-				const lang = configValue.lang || langFound;
-				init({
-					fallbackLocale: 'en',
-					initialLocale: configValue.lang || langFound
-				});
-
-				if (!configValue.lang) {
-					api({ url: 'api/lang', method: 'POST', data: { lang } });
-				}
-			});
-	};
-
-	setJSONLangs(['en', 'sk']);
-	setLang();
-
 
 	page.subscribe(() => {
 		openHeader = '';

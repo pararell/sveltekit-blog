@@ -1,18 +1,16 @@
 import { api } from '$lib/api';
 import { pageWithContent } from '$lib/store';
 
-export const load = async ({ fetch, url, params }) => {
+export const load = async ({ fetch, params }) => {
   const resPages = await api({ url: 'api/pages/home', serverFetch: fetch });
 
   if (resPages) {
     pageWithContent.next(resPages.body);
-    return { props: { url, params } };
+    return { params, home: resPages.body };
   }
 
   return {
-    props: {
-      url,
-      params
+      params,
+      home: null
     }
-  };
 };

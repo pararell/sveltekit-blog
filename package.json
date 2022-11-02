@@ -4,18 +4,22 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"start": "PORT=7000 node ./build/index.js",
+		"start": "PORT=3000 node ./build/index.js",
 		"preview": "vite preview",
 		"lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
 		"format": "prettier --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-node": "1.0.0-next.99",
-		"@sveltejs/kit": "1.0.0-next.528",
+		"@sveltejs/adapter-node": "1.0.0-next.100",
+		"@sveltejs/kit": "1.0.0-next.531",
+		"autoprefixer": "^10.4.13",
+    "postcss": "^8.4.18",
+		"postcss-load-config":"4.0.1",
 		"dotenv": "^16.0.3",
 		"eslint": "^8.26.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
+		"marked": "^4.1.0",
 		"prettier": "~2.7.1",
 		"prettier-plugin-svelte": "^2.7.1",
 		"sass": "^1.55.0",
@@ -25,7 +29,6 @@
 	},
 	"dependencies": {
 		"cookie-universal": "^2.2.2",
-		"marked": "^4.1.0",
 		"rxjs": "^7.5.7"
 	},
 	"type": "module"
