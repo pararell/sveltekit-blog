@@ -8,7 +8,9 @@
 	export let content = '';
 	let editor;
 	let error = '';
-	
+	let showMarkdown = false;
+	let showEditor = false;
+
 	$: {
 		if (editor) {
 			editor.value = content;
@@ -17,9 +19,7 @@
 
 	onMount(async () => {
 		try {
-			await import(
-				'https://cdnjs.cloudflare.com/ajax/libs/jodit/3.18.9/jodit.es2018.min.js'
-			);
+			await import('https://cdnjs.cloudflare.com/ajax/libs/jodit/3.18.9/jodit.es2018.min.js');
 
 			if (Jodit) {
 				editor = Jodit.make('#editor', {
@@ -119,7 +119,12 @@
 					</span>
 				{/if}
 				{#if item.type === 'markdown'}
-					<Markdown bind:content={item.value} />
+					<button class="btn" on:click={() => (showMarkdown = !showMarkdown)}>
+						Markdown toggle</button
+					>
+					<div class:hidden={showMarkdown === false}>
+						<Markdown bind:content={item.value} />
+					</div>
 				{/if}
 			{/each}
 		{/if}
@@ -132,7 +137,10 @@
 		<button class="btn submit"> Save</button>
 	</form>
 
-	<textarea id="editor" />
+	<button class="btn" on:click={() => (showEditor = !showEditor)}> Editor toggle</button>
+	<div class:hidden={showEditor === false}>
+		<textarea id="editor" />
+	</div>
 	<button class="btn submit" on:click={saveWithEditor}> Save with editor</button>
 
 	<button class="btn" on:click={prettifyHTML}> Prettify HTML</button>
@@ -167,5 +175,9 @@
 		display: block;
 		margin: 25px auto;
 		max-width: 500px;
+	}
+
+	.hidden {
+		display: none;
 	}
 </style>

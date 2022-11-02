@@ -120,4 +120,13 @@
 		width: 100%;
 		z-index: 100;
 	}
+
+	.btn-edit {
+		position: fixed;
+    top: 100px;
+    max-width: 100px;
+    right: 20px;
+    padding: 5px;
+    z-index: 100;
+	}
 </style>

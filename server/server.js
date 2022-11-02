@@ -115,7 +115,7 @@ app.use(urlencoded({ extended: true }));
 app.use(
 	cors({
 		credentials: true,
-		origin: [process.env.ORIGIN,process.env.ORIGIN2]
+		origin: [process.env.ORIGIN, process.env.ORIGIN2]
 	})
 );
 
