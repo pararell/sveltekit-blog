@@ -8,8 +8,6 @@ Server and Client run on the same port - it should check if the build exist and 
 
 <br/>
 
-<code>git clone https://github.com/pararell/svelte-blog.git </code>
-<br/>
 <code>npm i</code>
 <br/>
 <code>cd server npm i</code>
