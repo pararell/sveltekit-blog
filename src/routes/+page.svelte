@@ -1,44 +1,38 @@
 <script>
 	import { _ } from 'svelte-i18n';
 	import { marked } from 'marked';
-	import { pageWithContent, user } from '$lib/store';
+	import { user } from '$lib/store';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import { api } from '$lib/api';
-	import { onDestroy } from 'svelte';
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
 
 	let pageForm = Object.entries(pageModelForm);
 
-	let homePage;
-	let id = '';
+	export let data;
+	let {home} = data;
 
-	let pageSub = pageWithContent.subscribe((pageFound) => {
-		homePage = pageFound;
-
-		if (homePage) {
-			const pageKeys = Object.keys(pageFound);
-			id = pageFound.id;
+	$: {
+		if (home) {
+			const pageKeys = Object.keys(home);
 
 			pageForm = pageForm.map((keyval) => {
 				const found = pageKeys.includes(keyval[0]);
 				if (found) {
-					keyval[1].value = pageFound[keyval[0]];
+					keyval[1].value = home[keyval[0]];
 					return keyval;
 				}
 
 				return keyval;
 			});
 		}
-	});
-
-	onDestroy(() => pageSub.unsubscribe());
+	}
 
 	const submitForm = async (event) => {
 		const formData = event.detail;
 
 		if (formData.title) {
 			const data = {
-				id: parseFloat(id),
+				id: parseFloat(home.id),
 				...formData,
 				slug: formData.title
 					.toLowerCase()
@@ -49,24 +43,24 @@
 
 			const res = await api({ url: `api/pages/update`, method: 'PATCH', data });
 			if (res) {
-				pageWithContent.next(res.body);
+				home = res.body;
 			}
 		}
 	};
 </script>
 
 <svelte:head>
-	<title>{homePage ? homePage.metaTitle : $_('home')}</title>
+	<title>{home ? home.metaTitle : $_('home')}</title>
 </svelte:head>
 
-{#if homePage}
+{#if home}
 	<div class="homePage">
-		{@html marked(homePage.content)}
+		{@html marked(home.content)}
 	</div>
 
 	{#if $user?.email === ADMIN_EMAIL}
 		<div class="container">
-			<FormWithMarkdown form={pageForm} content={homePage.content} on:submitForm={submitForm} />
+			<FormWithMarkdown form={pageForm} content={home.content} on:submitForm={submitForm} />
 		</div>
 	{/if}
 {/if}
