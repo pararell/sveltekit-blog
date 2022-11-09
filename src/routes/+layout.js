@@ -1,36 +1,32 @@
+import { browser } from '$app/environment';
 import { api } from '$lib/api';
 import { user, config, pages, blogs } from '$lib/store';
-import { register, init, getLocaleFromNavigator } from 'svelte-i18n';
+import { setLocale, loadTranslations, } from '$lib/translations';
 import { filter, take } from 'rxjs/operators';
+// const setJSONLangs = (langs) => {
+// 	const translationsPath = import.meta.glob('../translations/*.json');
+// 	langs.forEach((lang) => {
+// 		register(lang, async () => {
+// 			const langKey = Object.keys(translationsPath).find((l) => l.includes(lang));
+// 			if (langKey) {
+// 				return await translationsPath[langKey]();
+// 			}
+// 		});
+// 	});
+// };
 
-const setJSONLangs = (langs) => {
-	const translationsPath = import.meta.glob('../translations/*.json');
-	langs.forEach((lang) => {
-		register(lang, async () => {
-			const langKey = Object.keys(translationsPath).find((l) => l.includes(lang));
-			if (langKey) {
-				return await translationsPath[langKey]();
-			}
-		});
-	});
-};
-
-const setLang = () => {
+const setLang = async() => {
 	config
 		.pipe(
 			filter((configValue) => !!configValue),
 			take(1)
 		)
-		.subscribe((configValue) => {
-			const langFromNavigator = getLocaleFromNavigator();
+		.subscribe(async (configValue) => {
 			const langFound =
-				langFromNavigator && ['en', 'sk'].includes(langFromNavigator) ? langFromNavigator : 'en';
+				browser && ['en', 'sk'].includes(navigator.language) ? navigator.language : 'en';
 			const lang = configValue.lang || langFound;
 
-			init({
-				fallbackLocale: 'en',
-				initialLocale: configValue.lang || langFound
-			});
+			setLocale(lang);
 
 			if (!configValue.lang) {
 				api({ url: 'api/lang', method: 'POST', data: { lang } });
@@ -38,30 +34,36 @@ const setLang = () => {
 		});
 };
 
-setJSONLangs(['en', 'sk']);
-setLang();
 
-export const load = async ({ fetch }) => {
+
+export const load = async ({ fetch, url }) => {
+	const {pathname} = url;
+	await loadTranslations( 'sk', pathname); 
+	await loadTranslations( 'en', pathname); 
+	setLang();
+
 	const resUser = api({ url: 'api/user', serverFetch: fetch });
 	const resConfig = api({ url: 'api/config', serverFetch: fetch });
 	const resPages = api({ url: 'api/pages', serverFetch: fetch });
 	const resBlogs = api({ url: 'api/blogs', serverFetch: fetch });
 
-	const data = await Promise.all([resUser, resConfig, resPages, resBlogs]);
+	const loadedData = await Promise.all([resUser, resConfig, resPages, resBlogs]);
 
-	if (data) {
-		user.next(data[0].body);
-		config.next(data[1].body);
-		pages.next(data[2].body);
-		blogs.next(data[3].body);
+	if (loadedData) {
+		user.next(loadedData[0].body);
+		config.next(loadedData[1].body);
+		pages.next(loadedData[2].body);
+		blogs.next(loadedData[3].body);
+
+		
 
 		return {
-			props: {},
-			cache: {
-				maxage: 240
+			user: loadedData[0].body,
+			config: loadedData[1].body,
+			pages: loadedData[2].body,
+			blogs: loadedData[3].body,
 			}
 		};
-	}
 
 	return {
 		error: new Error()

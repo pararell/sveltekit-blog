@@ -3,7 +3,7 @@
 	import { pages } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { pageModelForm } from '$lib/constants';
-	import { locale } from 'svelte-i18n';
+	import { locale } from '$lib/translations';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 
 	let pageForm = Object.entries(pageModelForm);

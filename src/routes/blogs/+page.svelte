@@ -24,7 +24,7 @@
 
 <script>
 	import Blogs from '$lib/Blogs.svelte';
-	import { _ } from 'svelte-i18n';
+	import { t } from '$lib/translations';
 </script>
 
 <svelte:head>
@@ -34,8 +34,8 @@
 {#if $blogs}
 	<section>
 		<div class="container">
-			<h1>{$_('blog_title')}</h1>
-			<h2>{$_('blog_subtitle')}</h2>
+			<h1>{$t('common.blog_title')}</h1>
+			<h2>{$t('common.blog_subtitle')}</h2>
 
 			<Blogs blogs={$blogs} />
 		</div>

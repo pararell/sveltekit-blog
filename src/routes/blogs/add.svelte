@@ -3,7 +3,7 @@
 	import { blogs, blog, user } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { blogModelForm } from '$lib/constants';
-	import { locale } from 'svelte-i18n';
+  import { locale } from '$lib/translations';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 
 	let blogForm = Object.entries(blogModelForm);

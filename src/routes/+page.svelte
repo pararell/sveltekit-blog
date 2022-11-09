@@ -1,18 +1,19 @@
 <script>
-	import { _ } from 'svelte-i18n';
 	import { marked } from 'marked';
 	import { user } from '$lib/store';
+	import { page } from '$app/stores';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import { api } from '$lib/api';
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
+	import { invalidate } from '$app/navigation';
 
 	let pageForm = Object.entries(pageModelForm);
+  let id = null;
 
-	export let data;
-	let {home} = data;
-
-	$: {
-		if (home) {
+	page.subscribe(pageVal => {
+		if (pageVal.data.home) {
+			const home = pageVal.data.home;
+			id = home.id;
 			const pageKeys = Object.keys(home);
 
 			pageForm = pageForm.map((keyval) => {
@@ -25,14 +26,14 @@
 				return keyval;
 			});
 		}
-	}
+	})
 
 	const submitForm = async (event) => {
 		const formData = event.detail;
 
 		if (formData.title) {
 			const data = {
-				id: parseFloat(home.id),
+				id: parseFloat(id),
 				...formData,
 				slug: formData.title
 					.toLowerCase()
@@ -43,24 +44,24 @@
 
 			const res = await api({ url: `api/pages/update`, method: 'PATCH', data });
 			if (res) {
-				home = res.body;
+				invalidate('app:home');
 			}
 		}
 	};
 </script>
 
 <svelte:head>
-	<title>{home ? home.metaTitle : $_('home')}</title>
+	<title>{$page.data?.home?.metaTitle}</title>
 </svelte:head>
 
-{#if home}
+{#if $page.data.home}
 	<div class="homePage">
-		{@html marked(home.content)}
+		{@html marked($page.data.home.content)}
 	</div>
 
 	{#if $user?.email === ADMIN_EMAIL}
 		<div class="container">
-			<FormWithMarkdown form={pageForm} content={home.content} on:submitForm={submitForm} />
+			<FormWithMarkdown form={pageForm} content={$page.data.home.content} on:submitForm={submitForm} />
 		</div>
 	{/if}
 {/if}

@@ -2,11 +2,11 @@
 	import { page } from '$app/stores';
 	import { api } from '$lib/api';
 	import { blogs, pages, pageWithContent, user } from '$lib/store';
-	import { _, locale, locales } from 'svelte-i18n';
+	import { t, locale, locales, setLocale } from '$lib/translations';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fromEvent } from 'rxjs';
 	import { map, filter } from 'rxjs/operators';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { HEADER_LOGO } from './constants';
 
 	const dispatch = createEventDispatcher();
@@ -56,7 +56,7 @@
 	);
 
 	const handleLanguageChange = async () => {
-		locale.set(selected);
+		setLocale(selected);
 		const langSet = await api({ url: 'api/lang', method: 'POST', data: { lang: selected } });
 		if (langSet) {
 			handleChange();
@@ -70,19 +70,10 @@
 	};
 
 	const handleChange = async () => {
-		const resBlogs = api({ url: 'api/blogs' });
-		const resPages = api({ url: 'api/pages' });
-		const resHomePage = api({ url: 'api/pages/home' });
-		const data = await Promise.all([resBlogs, resPages, resHomePage]);
-
-		if (data) {
-			blogs.next(data[0].body);
-			pages.next(data[1].body);
-			pageWithContent.next(data[2].body);
 			dispatch('toggle');
+			invalidateAll();
 			goto('/');
 			return;
-		}
 	};
 
 	onMount(() => {
@@ -120,7 +111,7 @@
 				</button>
 			</div>
 			<!-- <form id="header-search" style="opacity: 0;width:1px;">
-				<input type="search" name="s" placeholder="{$_('search')}&hellip;" class="draw" />
+				<input type="search" name="s" placeholder="{$t('search')}&hellip;" class="draw" />
 				<button type="submit">&rarr;</button>
 			</form> -->
 		</div>
@@ -130,7 +121,7 @@
 				<h4>MS</h4>
 				<ul>
 					<li class:active={$page.url.pathname === '/'}>
-						<a href="/">{$_('home')}</a>
+						<a href="/">{$t('common.home')}</a>
 					</li>
 					{#if $blogs?.length}
 						<li class:active={$page.url.pathname === '/blogs'}>
@@ -156,9 +147,6 @@
 							<a href="/" on:click={logout}>Logout</a>
 						</li>
 					{/if}
-					<!-- <li class:active={$page.url.pathname === '/contact'}>
-						<a href="/contact">{$_('contact')}</a>
-					</li> -->
 				</ul>
 			</div>
 			{#if $blogs?.length}
@@ -175,7 +163,7 @@
 			{/if}
 			{#if $categories?.length}
 				<div class="col">
-					<h4>{$_('categories')}</h4>
+					<h4>{$t('common.categories')}</h4>
 					<ul>
 						{#each $categories as category}
 							<li><a href="/blogs/category/{category}">{category}</a></li>

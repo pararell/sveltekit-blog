@@ -22,7 +22,9 @@ export const pageModel = {
 	image: 'string',
 	url: 'string',
 	position: 'string',
-	metaTitle: 'string'
+	metaTitle: 'string',
+	hidden: 'string',
+	onlyHTML: 'string'
 };
 
 export const blogModel = {

@@ -4,7 +4,7 @@
 		email = '',
 		result = '';
 	import { api } from '$lib/api';
-	import { _ } from 'svelte-i18n';
+	import { t } from '$lib/translations';
 
 	async function handleSubmit() {
 		const data = {
@@ -26,7 +26,7 @@
 	<div class="col">
 		<form class="content" on:submit|preventDefault={handleSubmit}>
 			<span class="field">
-				<label for="subject">{$_('subject')}</label>
+				<label for="subject">{$t('common.subject')}</label>
 				<input id="subject" name="subject" type="text" bind:value={subject} />
 			</span>
 			<span class="field">
@@ -34,10 +34,10 @@
 				<input id="email" name="email" type="text" bind:value={email} />
 			</span>
 			<span class="field">
-				<label for="note">{$_('note')}</label>
+				<label for="note">{$t('common.note')}</label>
 				<textarea id="note" name="note" bind:value={note} />
 			</span>
-			<button disabled={!email || !note || !subject} type="submit" class="btn">{$_('send')}</button>
+			<button disabled={!email || !note || !subject} type="submit" class="btn">{$t('common.send')}</button>
 		</form>
 		{#if result}
 			<span class="result">

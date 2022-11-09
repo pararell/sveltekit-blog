@@ -29,10 +29,18 @@ export const pageModelForm = {
 		type: 'text',
 		value: ''
 	},
+	hidden: {
+		type: 'text',
+		value: 'false'
+	},
+	onlyHTML: {
+		type: 'text',
+		value: 'false'
+	},
 	content: {
 		type: 'markdown',
 		value: '# T'
-	}
+	},
 };
 
 export const blogModelForm = {
