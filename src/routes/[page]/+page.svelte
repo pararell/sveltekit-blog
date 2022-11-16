@@ -1,39 +1,36 @@
 <script>
 	import { marked } from 'marked';
-	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import ContactForm from '$lib/ContactForm.svelte';
 	import { api } from '$lib/api';
-	import { onDestroy } from 'svelte';
-	import { pages, pageWithContent, user } from '$lib/store';
+	import { page } from '$app/stores';
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { onDestroy } from 'svelte';
 
 	let pageForm = Object.entries(pageModelForm);
 	let id = '';
-	let pageShow;
 	let showEdit = true;
 	export let data;
 
-	let pageSub = pageWithContent.subscribe((pageFound) => {
-		pageShow = pageFound;
-
-		if (pageShow) {
-			const pageKeys = Object.keys(pageFound);
-			id = pageFound.id;
+	let unsubscribe = page.subscribe(pageVal => {
+		if (pageVal.data.pageWithContent) {
+			const pageWithContent = pageVal.data.pageWithContent;
+			id = pageWithContent.id;
+			const pageKeys = Object.keys(pageWithContent);
 
 			pageForm = pageForm.map((keyval) => {
 				const found = pageKeys.includes(keyval[0]);
 				if (found) {
-					keyval[1].value = pageFound[keyval[0]];
+					keyval[1].value = pageWithContent[keyval[0]];
 					return keyval;
 				}
 
 				return keyval;
 			});
 		}
-	});
+	})
 
-	onDestroy(() => pageSub.unsubscribe());
+	onDestroy(() => unsubscribe());
 
 	const submitForm = async (event) => {
 		const formData = event.detail;
@@ -51,7 +48,7 @@
 
 			const res = await api({ url: `api/pages/update`, method: 'PATCH', data });
 			if (res) {
-				pageWithContent.next(res.body);
+				invalidateAll();
 			}
 		}
 	};
@@ -64,7 +61,7 @@
 				const resPages = await api({ url: `api/pages/` });
 
 				if (resPages) {
-					pages.next(resPages.body);
+					invalidateAll();
 					goto('/');
 				}
 			}
@@ -73,11 +70,11 @@
 </script>
 
 <svelte:head>
-	<title>{$pageWithContent?.metaTitle}</title>
+	<title>{$page.data?.pageWithContent?.metaTitle}</title>
 </svelte:head>
 
-{#if $pageWithContent}
-	{@html marked($pageWithContent.content)}
+{#if $page.data?.pageWithContent}
+	{@html marked($page.data.pageWithContent.content)}
 
 	{#if data.paramsPage === 'contact'}
 		<div class="container">
@@ -85,15 +82,17 @@
 		</div>
 	{/if}
 
-	{#if $user?.email === ADMIN_EMAIL && $pageWithContent.url !== '/'}
+	{#if $page.data?.user?.email === ADMIN_EMAIL && $page.data?.pageWithContent.url !== '/'}
 		{#if showEdit}
 			<div class="edit-wrap">
 				<div class="container">
-					<FormWithMarkdown
-						form={pageForm}
-						content={$pageWithContent.content}
-						on:submitForm={submitForm}
-					/>
+					{#await import("$lib/FormWithMarkdown.svelte") then FormWithMarkdown}
+							<FormWithMarkdown.default
+							form={pageForm}
+							content={$page.data?.pageWithContent.content}
+							on:submitForm={submitForm}
+						/>
+					{/await}
 
 					<form on:submit|preventDefault={removePage}>
 						<input type="hidden" name="id" value={id} />

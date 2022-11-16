@@ -11,7 +11,7 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "1.0.0-next.100",
-		"@sveltejs/kit": "1.0.0-next.539",
+		"@sveltejs/kit": "1.0.0-next.546",
 		"autoprefixer": "^10.4.13",
 		"postcss": "^8.4.18",
 		"postcss-load-config": "4.0.1",
@@ -23,13 +23,12 @@
 		"prettier": "~2.7.1",
 		"prettier-plugin-svelte": "^2.7.1",
 		"sass": "^1.55.0",
-		"svelte": "^3.52.0",
+		"svelte": "^3.53.1",
 		"sveltekit-i18n": "^2.2.2",
 		"svelte-preprocess": "^4.10.7"
 	},
 	"dependencies": {
-		"cookie-universal": "^2.2.2",
-		"rxjs": "^7.5.7"
+		"cookie-universal": "^2.2.2"
 	},
 	"type": "module"
 }

@@ -1,11 +1,8 @@
 <script>
 	import { page } from '$app/stores';
 	import { api } from '$lib/api';
-	import { blogs, pages, pageWithContent, user } from '$lib/store';
 	import { t, locale, locales, setLocale } from '$lib/translations';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { fromEvent } from 'rxjs';
-	import { map, filter } from 'rxjs/operators';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { HEADER_LOGO } from './constants';
 
@@ -13,12 +10,12 @@
 
 	let selected;
 	export let active = '';
+	export let pages;
+	export let blogs;
 
-	let pagesInMenu = pages.pipe(
-		filter(Boolean),
-		map((allPages) => {
-			const basicPages = allPages.filter((onePage) => onePage.url.split('/').length <= 1);
-			const subPages = allPages.filter((onePage) => onePage.url.split('/').length > 1);
+	$: pagesInMenu = () => {
+			const basicPages = pages.filter((onePage) => onePage.url.split('/').length <= 1);
+			const subPages = pages.filter((onePage) => onePage.url.split('/').length > 1);
 			return basicPages
 				.sort((a, b) => +a.position - +b.position)
 				.map((basicPage) => {
@@ -33,8 +30,7 @@
 					}
 					return basicPage;
 				});
-		})
-	);
+			};
 
 	locale.subscribe((value) => {
 		selected = value;
@@ -43,17 +39,15 @@
 	const toggleMenu = () => {
 		dispatch('toggle');
 	};
-
-	let categories = blogs.pipe(
-		map((blogs) => {
+ 
+	$: categories = () => {
 			if (!blogs) {
 				return [];
 			}
 			return [
 				...new Set(blogs.map((blog) => blog.categories.split(',').map((cat) => cat.trim())).flat())
 			];
-		})
-	);
+	};
 
 	const handleLanguageChange = async () => {
 		setLocale(selected);
@@ -77,7 +71,7 @@
 	};
 
 	onMount(() => {
-		fromEvent(document.getElementById('main'), 'click').subscribe(() => {
+		document.getElementById("main").addEventListener("click", () => {
 			dispatch('toggle', {
 				action: 'close'
 			});
@@ -89,10 +83,10 @@
 	<div class="container">
 		<div class="header-menu">
 			<a href="/" class="logo">{HEADER_LOGO}</a>
-			{#if $blogs?.length}
+			{#if blogs?.length}
 				<a class="menu-link" class:active={$page.url.pathname === '/blogs'} href="/blogs">Blog</a>
 			{/if}
-			{#each $pagesInMenu as pageToShow (pageToShow.id)}
+			{#each pagesInMenu() as pageToShow (pageToShow.id)}
 				{#if pageToShow.url !== '/' && !pageToShow.subpage}
 					<a
 						rel={pageToShow.description === 'reload' ? 'external' : ''}
@@ -123,12 +117,12 @@
 					<li class:active={$page.url.pathname === '/'}>
 						<a href="/">{$t('common.home')}</a>
 					</li>
-					{#if $blogs?.length}
+					{#if blogs?.length}
 						<li class:active={$page.url.pathname === '/blogs'}>
 							<a href="/blogs">Blog</a>
 						</li>
 					{/if}
-					{#each $pagesInMenu as pageToShow (pageToShow.id)}
+					{#each pagesInMenu() as pageToShow (pageToShow.id)}
 						{#if pageToShow.url !== '/'}
 							<li class:active={$page.url.pathname === pageToShow.url}>
 								<a href="/{pageToShow.url}">{pageToShow.title}</a>
@@ -142,30 +136,30 @@
 							</li>
 						{/if}
 					{/each}
-					{#if $user?.email}
+					{#if $page.data?.user?.email}
 						<li>
 							<a href="/" on:click={logout}>Logout</a>
 						</li>
 					{/if}
 				</ul>
 			</div>
-			{#if $blogs?.length}
+			{#if blogs?.length}
 				<div class="col">
 					<h4>Blog</h4>
 					<ul>
-						{#if $blogs}
-							{#each $blogs.slice(0, 3) as blog}
+						{#if blogs}
+							{#each blogs.slice(0, 3) as blog}
 								<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
 							{/each}
 						{/if}
 					</ul>
 				</div>
 			{/if}
-			{#if $categories?.length}
+			{#if categories().length}
 				<div class="col">
 					<h4>{$t('common.categories')}</h4>
 					<ul>
-						{#each $categories as category}
+						{#each categories() as category}
 							<li><a href="/blogs/category/{category}">{category}</a></li>
 						{/each}
 					</ul>

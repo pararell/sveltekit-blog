@@ -1,7 +1,6 @@
 <script>
 	import { api } from '$lib/api';
-	import { user } from '$lib/store';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 
 	let email = '';
 	let password = '';
@@ -17,7 +16,7 @@
 			error = res.body;
 			return;
 		}
-		user.next(res.body);
+		invalidateAll();
 		goto('/blogs');
 	};
 </script>

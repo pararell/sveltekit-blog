@@ -1,19 +1,16 @@
 <script>
 	import { api } from '$lib/api';
-	import { blogs, blog, user } from '$lib/store';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { blogModelForm } from '$lib/constants';
   import { locale } from '$lib/translations';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 
 	let blogForm = Object.entries(blogModelForm);
+	export let data;
+	const {user} = data;
 
 	const handleRedirect = async () => {
-		const resBlogs = await api({ url: 'api/blogs', serverFetch: fetch });
-
-		if (resBlogs) {
-			blogs.next(resBlogs.body);
-		}
+		invalidateAll();
 	};
 
 	const submitForm = async (event) => {
@@ -27,13 +24,12 @@
 					.replace(/[\u0300-\u036f]/g, '')
 					.replace(/[^\w]/gi, '-'),
 				categories: formData.categories ? formData.categories.split(',') : [],
-				author: user.value.email,
+				author: user.email,
 				lang: $locale,
 				comments: []
 			};
 
 			const res = await api({ url: `api/blogs/create`, method: 'POST', data });
-			blog.next(res.body);
 			handleRedirect();
 			goto('/blogs');
 		}

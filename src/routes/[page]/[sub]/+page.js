@@ -1,4 +1,3 @@
-import { pageWithContent } from '$lib/store';
 import { api } from '$lib/api';
 
 export const load = async ({ fetch, url, params }) => {
@@ -8,11 +7,11 @@ export const load = async ({ fetch, url, params }) => {
 	});
 
 	if (resPage) {
-		pageWithContent.next(resPage.body);
-		return { url, params };
+		return { url, params, pageWithContent: resPage.body };
 	}
 
 	return {
+		pageWithContent: null,
 		url,
 		params
 	};

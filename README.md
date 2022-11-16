@@ -31,7 +31,6 @@ Set .env in main directory and in /server
 - Use **express-session** for the session management in Express
 - Use language switch with **svelte-i18n**
 - Pages and Blogs creation with **marked**
-- Use **rxjs** for the Store and some subscriptions(optional)
   <br>
   
   test login - https://playscript.sk/auth/login - test@playscript.sk : test

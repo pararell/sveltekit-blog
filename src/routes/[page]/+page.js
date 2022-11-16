@@ -1,4 +1,3 @@
-import { pageWithContent } from '$lib/store';
 import { api } from '$lib/api';
 export let csr = true;
 
@@ -11,11 +10,11 @@ export const load = async ({ fetch, params }) => {
 		} else {
 			csr = true;
 		}
-		pageWithContent.next(resPage.body);
-		return { paramsPage: params.page };
+		return { pageWithContent: resPage.body, paramsPage: params.page };
 	}
 
 	return {
+		pageWithContent: null,
 		paramsPage: params.page
 	};
 };

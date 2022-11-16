@@ -1,6 +1,8 @@
-import { fromEvent } from 'rxjs';
-
-export const setDisqus = (config) => {
+export const setDisqus = (config, host, slug) => {
+	if (window.DISQUS) {
+		resetDisqus(host, slug);
+		return;
+	}
 	const dsq = document.createElement('script');
 	dsq.type = 'text/javascript';
 	dsq.src = config.disqusSrc;
@@ -15,19 +17,25 @@ export const setDisqus = (config) => {
 		this.language = 'en';
 	};
 
-	return fromEvent(dsq, 'load');
+	dsq.addEventListener("load", () => {
+		resetDisqus(host, slug);
+	});
 };
 
-export const resetDisqus = (page) => {
-	const DISQUS = window.DISQUS || { reset: () => {} };
-	const host = page.host;
+export const resetDisqus = (host, slug) => {
 
-	DISQUS.reset({
-		reload: true,
-		config: function () {
-			this.page.url = 'https://' + host + '/blogs/' + page.attributes.slug;
-			this.page.identifier = page.attributes.slug;
-			this.language = 'en';
-		}
-	});
+	setTimeout(() => {
+		const DISQUS = window.DISQUS || { reset: () => {} };
+	
+		DISQUS.reset({
+			reload: true,
+			config: function () {
+				this.page.url = 'https://' + host + '/blogs/' + slug;
+				this.page.identifier = slug;
+				this.language = 'en';
+			}
+		});
+	}, 200)
+
+
 };

@@ -1,7 +1,6 @@
 <script>
 	import { api } from '$lib/api';
-	import { pages } from '$lib/store';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { pageModelForm } from '$lib/constants';
 	import { locale } from '$lib/translations';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
@@ -9,11 +8,7 @@
 	let pageForm = Object.entries(pageModelForm);
 
 	const handleRedirect = async () => {
-		const resPages = await api({ url: 'api/pages', serverFetch: fetch });
-
-		if (resPages) {
-			pages.next(resPages.body);
-		}
+		invalidateAll();
 	};
 
 	const submitForm = async (event) => {

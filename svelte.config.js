@@ -7,12 +7,6 @@ const config = {
 		adapter: node({ out: 'build' }),
 		serviceWorker: {
 			register: false
-		},
-		files: {
-			assets: 'static',
-			lib: 'src/lib',
-			routes: 'src/routes',
-			appTemplate: 'src/app.html'
 		}
 	}
 };

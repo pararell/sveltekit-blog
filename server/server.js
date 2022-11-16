@@ -122,7 +122,7 @@ app.use(
 );
 
 app.use(json({ limit: '10mb' }));
-app.use(compression({ threshold: 0 }));
+app.use(compression());
 
 app.get('/api/user', async (req, res) => {
 	try {

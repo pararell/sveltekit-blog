@@ -1,71 +1,41 @@
-import { browser } from '$app/environment';
 import { api } from '$lib/api';
-import { user, config, pages, blogs } from '$lib/store';
-import { setLocale, loadTranslations, } from '$lib/translations';
-import { filter, take } from 'rxjs/operators';
-// const setJSONLangs = (langs) => {
-// 	const translationsPath = import.meta.glob('../translations/*.json');
-// 	langs.forEach((lang) => {
-// 		register(lang, async () => {
-// 			const langKey = Object.keys(translationsPath).find((l) => l.includes(lang));
-// 			if (langKey) {
-// 				return await translationsPath[langKey]();
-// 			}
-// 		});
-// 	});
-// };
-
-const setLang = async() => {
-	config
-		.pipe(
-			filter((configValue) => !!configValue),
-			take(1)
-		)
-		.subscribe(async (configValue) => {
-			const langFound =
-				browser && ['en', 'sk'].includes(navigator.language) ? navigator.language : 'en';
-			const lang = configValue.lang || langFound;
-
-			setLocale(lang);
-
-			if (!configValue.lang) {
-				api({ url: 'api/lang', method: 'POST', data: { lang } });
-			}
-		});
-};
+import { loadTranslations, locale } from '$lib/translations';
 
 
-
-export const load = async ({ fetch, url }) => {
+export async function load({ fetch, url }) {
+	let loc = locale.get();
 	const {pathname} = url;
-	await loadTranslations( 'sk', pathname); 
-	await loadTranslations( 'en', pathname); 
-	setLang();
+	if (loc) {
+		await loadTranslations(loc, pathname); 
+	} else {
+		await loadTranslations('sk', pathname);
+		await loadTranslations('en', pathname);
+	}
 
-	const resUser = api({ url: 'api/user', serverFetch: fetch });
-	const resConfig = api({ url: 'api/config', serverFetch: fetch });
-	const resPages = api({ url: 'api/pages', serverFetch: fetch });
-	const resBlogs = api({ url: 'api/blogs', serverFetch: fetch });
+	const fetchUser = async () => {
+		const response = await api({ url: 'api/user', serverFetch: fetch });
+		return response.body;
+	}
 
-	const loadedData = await Promise.all([resUser, resConfig, resPages, resBlogs]);
+	const fetchConfig = async () => {
+		const response = await api({ url: 'api/config', serverFetch: fetch });
+		return response.body;
+	}
 
-	if (loadedData) {
-		user.next(loadedData[0].body);
-		config.next(loadedData[1].body);
-		pages.next(loadedData[2].body);
-		blogs.next(loadedData[3].body);
+	const fetchPages = async () => {
+		const response = await api({ url: 'api/pages', serverFetch: fetch });
+		return response.body;
+	}
 
-		
+	const fetchBlogs = async () => {
+		const response = await api({ url: 'api/blogs', serverFetch: fetch });
+		return response.body;
+	}
 
 		return {
-			user: loadedData[0].body,
-			config: loadedData[1].body,
-			pages: loadedData[2].body,
-			blogs: loadedData[3].body,
+			user: fetchUser(),
+			config: fetchConfig(),
+			pages: fetchPages(),
+			blogs: fetchBlogs(),
 			}
-		};
-
-	return {
-		error: new Error()
-	};
 };

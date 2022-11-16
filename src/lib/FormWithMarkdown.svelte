@@ -3,7 +3,8 @@
 	import Markdown from '$lib/Markdown.svelte';
 	import { inputTypes } from './constants';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { user } from './store';
+	import { page } from '$app/stores';
+	
 	export let form;
 	export let content = '';
 	let editor;
@@ -85,7 +86,7 @@
 	};
 </script>
 
-{#if $user?.email === ADMIN_EMAIL}
+{#if $page.data?.user?.email === ADMIN_EMAIL}
 	<form class="form" on:submit|preventDefault={handleSubmit}>
 		{#if form}
 			{#each form as [name, item]}

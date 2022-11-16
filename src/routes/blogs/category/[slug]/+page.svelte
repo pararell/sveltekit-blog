@@ -1,7 +1,6 @@
 <script>
 	import Blogs from '$lib/Blogs.svelte';
 	import { page } from '$app/stores';
-	import { blogs } from '$lib/store';
 </script>
 
 <svelte:head>
@@ -11,7 +10,7 @@
 <section>
 	<div class="container">
 		<h1>{$page?.params?.slug}</h1>
-		<Blogs category={$page?.params?.slug} blogs={$blogs} />
+		<Blogs category={$page?.params?.slug} blogs={$page.data?.blogs} />
 	</div>
 </section>
 

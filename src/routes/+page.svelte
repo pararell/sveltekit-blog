@@ -1,16 +1,14 @@
 <script>
-	import { marked } from 'marked';
-	import { user } from '$lib/store';
 	import { page } from '$app/stores';
-	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import { api } from '$lib/api';
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
 	import { invalidate } from '$app/navigation';
+	import { onDestroy } from 'svelte';
 
 	let pageForm = Object.entries(pageModelForm);
   let id = null;
 
-	page.subscribe(pageVal => {
+	let unsubscribe = page.subscribe(pageVal => {
 		if (pageVal.data.home) {
 			const home = pageVal.data.home;
 			id = home.id;
@@ -27,6 +25,8 @@
 			});
 		}
 	})
+
+	onDestroy(() => unsubscribe());
 
 	const submitForm = async (event) => {
 		const formData = event.detail;
@@ -56,12 +56,14 @@
 
 {#if $page.data.home}
 	<div class="homePage">
-		{@html marked($page.data.home.content)}
+		{@html $page.data.home.content}
 	</div>
 
-	{#if $user?.email === ADMIN_EMAIL}
+	{#if $page.data?.user?.email === ADMIN_EMAIL}
+	{#await import("$lib/FormWithMarkdown.svelte") then FormWithMarkdown}
 		<div class="container">
-			<FormWithMarkdown form={pageForm} content={$page.data.home.content} on:submitForm={submitForm} />
+			<FormWithMarkdown.default form={pageForm} content={$page.data.home.content} on:submitForm={submitForm} />
 		</div>
+	{/await}
 	{/if}
 {/if}

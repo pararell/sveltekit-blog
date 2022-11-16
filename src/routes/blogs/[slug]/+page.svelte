@@ -2,28 +2,27 @@
 	import { marked } from 'marked';
 	import Comments from '$lib/Comments.svelte';
 	import { api } from '$lib/api';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { blogModelForm, ADMIN_EMAIL } from '$lib/constants';
-	import { onDestroy } from 'svelte';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
-	import { blog, blogs, user } from '$lib/store';
+	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
+	import { onDestroy } from 'svelte';
 
 	export let data;
 	let id = '';
 	let blogForm = Object.entries(blogModelForm);
-	let blogShow;
 
-	let blogSub = blog.subscribe((blogFound) => {
-		blogShow = blogFound;
-
-		if (blogShow) {
-			const blogKeys = Object.keys(blogFound);
-			id = blogFound.id;
+	let unsubscribe = page.subscribe((pageVal) => {
+		if (pageVal.data.blog) {
+			const blog = pageVal.data.blog;
+			id = blog.id;
+			const pageKeys = Object.keys(blog);
 
 			blogForm = blogForm.map((keyval) => {
-				const found = blogKeys.includes(keyval[0]);
+				const found = pageKeys.includes(keyval[0]);
 				if (found) {
-					keyval[1].value = blogFound[keyval[0]];
+					keyval[1].value = blog[keyval[0]];
 					return keyval;
 				}
 
@@ -32,7 +31,7 @@
 		}
 	});
 
-	onDestroy(() => blogSub.unsubscribe());
+	onDestroy(() => unsubscribe());
 
 	const submitForm = async (event) => {
 		const formData = event.detail;
@@ -50,13 +49,8 @@
 			const res = await api({ url: `api/blogs/update`, method: 'PATCH', data });
 
 			if (res) {
-				blog.next(res.body);
+				invalidateAll();
 				goto('/blogs/' + res.body.slug);
-
-				const resBlogs = await api({ url: `api/blogs/` });
-				if (resBlogs) {
-					blogs.next(resBlogs.body);
-				}
 			}
 		}
 	};
@@ -69,8 +63,7 @@
 				const resBlogs = await api({ url: `api/blogs/` });
 
 				if (resBlogs) {
-					blogs.next(resBlogs.body);
-					goto('/blogs');
+					invalidateAll();
 				}
 			}
 		}
@@ -78,21 +71,25 @@
 </script>
 
 <svelte:head>
-	<title>{$blog?.title}</title>
+	<title>{$page.data?.blog?.title}</title>
 </svelte:head>
 
-{#if $blog}
+{#if $page.data?.blog}
 	<div class="container">
-		<h1>{$blog.title}</h1>
+		<h1>{$page.data?.blog.title}</h1>
 
 		<div class="content">
-			{@html marked($blog.content)}
+			{@html marked($page.data?.blog.content)}
 		</div>
 
-		<span class="date">{new Date($blog.date).toLocaleDateString()}</span>
+		<span class="date">{new Date($page.data?.blog.date).toLocaleDateString()}</span>
 
-		{#if $user?.email === ADMIN_EMAIL}
-			<FormWithMarkdown form={blogForm} content={$blog.content} on:submitForm={submitForm} />
+		{#if $page.data?.user?.email === ADMIN_EMAIL}
+			<FormWithMarkdown
+				form={blogForm}
+				content={$page.data?.blog.content}
+				on:submitForm={submitForm}
+			/>
 
 			<form on:submit|preventDefault={removeBlog}>
 				<input type="hidden" name="id" value={id} />
@@ -100,7 +97,10 @@
 			</form>
 		{/if}
 
-		<Comments host={data.url.host} slug={data.params.slug} />
+		{#if browser}
+			<Comments host={data.url.host} slug={data.params.slug} />
+		{/if}
+
 	</div>
 {/if}
 
