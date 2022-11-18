@@ -1,13 +1,9 @@
 # Blog made with SvelteKit
 
 ## Svelte blog which using Markdown, FE Svelte - SvelteKit, BE Express + SQLite
-
-Server and Client run on the same port - it should check if the build exist and if yes, it will include SSR Sveltekit
 <br/>
-` if (fs.existsSync('../build/handler.js')) { const {handler} = await import('../build/handler.js'); app.use(handler); }`
-
+Pages and blogs are dynamically created with Markdown or Joddit and they are server-side rendered then - for SEO and client-side for interaction. Option for only HTML without Javascript was added, but header has to be updated to work without Javascript too - no partial hydratation for SvelteKit now :(
 <br/>
-
 <code>npm i</code>
 <br/>
 <code>cd server npm i</code>
@@ -25,6 +21,10 @@ Set .env in main directory and in /server
 <br/>
 <code>cd server npm run dev</code>
 <br/>
+Server and Client run on the same port - it should check if the build exist and if yes, it will include SSR Sveltekit
+<br/>
+` if (fs.existsSync('../build/handler.js')) { const {handler} = await import('../build/handler.js'); app.use(handler); }`
+
 <br/>
 
 - Use **jsonwebtoken** for the Authorization
