@@ -6,29 +6,20 @@
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { onDestroy } from 'svelte';
+	import { preparePageForm } from '$lib/utils';
 
 	let pageForm = Object.entries(pageModelForm);
 	let id = '';
 	let showEdit = true;
 	export let data;
 
-	let unsubscribe = page.subscribe(pageVal => {
+	let unsubscribe = page.subscribe((pageVal) => {
 		if (pageVal.data.pageWithContent) {
 			const pageWithContent = pageVal.data.pageWithContent;
 			id = pageWithContent.id;
-			const pageKeys = Object.keys(pageWithContent);
-
-			pageForm = pageForm.map((keyval) => {
-				const found = pageKeys.includes(keyval[0]);
-				if (found) {
-					keyval[1].value = pageWithContent[keyval[0]];
-					return keyval;
-				}
-
-				return keyval;
-			});
+			pageForm = preparePageForm(pageForm, pageWithContent);
 		}
-	})
+	});
 
 	onDestroy(() => unsubscribe());
 
@@ -86,8 +77,8 @@
 		{#if showEdit}
 			<div class="edit-wrap">
 				<div class="container">
-					{#await import("$lib/FormWithMarkdown.svelte") then FormWithMarkdown}
-							<FormWithMarkdown.default
+					{#await import('$lib/FormWithMarkdown.svelte') then FormWithMarkdown}
+						<FormWithMarkdown.default
 							form={pageForm}
 							content={$page.data?.pageWithContent.content}
 							on:submitForm={submitForm}
@@ -122,10 +113,10 @@
 
 	.btn-edit {
 		position: fixed;
-    top: 100px;
-    max-width: 100px;
-    right: 20px;
-    padding: 5px;
-    z-index: 100;
+		top: 100px;
+		max-width: 100px;
+		right: 20px;
+		padding: 5px;
+		z-index: 100;
 	}
 </style>

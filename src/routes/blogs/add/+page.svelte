@@ -2,12 +2,12 @@
 	import { api } from '$lib/api';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { blogModelForm } from '$lib/constants';
-  import { locale } from '$lib/translations';
+	import { locale } from '$lib/i18n';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 
 	let blogForm = Object.entries(blogModelForm);
 	export let data;
-	const {user} = data;
+	const { user } = data;
 
 	const handleRedirect = async () => {
 		invalidateAll();
@@ -30,8 +30,11 @@
 			};
 
 			const res = await api({ url: `api/blogs/create`, method: 'POST', data });
-			handleRedirect();
-			goto('/blogs');
+			if (res) {
+				handleRedirect();
+				goto('/blogs');
+			}
+
 		}
 	};
 </script>

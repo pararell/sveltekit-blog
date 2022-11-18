@@ -2,7 +2,7 @@
 	import { api } from '$lib/api';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { pageModelForm } from '$lib/constants';
-	import { locale } from '$lib/translations';
+	import { locale } from '$lib/i18n';
 	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 
 	let pageForm = Object.entries(pageModelForm);

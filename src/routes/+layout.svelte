@@ -4,7 +4,7 @@
 	import Header from '$lib/Header.svelte';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
-	import { setLocale } from '$lib/translations';
+	import { locale } from '$lib/i18n';
 	import { api } from '$lib/api';
 
 	export let openHeader = '';
@@ -12,14 +12,15 @@
 	page.subscribe((p) => {
 		openHeader = '';
 		if (p.data.config) {
-			const langFound = browser && ['en', 'sk'].includes(navigator.language) ? navigator.language : 'en';
+			const langFound =
+				browser && ['en', 'sk'].includes(navigator.language) ? navigator.language : 'en';
 			const lang = p.data.config.lang || langFound;
 
 			if (!p.data.config.lang) {
 				api({ url: 'api/lang', method: 'POST', data: { lang } });
 			}
 
-			setLocale(lang);
+			locale.set(lang);
 		}
 	});
 
@@ -35,17 +36,22 @@
 		}
 	};
 </script>
-	<div class="header-wrap">
-		<Header on:toggle={toggleMenu} active={openHeader} pages={$page.data?.pages} blogs={$page.data?.blogs} />
-	</div>
-	<main id="main">
-		<slot />
-	</main>
 
-	<footer>
-		<p />
-	</footer>
+<div class="header-wrap">
+	<Header
+		on:toggle={toggleMenu}
+		active={openHeader}
+		pages={$page.data?.pages}
+		blogs={$page.data?.blogs}
+	/>
+</div>
+<main id="main">
+	<slot />
+</main>
 
+<footer>
+	<p />
+</footer>
 
 <style>
 	main {

@@ -1,6 +1,5 @@
 <script>
 	import Blogs from '$lib/Blogs.svelte';
-	import { t } from '$lib/translations';
 	import { page } from '$app/stores';
 </script>
 
@@ -11,8 +10,7 @@
 {#if $page.data?.blogs}
 	<section>
 		<div class="container">
-			<h1>{$t('common.blog_title')}</h1>
-			<h2>{$t('common.blog_subtitle')}</h2>
+			<h1>Blog</h1>
 
 			<Blogs blogs={$page.data.blogs} />
 		</div>
@@ -22,8 +20,5 @@
 <style>
 	h1 {
 		margin-bottom: 0;
-	}
-	h2 {
-		text-align: center;
 	}
 </style>

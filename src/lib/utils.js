@@ -17,16 +17,15 @@ export const setDisqus = (config, host, slug) => {
 		this.language = 'en';
 	};
 
-	dsq.addEventListener("load", () => {
+	dsq.addEventListener('load', () => {
 		resetDisqus(host, slug);
 	});
 };
 
 export const resetDisqus = (host, slug) => {
-
 	setTimeout(() => {
 		const DISQUS = window.DISQUS || { reset: () => {} };
-	
+
 		DISQUS.reset({
 			reload: true,
 			config: function () {
@@ -35,7 +34,18 @@ export const resetDisqus = (host, slug) => {
 				this.language = 'en';
 			}
 		});
-	}, 200)
+	}, 200);
+};
 
+export const preparePageForm = (pageForm, page) => {
+	const pageKeys = Object.keys(page);
+	return pageForm.map((keyval) => {
+		const found = pageKeys.includes(keyval[0]);
+		if (found) {
+			keyval[1].value = page[keyval[0]];
+			return keyval;
+		}
 
+		return keyval;
+	});
 };

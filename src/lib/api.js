@@ -1,7 +1,4 @@
 import { API_URL } from './constants';
-import Cookie from 'cookie-universal';
-const cookies = Cookie();
-const cookiesRes = cookies.getAll();
 const baseUrl = API_URL;
 
 export async function api({ url, method, data, serverFetch }) {
@@ -9,8 +6,7 @@ export async function api({ url, method, data, serverFetch }) {
 		method: method || 'GET',
 		headers: {
 			'content-type': 'application/json',
-			accept: 'application/json',
-			cookie: cookiesRes
+			accept: 'application/json'
 		},
 		credentials: 'include',
 		body: data && JSON.stringify(data)

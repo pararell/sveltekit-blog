@@ -4,7 +4,7 @@
 		email = '',
 		result = '';
 	import { api } from '$lib/api';
-	import { t } from '$lib/translations';
+	import { t } from '$lib/i18n';
 
 	async function handleSubmit() {
 		const data = {
@@ -26,7 +26,7 @@
 	<div class="col">
 		<form class="content" on:submit|preventDefault={handleSubmit}>
 			<span class="field">
-				<label for="subject">{$t('common.subject')}</label>
+				<label for="subject">{$t('subject')}</label>
 				<input id="subject" name="subject" type="text" bind:value={subject} />
 			</span>
 			<span class="field">
@@ -34,14 +34,14 @@
 				<input id="email" name="email" type="text" bind:value={email} />
 			</span>
 			<span class="field">
-				<label for="note">{$t('common.note')}</label>
+				<label for="note">{$t('note')}</label>
 				<textarea id="note" name="note" bind:value={note} />
 			</span>
-			<button disabled={!email || !note || !subject} type="submit" class="btn">{$t('common.send')}</button>
+			<button disabled={!email || !note || !subject} type="submit" class="btn">{$t('send')}</button>
 		</form>
 		{#if result}
 			<span class="result">
-				{result.message}
+				{$t(result.message)}
 			</span>
 		{/if}
 	</div>
@@ -94,7 +94,7 @@
 		display: block;
 		text-transform: uppercase;
 		padding: 10px 0;
-		color: var(--text-color);
+    font-weight: bold;
 	}
 
 	.flex {

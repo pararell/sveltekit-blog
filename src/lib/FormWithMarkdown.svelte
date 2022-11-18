@@ -4,7 +4,7 @@
 	import { inputTypes } from './constants';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { page } from '$app/stores';
-	
+
 	export let form;
 	export let content = '';
 	let editor;

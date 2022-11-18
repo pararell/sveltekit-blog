@@ -5,28 +5,19 @@
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { preparePageForm } from '$lib/utils';
 
 	let pageForm = Object.entries(pageModelForm);
 	let id = '';
 	let showEdit = true;
 
-	let unsubscribe = page.subscribe(pageVal => {
-		if (pageVal.data.pageWithContent) {
-			const pageWithContent = pageVal.data.pageWithContent;
-			id = pageWithContent.id;
-			const pageKeys = Object.keys(pageWithContent);
-
-			pageForm = pageForm.map((keyval) => {
-				const found = pageKeys.includes(keyval[0]);
-				if (found) {
-					keyval[1].value = pageWithContent[keyval[0]];
-					return keyval;
-				}
-
-				return keyval;
-			});
+	let unsubscribe = page.subscribe((pageVal) => {
+		if (pageVal.data.subPageWithContent) {
+			const subPageWithContent = pageVal.data.subPageWithContent;
+			id = subPageWithContent.id;
+			pageForm = preparePageForm(pageForm, subPageWithContent);
 		}
-	})
+	});
 
 	onDestroy(() => unsubscribe());
 
@@ -68,20 +59,20 @@
 </script>
 
 <svelte:head>
-	<title>{$page.data?.pageWithContent?.metaTitle}</title>
+	<title>{$page.data?.subPageWithContent?.metaTitle}</title>
 </svelte:head>
 
-{#if $page.data?.pageWithContent}
-	{@html marked($page.data?.pageWithContent.content)}
+{#if $page.data?.subPageWithContent}
+	{@html marked($page.data?.subPageWithContent.content)}
 
-	{#if $page.data?.user?.email === ADMIN_EMAIL && $page.data?.pageWithContent.url !== '/'}
+	{#if $page.data?.user?.email === ADMIN_EMAIL && $page.data?.subPageWithContent.url !== '/'}
 		{#if showEdit}
 			<div class="edit-wrap">
 				<div class="container">
-					{#await import("$lib/FormWithMarkdown.svelte") then FormWithMarkdown}
-					  <FormWithMarkdown.default
+					{#await import('$lib/FormWithMarkdown.svelte') then FormWithMarkdown}
+						<FormWithMarkdown.default
 							form={pageForm}
-							content={$page.data?.pageWithContent.content}
+							content={$page.data?.subPageWithContent.content}
 							on:submitForm={submitForm}
 						/>
 					{/await}

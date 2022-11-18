@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import { api } from '$lib/api';
-	import { t, locale, locales, setLocale } from '$lib/translations';
+	import { t, locale, locales } from '$lib/i18n';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { HEADER_LOGO } from './constants';
@@ -14,23 +14,21 @@
 	export let blogs;
 
 	$: pagesInMenu = () => {
-			const basicPages = pages.filter((onePage) => onePage.url.split('/').length <= 1);
-			const subPages = pages.filter((onePage) => onePage.url.split('/').length > 1);
-			return basicPages
-				.sort((a, b) => +a.position - +b.position)
-				.map((basicPage) => {
-					const subpagesForPage = subPages.filter(
-						(subP) => subP.url.split('/')[0] === basicPage.url
-					);
-					if (subpagesForPage.length) {
-						return {
-							...basicPage,
-							subPages: subpagesForPage.map((subPage) => ({ ...subPage, subpage: true }))
-						};
-					}
-					return basicPage;
-				});
-			};
+		const basicPages = pages.filter((onePage) => onePage.url.split('/').length <= 1);
+		const subPages = pages.filter((onePage) => onePage.url.split('/').length > 1);
+		return basicPages
+			.sort((a, b) => +a.position - +b.position)
+			.map((basicPage) => {
+				const subpagesForPage = subPages.filter((subP) => subP.url.split('/')[0] === basicPage.url);
+				if (subpagesForPage.length) {
+					return {
+						...basicPage,
+						subPages: subpagesForPage.map((subPage) => ({ ...subPage, subpage: true }))
+					};
+				}
+				return basicPage;
+			});
+	};
 
 	locale.subscribe((value) => {
 		selected = value;
@@ -39,20 +37,20 @@
 	const toggleMenu = () => {
 		dispatch('toggle');
 	};
- 
+
 	$: categories = () => {
-			if (!blogs) {
-				return [];
-			}
-			return [
-				...new Set(blogs.map((blog) => blog.categories.split(',').map((cat) => cat.trim())).flat())
-			];
+		if (!blogs) {
+			return [];
+		}
+		return [
+			...new Set(blogs.map((blog) => blog.categories.split(',').map((cat) => cat.trim())).flat())
+		];
 	};
 
 	const handleLanguageChange = async () => {
-		setLocale(selected);
 		const langSet = await api({ url: 'api/lang', method: 'POST', data: { lang: selected } });
 		if (langSet) {
+			locale.set(selected);
 			handleChange();
 			return;
 		}
@@ -64,14 +62,14 @@
 	};
 
 	const handleChange = async () => {
-			dispatch('toggle');
-			invalidateAll();
-			goto('/');
-			return;
+		dispatch('toggle');
+		invalidateAll();
+		goto('/');
+		return;
 	};
 
 	onMount(() => {
-		document.getElementById("main").addEventListener("click", () => {
+		document.getElementById('main').addEventListener('click', () => {
 			dispatch('toggle', {
 				action: 'close'
 			});
@@ -115,7 +113,7 @@
 				<h4>MS</h4>
 				<ul>
 					<li class:active={$page.url.pathname === '/'}>
-						<a href="/">{$t('common.home')}</a>
+						<a href="/">{$t('home')}</a>
 					</li>
 					{#if blogs?.length}
 						<li class:active={$page.url.pathname === '/blogs'}>
@@ -157,7 +155,7 @@
 			{/if}
 			{#if categories().length}
 				<div class="col">
-					<h4>{$t('common.categories')}</h4>
+					<h4>{$t('categories')}</h4>
 					<ul>
 						{#each categories() as category}
 							<li><a href="/blogs/category/{category}">{category}</a></li>
@@ -169,7 +167,7 @@
 				<div class="switcher">
 					<!-- svelte-ignore a11y-no-onchange -->
 					<select bind:value={selected} on:change={handleLanguageChange}>
-						{#each $locales as language}
+						{#each locales as language}
 							<option value={language}>
 								{language}
 							</option>

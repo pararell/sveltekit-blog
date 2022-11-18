@@ -8,6 +8,7 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import { onDestroy } from 'svelte';
+	import { preparePageForm } from '$lib/utils';
 
 	export let data;
 	let id = '';
@@ -17,17 +18,7 @@
 		if (pageVal.data.blog) {
 			const blog = pageVal.data.blog;
 			id = blog.id;
-			const pageKeys = Object.keys(blog);
-
-			blogForm = blogForm.map((keyval) => {
-				const found = pageKeys.includes(keyval[0]);
-				if (found) {
-					keyval[1].value = blog[keyval[0]];
-					return keyval;
-				}
-
-				return keyval;
-			});
+			blogForm = preparePageForm(blogForm, blog);
 		}
 	});
 
@@ -100,7 +91,6 @@
 		{#if browser}
 			<Comments host={data.url.host} slug={data.params.slug} />
 		{/if}
-
 	</div>
 {/if}
 

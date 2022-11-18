@@ -520,9 +520,9 @@ app.post('/api/contact', async (req, res) => {
 	});
 
 	try {
-		res.end(JSON.stringify({ ...info, message: 'success' }));
+		res.end(JSON.stringify({ ...info, message: 'message_success' }));
 	} catch {
-		res.end(JSON.stringify({ message: `Mail wasnt send` }));
+		res.end(JSON.stringify({ message: 'message_error' }));
 	}
 });
 

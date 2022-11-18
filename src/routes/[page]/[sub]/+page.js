@@ -7,11 +7,11 @@ export const load = async ({ fetch, url, params }) => {
 	});
 
 	if (resPage) {
-		return { url, params, pageWithContent: resPage.body };
+		return { url, params, subPageWithContent: resPage.body };
 	}
 
 	return {
-		pageWithContent: null,
+		subPageWithContent: null,
 		url,
 		params
 	};

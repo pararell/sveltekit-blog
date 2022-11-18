@@ -40,7 +40,7 @@ export const pageModelForm = {
 	content: {
 		type: 'markdown',
 		value: '# T'
-	},
+	}
 };
 
 export const blogModelForm = {

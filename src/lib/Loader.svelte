@@ -1,7 +1,7 @@
 <div class="loading" />
 
 <style>
-  	.loading {
+	.loading {
 		height: 0;
 		width: 0;
 		padding: 15px;

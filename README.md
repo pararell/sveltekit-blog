@@ -32,8 +32,8 @@ Set .env in main directory and in /server
 - Use language switch with **svelte-i18n**
 - Pages and Blogs creation with **marked**
   <br>
-  
+
   test login - https://playscript.sk/auth/login - test@playscript.sk : test
   <br>
-  
+
   <img width="400" src="https://res.cloudinary.com/dnpgh1vhi/image/upload/v1655193553/screenshot_2022-06-14_o_9.57.19_kexrkc.png">
