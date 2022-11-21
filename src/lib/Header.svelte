@@ -4,7 +4,7 @@
 	import { t, locale, locales } from '$lib/i18n';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { HEADER_LOGO } from './constants';
+	import { HEADER_LOGO, ADMIN_EMAIL } from './constants';
 
 	const dispatch = createEventDispatcher();
 
@@ -65,7 +65,7 @@
 		dispatch('toggle');
 		invalidateAll().then(() => {
 			goto('/');
-		})
+		});
 
 		return;
 	};
@@ -104,10 +104,6 @@
 					<span class="hamburger-label">Menu</span>
 				</button>
 			</div>
-			<!-- <form id="header-search" style="opacity: 0;width:1px;">
-				<input type="search" name="s" placeholder="{$t('search')}&hellip;" class="draw" />
-				<button type="submit">&rarr;</button>
-			</form> -->
 		</div>
 
 		<nav id="site-nav" class={active}>
@@ -140,6 +136,11 @@
 						<li>
 							<a href="/" on:click={logout}>Logout</a>
 						</li>
+					{/if}
+					{#if $page.data?.user?.email === ADMIN_EMAIL}
+						<br />
+						<li><a href="/add">Add page</a></li>
+						<li><a href="/edit">Edit page</a></li>
 					{/if}
 				</ul>
 			</div>
@@ -465,77 +466,6 @@
 	#site-nav li a:hover,
 	#site-nav li a:focus {
 		color: #686d6e;
-	}
-
-	/* #header-search {
-		margin: 0.6em 0 0.6em 2em;
-		max-width: 10em;
-		position: relative;
-		-webkit-appearance: none;
-	} */
-
-	/* #header-search input {
-		background: transparent;
-		border: none;
-		border-color: #fff;
-		color: #fff;
-		border-style: solid;
-		border-width: 1px;
-		border-radius: 50px;
-		outline: none;
-		width: 100%;
-		padding: 0.5em 1em 0.4em 1em;
-		transition: border-color 0.3s ease;
-		-webkit-appearance: none;
-		line-height: 1;
-		font-size: 14px;
-	}
-
-	#header-search input::-webkit-search-cancel-button {
-		display: none;
-	} */
-
-	/* #header-search button {
-		background: none;
-		border: none;
-		color: #fff;
-		font-size: 1em;
-		padding: 0;
-		position: absolute;
-		top: 50%;
-		right: 0.75em;
-		transform: translateY(-50%);
-		-webkit-appearance: none;
-	}
-
-	#header.is-active #header-search button {
-		color: #b4b9ba;
-	}
-
-	#header.is-active #header-search input {
-		border-color: #b4b9ba;
-	}
-
-	#header-search ::-webkit-input-placeholder {
-		color: #fff;
-	} */
-
-	#header.is-active #header-search ::-webkit-input-placeholder {
-		color: #b4b9ba;
-	}
-
-	#header.is-active #header-search :-moz-placeholder {
-		color: #b4b9ba;
-		opacity: 1;
-	}
-
-	#header.is-active #header-search ::-moz-placeholder {
-		color: #b4b9ba;
-		opacity: 1;
-	}
-
-	#header.is-active #header-search :-ms-input-placeholder {
-		color: #b4b9ba;
 	}
 
 	#header .col {

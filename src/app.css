@@ -188,7 +188,7 @@ code {
 	left: 0;
 	top: 0;
 	height: var(--header-height);
-	z-index: 10;
+	z-index: 101;
 }
 
 .header-wrap:after {

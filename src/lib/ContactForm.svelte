@@ -94,7 +94,7 @@
 		display: block;
 		text-transform: uppercase;
 		padding: 10px 0;
-    font-weight: bold;
+		font-weight: bold;
 	}
 
 	.flex {

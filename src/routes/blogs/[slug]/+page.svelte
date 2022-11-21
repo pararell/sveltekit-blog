@@ -1,65 +1,7 @@
 <script>
 	import Comments from '$lib/Comments.svelte';
-	import { api } from '$lib/api';
-	import { goto, invalidateAll } from '$app/navigation';
-	import { blogModelForm, ADMIN_EMAIL } from '$lib/constants';
-	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
-	import { onDestroy } from 'svelte';
-	import { preparePageForm } from '$lib/utils';
-
-	export let data;
-	let id = '';
-	let blogForm = Object.entries(blogModelForm);
-
-	let unsubscribe = page.subscribe((pageVal) => {
-		if (pageVal.data.blog) {
-			const blog = pageVal.data.blog;
-			id = blog.id;
-			blogForm = preparePageForm(blogForm, blog);
-		}
-	});
-
-	onDestroy(() => unsubscribe());
-
-	const submitForm = async (event) => {
-		const formData = event.detail;
-		if (id && formData.title) {
-			const data = {
-				...formData,
-				id: parseFloat(id),
-				slug: formData.title
-					.toLowerCase()
-					.normalize('NFD')
-					.replace(/[\u0300-\u036f]/g, '')
-					.replace(/[^\w]/gi, '-'),
-				categories: formData.categories ? formData.categories.split(',') : []
-			};
-			const res = await api({ url: `api/blogs/update`, method: 'PATCH', data });
-
-			if (res) {
-				invalidateAll().then(() => {
-					goto('/blogs/' + res.body.slug);
-				})
-			
-			}
-		}
-	};
-
-	const removeBlog = async () => {
-		if (id) {
-			const res = await api({ url: `api/blogs/delete/` + id, method: 'DELETE' });
-
-			if (res) {
-				const resBlogs = await api({ url: `api/blogs/` });
-
-				if (resBlogs) {
-					invalidateAll();
-				}
-			}
-		}
-	};
 </script>
 
 <svelte:head>
@@ -76,21 +18,8 @@
 
 		<span class="date">{new Date($page.data?.blog.date).toLocaleDateString()}</span>
 
-		{#if $page.data?.user?.email === ADMIN_EMAIL}
-			<FormWithMarkdown
-				form={blogForm}
-				content={$page.data?.blog.content}
-				on:submitForm={submitForm}
-			/>
-
-			<form on:submit|preventDefault={removeBlog}>
-				<input type="hidden" name="id" value={id} />
-				<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
-			</form>
-		{/if}
-
 		{#if browser}
-			<Comments host={data.host} slug={data.params.slug} />
+			<Comments host={$page.data?.host} slug={$page.data?.params.slug} />
 		{/if}
 	</div>
 {/if}
@@ -139,11 +68,5 @@
 		margin-left: auto;
 		display: block;
 		color: var(--secondary-color);
-	}
-
-	.btn-delete {
-		display: block;
-		max-width: 200px;
-		margin: 30px auto;
 	}
 </style>

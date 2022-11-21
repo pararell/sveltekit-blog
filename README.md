@@ -1,6 +1,7 @@
 # Blog made with SvelteKit
 
 ## Svelte blog which using Markdown, FE Svelte - SvelteKit, BE Express + SQLite
+
 <br/>
 Pages and blogs are dynamically created with Markdown or Joddit and they are server-side rendered then - for SEO and client-side for interaction. Option for only HTML without Javascript was added, but header has to be updated to work without Javascript too - no partial hydratation for SvelteKit now :(
 <br/><br/>

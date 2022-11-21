@@ -18,7 +18,7 @@
 		}
 		invalidateAll().then(() => {
 			goto('/');
-		})
+		});
 	};
 </script>
 

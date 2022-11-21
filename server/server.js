@@ -223,17 +223,27 @@ app.patch('/api/blogs/update', async (req, res) => {
 });
 
 app.get('/api/blogs/:slug', async (req, res) => {
+	const lang = req.session && req.session.lang ? req.session.lang : 'en';
+	const defaultEmpty = {
+		...blogModel,
+		title: 'Blog',
+		slug: 'blog',
+		metaTitle: 'Blog | SvelteKit',
+		url: '/blog',
+		lang,
+		content: `<style>.home {min-height: 100vh; margin-top: -50px; padding-top: 50px; background: rgba(0,0,0,0.1); width: 100%;}</style><div class="home"><h1 style="text-align: center;">Welcome to SvelteKit template</h1><h2 style="text-align: center;"><strong>Feel free to edit page with markdown or editor</strong></h2><br><p style="text-align: center;"> <span style="font-size: 18px;">Add more pages =</span><span style="font-size: 18px;"><a href="/add"> /add</a></span><span style="font-size: 18px;"> , add blog </span><span style="font-size: 18px;"><a href="/blogs/add">/blogs/add</a></span></p><div><br></div><p style="text-align: center;"> <br> <strong style="font-size: 18px;">Good luck!</strong> <br> </p></div>`
+	};
 	try {
 		let { slug } = req.params;
-		const blogs = await connection.select('*').from('blogs').where('slug', slug).first();
-		res.end(JSON.stringify(blogs));
+		const blog = await connection.select('*').from('blogs').where('slug', slug).first();
+		if (blog) {
+			res.end(JSON.stringify(blog));
+		} else {
+			res.end(JSON.stringify(defaultEmpty));
+		}
+
 	} catch {
-		res.end(
-			JSON.stringify({
-				...blogModel,
-				content: 'Something is missing'
-			})
-		);
+		res.end(JSON.stringify(defaultEmpty));
 	}
 });
 

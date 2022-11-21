@@ -1,9 +1,9 @@
 <script>
 	import { api } from '$lib/api';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { blogModelForm } from '$lib/constants';
+	import { ADMIN_EMAIL, blogModelForm } from '$lib/constants';
 	import { locale } from '$lib/i18n';
-	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
+	import { page } from '$app/stores';
 
 	let blogForm = Object.entries(blogModelForm);
 	export let data;
@@ -12,7 +12,7 @@
 	const handleRedirect = async () => {
 		invalidateAll().then(() => {
 			goto('/blogs');
-		})
+		});
 	};
 
 	const submitForm = async (event) => {
@@ -35,15 +35,18 @@
 			if (res) {
 				handleRedirect();
 			}
-
 		}
 	};
 </script>
 
 <div class="page">
-	<div class="container">
-		<FormWithMarkdown form={blogForm} on:submitForm={submitForm} />
-	</div>
+	{#if $page.data?.user?.email === ADMIN_EMAIL}
+		{#await import('$lib/FormWithMarkdown.svelte') then FormWithMarkdown}
+			<div class="container">
+				<FormWithMarkdown.default form={blogForm} on:submitForm={submitForm} />
+			</div>
+		{/await}
+	{/if}
 </div>
 
 <style>

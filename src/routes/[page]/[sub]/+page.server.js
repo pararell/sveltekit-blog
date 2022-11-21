@@ -4,26 +4,21 @@ import { marked } from 'marked';
 export let csr = true;
 
 export const load = async ({ fetch, params, url }) => {
-	const resPage = await api({
-		url: `api/pages/${params.page}/${params.sub}`,
-		serverFetch: fetch
-	});
-
-	if (resPage) {
+	const loadSubPage = async () => {
+		const resPage = await api({
+			url: `api/pages/${params.page}/${params.sub}`,
+			serverFetch: fetch
+		});
 		if (resPage.body.onlyHTML === 'true') {
 			csr = false;
 		} else {
 			csr = true;
 		}
-
-		return { 
-			subPageWithContent: {...resPage.body,content: marked(resPage.body.content)},
-			pathname: url.pathname,
-			params };
-	}
+		return { ...resPage.body, content: marked(resPage.body.content) };
+	};
 
 	return {
-		subPageWithContent: null,
+		subPageWithContent: loadSubPage(),
 		pathname: url.pathname,
 		params
 	};

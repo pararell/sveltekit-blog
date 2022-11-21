@@ -1,16 +1,16 @@
 <script>
 	import { api } from '$lib/api';
+	import { page } from '$app/stores';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { pageModelForm } from '$lib/constants';
+	import { ADMIN_EMAIL, pageModelForm } from '$lib/constants';
 	import { locale } from '$lib/i18n';
-	import FormWithMarkdown from '$lib/FormWithMarkdown.svelte';
 
 	let pageForm = Object.entries(pageModelForm);
 
 	const handleRedirect = async () => {
 		invalidateAll().then(() => {
 			goto('/');
-		})
+		});
 	};
 
 	const submitForm = async (event) => {
@@ -36,9 +36,13 @@
 </script>
 
 <div class="page">
-	<div class="container">
-		<FormWithMarkdown form={pageForm} on:submitForm={submitForm} />
-	</div>
+	{#if $page.data?.user?.email === ADMIN_EMAIL}
+		{#await import('$lib/FormWithMarkdown.svelte') then FormWithMarkdown}
+			<div class="container">
+				<FormWithMarkdown.default form={pageForm} on:submitForm={submitForm} />
+			</div>
+		{/await}
+	{/if}
 </div>
 
 <style>
