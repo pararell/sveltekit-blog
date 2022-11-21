@@ -16,8 +16,9 @@
 			error = res.body;
 			return;
 		}
-		invalidateAll();
-		goto('/blogs');
+		invalidateAll().then(() => {
+			goto('/');
+		})
 	};
 </script>
 

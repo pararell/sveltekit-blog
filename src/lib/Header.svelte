@@ -63,8 +63,10 @@
 
 	const handleChange = async () => {
 		dispatch('toggle');
-		invalidateAll();
-		goto('/');
+		invalidateAll().then(() => {
+			goto('/');
+		})
+
 		return;
 	};
 

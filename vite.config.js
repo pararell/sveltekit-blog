@@ -8,14 +8,14 @@ const file = fileURLToPath(new URL('package.json', import.meta.url));
 const json = readFileSync(file, 'utf8');
 const pkg = JSON.parse(json);
 
+
 export default defineConfig(({ command }) => {
 	const ssrObj =
 		command === 'build'
 			? {
 					ssr: {
 						noExternal: Object.keys(pkg.dependencies || {})
-					},
-					legacy: { buildSsrCjsExternalHeuristics: true }
+					}
 			  }
 			: {};
 	return {

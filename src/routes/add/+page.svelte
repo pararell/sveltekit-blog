@@ -8,7 +8,9 @@
 	let pageForm = Object.entries(pageModelForm);
 
 	const handleRedirect = async () => {
-		invalidateAll();
+		invalidateAll().then(() => {
+			goto('/');
+		})
 	};
 
 	const submitForm = async (event) => {
@@ -28,7 +30,6 @@
 
 			if (res) {
 				handleRedirect();
-				goto('/');
 			}
 		}
 	};

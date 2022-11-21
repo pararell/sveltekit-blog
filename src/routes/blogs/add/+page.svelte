@@ -10,7 +10,9 @@
 	const { user } = data;
 
 	const handleRedirect = async () => {
-		invalidateAll();
+		invalidateAll().then(() => {
+			goto('/blogs');
+		})
 	};
 
 	const submitForm = async (event) => {
@@ -32,7 +34,6 @@
 			const res = await api({ url: `api/blogs/create`, method: 'POST', data });
 			if (res) {
 				handleRedirect();
-				goto('/blogs');
 			}
 
 		}

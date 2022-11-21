@@ -1,16 +1,16 @@
 import { api } from '$lib/api';
+import { marked } from 'marked';
 
 export const load = async ({ fetch, params, depends }) => {
-	const resPage = await api({ url: 'api/pages/home', serverFetch: fetch });
+	const getHomePage = async() => {
+		const resPage = await api({ url: 'api/pages/home', serverFetch: fetch });
+		return {...resPage.body,content: marked(resPage.body.content)};
+	}
 
 	depends('app:home');
 
-	if (resPage) {
-		return { params, home: resPage.body };
-	}
-
 	return {
 		params,
-		home: null
+		home: getHomePage()
 	};
 };

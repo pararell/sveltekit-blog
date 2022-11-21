@@ -1,6 +1,5 @@
 <script>
-	import { marked } from 'marked';
-	import { api } from '$lib/api';
+  import { api } from '$lib/api';
 	import { onDestroy } from 'svelte';
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
 	import { goto, invalidateAll } from '$app/navigation';
@@ -50,8 +49,10 @@
 				const resPages = await api({ url: `api/pages/` });
 
 				if (resPages) {
-					invalidateAll();
-					goto('/');
+					invalidateAll().then(() => {
+						goto('/');
+					})
+
 				}
 			}
 		}
@@ -63,9 +64,9 @@
 </svelte:head>
 
 {#if $page.data?.subPageWithContent}
-	{@html marked($page.data?.subPageWithContent.content)}
+	{@html $page.data.subPageWithContent.content}
 
-	{#if $page.data?.user?.email === ADMIN_EMAIL && $page.data?.subPageWithContent.url !== '/'}
+	{#if $page.data?.user?.email === ADMIN_EMAIL && $page.data?.subPageWithContent.pathname !== '/'}
 		{#if showEdit}
 			<div class="edit-wrap">
 				<div class="container">
@@ -79,13 +80,13 @@
 
 					<form on:submit|preventDefault={removePage}>
 						<input type="hidden" name="id" value={id} />
-						<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
+						<button class="btn delete btn-delete" aria-label="Delete page"> Delete Page</button>
 					</form>
 				</div>
 			</div>
 		{/if}
+		<button class="btn btn-edit" on:click={() => (showEdit = !showEdit)}>Toggle Edit</button>
 	{/if}
-	<button class="btn btn-edit" on:click={() => (showEdit = !showEdit)}>Toggle Edit</button>
 {/if}
 
 <style>

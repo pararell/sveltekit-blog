@@ -1,5 +1,4 @@
 <script>
-	import { marked } from 'marked';
 	import Comments from '$lib/Comments.svelte';
 	import { api } from '$lib/api';
 	import { goto, invalidateAll } from '$app/navigation';
@@ -40,8 +39,10 @@
 			const res = await api({ url: `api/blogs/update`, method: 'PATCH', data });
 
 			if (res) {
-				invalidateAll();
-				goto('/blogs/' + res.body.slug);
+				invalidateAll().then(() => {
+					goto('/blogs/' + res.body.slug);
+				})
+			
 			}
 		}
 	};
@@ -70,7 +71,7 @@
 		<h1>{$page.data?.blog.title}</h1>
 
 		<div class="content">
-			{@html marked($page.data?.blog.content)}
+			{@html $page.data?.blog.content}
 		</div>
 
 		<span class="date">{new Date($page.data?.blog.date).toLocaleDateString()}</span>
@@ -89,7 +90,7 @@
 		{/if}
 
 		{#if browser}
-			<Comments host={data.url.host} slug={data.params.slug} />
+			<Comments host={data.host} slug={data.params.slug} />
 		{/if}
 	</div>
 {/if}

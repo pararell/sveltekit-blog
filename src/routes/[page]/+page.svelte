@@ -1,5 +1,4 @@
 <script>
-	import { marked } from 'marked';
 	import ContactForm from '$lib/ContactForm.svelte';
 	import { api } from '$lib/api';
 	import { page } from '$app/stores';
@@ -52,8 +51,10 @@
 				const resPages = await api({ url: `api/pages/` });
 
 				if (resPages) {
-					invalidateAll();
-					goto('/');
+					invalidateAll().then(() => {
+						goto('/');
+					})
+	
 				}
 			}
 		}
@@ -65,7 +66,7 @@
 </svelte:head>
 
 {#if $page.data?.pageWithContent}
-	{@html marked($page.data.pageWithContent.content)}
+	{@html $page.data.pageWithContent.content}
 
 	{#if data.paramsPage === 'contact'}
 		<div class="container">
@@ -73,7 +74,7 @@
 		</div>
 	{/if}
 
-	{#if $page.data?.user?.email === ADMIN_EMAIL && $page.data?.pageWithContent.url !== '/'}
+	{#if $page.data?.user?.email === ADMIN_EMAIL && $page.data?.pageWithContent.pathname !== '/'}
 		{#if showEdit}
 			<div class="edit-wrap">
 				<div class="container">
