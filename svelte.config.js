@@ -5,6 +5,9 @@ const config = {
 	preprocess: preprocess({ postcss: true }),
 	kit: {
 		adapter: node({ out: 'build' }),
+		csrf: {
+      checkOrigin: false,
+    },
 		serviceWorker: {
 			register: false
 		}
