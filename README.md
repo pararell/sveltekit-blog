@@ -3,12 +3,9 @@
 ## Svelte blog which using Markdown, FE Svelte - SvelteKit, BE Express + SQLite
 
 <br/>
-Pages and blogs are dynamically created with Markdown or Joddit and they are server-side rendered then - for SEO and client-side for interaction. Option for only HTML without Javascript was added, but header has to be updated to work without Javascript too - no partial hydratation for SvelteKit now :(
+Pages and blogs are dynamically created with Markdown or Joddit and they are server-side rendered then - for SEO and client-side for interaction. Option for only HTML without Javascript was added - header will work but language switcher has to be updated still
 <br/><br/>
-<code>npm i</code>
-<br/>
-<code>cd server npm i</code>
-<br/>
+
 
 Set .env in main directory and in /server
 
@@ -19,14 +16,12 @@ Set .env in main directory and in /server
 - works with Node.js v.16+
 
 <code>npm run build</code>
-<br/>
+<br/><br/>
 <code>cd server npm run dev</code>
-<br/>
+<br/><br/>
 Server and Client run on the same port - it should check if the build exist and if yes, it will include SSR Sveltekit
 <br/>
 ` if (fs.existsSync('../build/handler.js')) { const {handler} = await import('../build/handler.js'); app.use(handler); }`
-
-<br/>
 
 - Use **jsonwebtoken** for the Authorization
 - Use **express-session** for the session management in Express
@@ -37,4 +32,4 @@ Server and Client run on the same port - it should check if the build exist and 
   test login - https://playscript.sk/auth/login - test@playscript.sk : test
   <br>
 
-  <img width="400" src="https://res.cloudinary.com/dnpgh1vhi/image/upload/v1655193553/screenshot_2022-06-14_o_9.57.19_kexrkc.png">
+  <img width="400" src="https://res.cloudinary.com/dnpgh1vhi/image/upload/v1669123043/screenshot_2022-11-22_o_14.16.09_fofgol.png">
