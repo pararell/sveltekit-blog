@@ -36,9 +36,7 @@
 			const res = await api({ url: `api/blogs/update`, method: 'PATCH', data });
 
 			if (res) {
-				invalidateAll().then(() => {
-					goto('/blogs/' + res.body.slug);
-				});
+				invalidateAll();
 			}
 		}
 	};
@@ -51,7 +49,9 @@
 				const resBlogs = await api({ url: `api/blogs/` });
 
 				if (resBlogs) {
-					invalidateAll();
+					invalidateAll().then(() => {
+						goto('/blogs');
+					});
 				}
 			}
 		}
@@ -63,8 +63,8 @@
 </svelte:head>
 
 <form id="search">
-  <input type="search" name="edit" placeholder="Search pages&hellip;" class="draw" />
-  <button class="btn" type="submit">Search</button>
+	<input type="search" name="edit" placeholder="Search pages&hellip;" class="draw" />
+	<button class="btn" type="submit">Search</button>
 </form>
 
 {#if $page.data?.blog}
@@ -90,7 +90,6 @@
 				<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
 			</form>
 		{/if}
-
 	</div>
 {/if}
 
@@ -146,7 +145,7 @@
 		margin: 30px auto;
 	}
 
-  #search {
+	#search {
 		display: flex;
 		margin: 20px auto;
 		position: fixed;

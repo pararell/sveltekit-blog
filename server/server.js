@@ -241,7 +241,6 @@ app.get('/api/blogs/:slug', async (req, res) => {
 		} else {
 			res.end(JSON.stringify(defaultEmpty));
 		}
-
 	} catch {
 		res.end(JSON.stringify(defaultEmpty));
 	}

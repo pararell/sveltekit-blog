@@ -7,34 +7,44 @@
 	import { locale } from '$lib/i18n';
 	import { api } from '$lib/api';
 
-	export let openHeader = '';
+	let firstInit = false;
+	let openHeader = '';
 
-	page.subscribe((p) => {
-		openHeader = '';
-		if (p.data.config) {
-			const langFound =
-				browser && ['en', 'sk'].includes(navigator.language) ? navigator.language : 'en';
-			const lang = p.data.config.lang || langFound;
+	const checkLang = (lang) => {
+		const langFound =
+			browser && ['en', 'sk'].includes(navigator.language) ? navigator.language : 'en';
+		const foundLang = lang || langFound;
 
-			if (!p.data.config.lang) {
-				api({ url: 'api/lang', method: 'POST', data: { lang } });
-			}
-
-			locale.set(lang);
+		if (!lang) {
+			api({ url: 'api/lang', method: 'POST', data: { foundLang } });
 		}
-	});
+
+		locale.set(foundLang);
+	};
 
 	const toggleMenu = (event) => {
-		if (event && event.detail && event.detail.action === 'close') {
-			openHeader = '';
-			return;
-		}
-		if (openHeader === 'is-active') {
-			openHeader = '';
-		} else {
-			openHeader = 'is-active';
+		if (browser) {
+			const menu = document.getElementById('hamburger-trigger');
+			if (menu) {
+				if (event?.detail?.action === 'close') {
+					menu.checked = false;
+					openHeader = '';
+				} else {
+					menu.click();
+					openHeader = !openHeader ? 'is-active' : '';
+				}
+			}
 		}
 	};
+
+	page.subscribe((p) => {
+		toggleMenu({ detail: { action: 'close' } });
+
+		if (p.data.config && !firstInit) {
+			checkLang(p.data.config.lang);
+			firstInit = true;
+		}
+	});
 </script>
 
 <div class="header-wrap">

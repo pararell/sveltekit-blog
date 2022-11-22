@@ -9,11 +9,7 @@ export const load = async ({ fetch, params, url }) => {
 			url: `api/pages/${params.page}/${params.sub}`,
 			serverFetch: fetch
 		});
-		if (resPage.body.onlyHTML === 'true') {
-			csr = false;
-		} else {
-			csr = true;
-		}
+		csr = resPage.body.onlyHTML !== 'true';
 		return { ...resPage.body, content: marked(resPage.body.content) };
 	};
 

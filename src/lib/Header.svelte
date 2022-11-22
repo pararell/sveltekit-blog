@@ -97,12 +97,17 @@
 				{/if}
 			{/each}
 			<div class="menu-links">
-				<button class="hamburger hamburger--boring {active}" on:click={toggleMenu} type="button">
-					<span class="hamburger-box">
-						<span class="hamburger-inner" />
-					</span>
+				<input
+					id="hamburger-trigger"
+					class="hamburger hamburger-trigger {active}"
+					type="checkbox"
+					aria-label="open the navigation"
+				/>
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<label class="hamburger-box" for="hamburger-trigger" on:click={toggleMenu}>
+					<span class="hamburger-inner" />
 					<span class="hamburger-label">Menu</span>
-				</button>
+				</label>
 			</div>
 		</div>
 
@@ -153,6 +158,11 @@
 								<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
 							{/each}
 						{/if}
+						{#if $page.data?.user?.email === ADMIN_EMAIL}
+							<br />
+							<li><a href="/blogs/add">Add blog</a></li>
+							<li><a href="/blogs/edit">Edit blog</a></li>
+						{/if}
 					</ul>
 				</div>
 			{/if}
@@ -182,7 +192,7 @@
 	</div>
 </header>
 
-<style>
+<style type="text/scss">
 	.logo {
 		color: #fff;
 		font-weight: 700;
@@ -263,6 +273,13 @@
 		position: relative;
 	}
 
+	#header:has(.hamburger-trigger:checked) {
+		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+		background: #fff;
+		overflow: auto;
+		min-height: 500px;
+	}
+
 	#header.is-active {
 		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
 		background: #fff;
@@ -271,6 +288,10 @@
 	}
 
 	@media screen and (max-width: 768px) {
+		#header:has(.hamburger-trigger:checked) {
+			height: 100vh;
+		}
+
 		#header.is-active {
 			height: 100vh;
 		}
@@ -285,6 +306,10 @@
 		background-color: #fff;
 		opacity: 0;
 		transition: opacity 0.3s ease;
+	}
+
+	#header:has(.hamburger-trigger:checked):after {
+		opacity: 1;
 	}
 
 	#header.is-active:after {
@@ -310,8 +335,6 @@
 	}
 
 	.hamburger-box {
-		width: 30px;
-		height: 24px;
 		display: inline-block;
 		position: relative;
 	}
@@ -337,6 +360,12 @@
 		transition-timing-function: ease;
 	}
 
+	#header:has(.hamburger-trigger:checked) .hamburger-inner,
+	#header:has(.hamburger-trigger:checked) .hamburger-inner::before,
+	#header:has(.hamburger-trigger:checked) .hamburger-inner::after {
+		background-color: #000;
+	}
+
 	#header.is-active .hamburger-inner,
 	#header.is-active .hamburger-inner::before,
 	#header.is-active .hamburger-inner::after {
@@ -357,46 +386,61 @@
 		bottom: -6px;
 	}
 
-	.hamburger--boring .hamburger-inner,
-	.hamburger--boring .hamburger-inner::before,
-	.hamburger--boring .hamburger-inner::after {
+	.hamburger-trigger .hamburger-inner,
+	.hamburger-trigger .hamburger-inner::before,
+	.hamburger-trigger .hamburger-inner::after {
 		transition-property: none;
 	}
 
-	.hamburger--boring.is-active .hamburger-inner {
-		-webkit-transform: rotate(45deg);
-		transform: rotate(45deg);
+	#header:has(.hamburger-trigger:checked),
+	#header.is-active {
+		.hamburger-inner {
+			transform: rotate(45deg);
+
+			&::before {
+				top: 0;
+				opacity: 0;
+			}
+
+			&:after {
+				bottom: 0;
+				transform: rotate(-90deg);
+			}
+		}
 	}
 
-	.hamburger--boring.is-active .hamburger-inner::before {
-		top: 0;
-		opacity: 0;
-	}
+	#header.is-active {
+		.hamburger-inner {
+			transform: rotate(45deg);
 
-	.hamburger--boring.is-active .hamburger-inner::after {
-		bottom: 0;
-		-webkit-transform: rotate(-90deg);
-		transform: rotate(-90deg);
+			&::before {
+				top: 0;
+				opacity: 0;
+			}
+
+			&:after {
+				bottom: 0;
+				transform: rotate(-90deg);
+			}
+		}
 	}
 
 	.hamburger-label {
 		color: #fff;
 		display: inline-block;
 		font-weight: 700;
-		letter-spacing: 0.08em;
 		line-height: 1;
-		margin-left: 0.3125em;
+		margin-left: 40px;
 		text-transform: uppercase;
 	}
 
+	#header:has(.hamburger-trigger:checked) .hamburger-label,
 	#header.is-active .hamburger-label {
 		color: #000;
 	}
 
-	.hamburger-box,
-	.hamburger-label {
-		display: inline-block;
-		vertical-align: middle;
+	#header.is-active .hamburger-label {
+		color: #000;
 	}
 
 	#site-nav {
@@ -406,6 +450,12 @@
 		height: 0;
 		overflow: hidden;
 		padding-top: 1em;
+	}
+
+	#header:has(.hamburger-trigger:checked) #site-nav,
+	#site-nav.is-active {
+		height: auto;
+		overflow: visible;
 	}
 
 	#site-nav.is-active {
@@ -472,30 +522,61 @@
 		opacity: 0;
 	}
 
-	#header.is-active .col {
-		transform: translateY(40px);
-		transition: opacity 0.3s ease;
-		animation: fade-in-stagger 0.8s ease forwards;
+	#header:has(.hamburger-trigger:checked),
+	#header.is-active {
+		.col {
+			transform: translateY(40px);
+			transition: opacity 0.3s ease;
+			animation: fade-in-stagger 0.8s ease forwards;
+
+			&:nth-child(1) {
+				-webkit-animation-delay: 0;
+			}
+
+			&:nth-child(2) {
+				-webkit-animation-delay: 0.1s;
+			}
+
+			&:nth-child(3) {
+				-webkit-animation-delay: 0.2s;
+			}
+
+			&:nth-child(4) {
+				-webkit-animation-delay: 0.3s;
+			}
+
+			&:nth-child(5) {
+				-webkit-animation-delay: 0.4s;
+			}
+		}
 	}
 
-	#header.is-active .col:nth-child(1) {
-		-webkit-animation-delay: 0;
-	}
+	#header.is-active {
+		.col {
+			transform: translateY(40px);
+			transition: opacity 0.3s ease;
+			animation: fade-in-stagger 0.8s ease forwards;
 
-	#header.is-active .col:nth-child(2) {
-		-webkit-animation-delay: 0.1s;
-	}
+			&:nth-child(1) {
+				-webkit-animation-delay: 0;
+			}
 
-	#header.is-active .col:nth-child(3) {
-		-webkit-animation-delay: 0.2s;
-	}
+			&:nth-child(2) {
+				-webkit-animation-delay: 0.1s;
+			}
 
-	#header.is-active .col:nth-child(4) {
-		-webkit-animation-delay: 0.3s;
-	}
+			&:nth-child(3) {
+				-webkit-animation-delay: 0.2s;
+			}
 
-	#header.is-active .col:nth-child(5) {
-		-webkit-animation-delay: 0.4s;
+			&:nth-child(4) {
+				-webkit-animation-delay: 0.3s;
+			}
+
+			&:nth-child(5) {
+				-webkit-animation-delay: 0.4s;
+			}
+		}
 	}
 
 	@keyframes fade-in-stagger {

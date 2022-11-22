@@ -120,7 +120,7 @@
 					</span>
 				{/if}
 				{#if item.type === 'markdown'}
-					<button class="btn" type="button"  on:click={() => (showMarkdown = !showMarkdown)}>
+					<button class="btn" type="button" on:click={() => (showMarkdown = !showMarkdown)}>
 						Markdown toggle</button
 					>
 					<div class:hidden={showMarkdown === false}>
@@ -138,7 +138,9 @@
 		<button class="btn submit" type="submit"> Save</button>
 	</form>
 
-	<button class="btn" type="button" on:click|preventDefault={() => (showEditor = !showEditor)}> Editor toggle</button>
+	<button class="btn" type="button" on:click|preventDefault={() => (showEditor = !showEditor)}>
+		Editor toggle</button
+	>
 	<div class:hidden={showEditor === false}>
 		<textarea id="editor" />
 	</div>
