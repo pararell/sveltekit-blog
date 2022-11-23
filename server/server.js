@@ -1,10 +1,10 @@
 import express from 'express';
 import compression from 'compression';
 import bodyParser from 'body-parser';
-const { urlencoded, json } = bodyParser;
+const { json } = bodyParser;
 import nodemailer from 'nodemailer';
 import * as path from 'path';
-// import * as fs from 'fs';
+import * as fs from 'fs';
 import knex from 'knex';
 import cors from 'cors';
 import session from 'express-session';
@@ -12,7 +12,7 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import cookieParser from 'cookie-parser';
-import { handler } from '../build/handler.js';
+// import { handler } from '../build/handler.js';
 dotenv.config();
 
 export const pageModel = {
@@ -121,7 +121,6 @@ app.use(
 	})
 );
 
-app.use(urlencoded({ extended: true }));
 app.use(
 	cors({
 		credentials: true,
@@ -520,12 +519,12 @@ const run = async () => {
 	const { PORT } = process.env;
 	const portServer = PORT || 4000;
 
-	// if (fs.existsSync('../build/handler.js')) {
-	// 	const { handler } = await import('../build/handler.js');
-	// 	app.use(handler);
-	// }
+	if (fs.existsSync('../build/handler.js')) {
+		const { handler } = await import('../build/handler.js');
+		app.use(handler);
+	}
 
-	app.use(handler);
+	// app.use(handler);
 
 	app.listen(portServer, (err) => {
 		if (err) console.log('error', err);

@@ -154,7 +154,6 @@
 			{/if}
 			<div class="col">
 				<div class="switcher">
-					<!-- svelte-ignore a11y-no-onchange -->
 					<form method="POST" action="/">
 						<select name="lang" bind:value={selected}>
 							{#each locales as language}
