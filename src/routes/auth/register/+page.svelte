@@ -1,33 +1,12 @@
 <script>
-	import { goto } from '$app/navigation';
-	import { api } from '$lib/api';
-
 	let email = '';
 	let username = '';
 	let password = '';
-	let error = '';
-
-	const submitForm = async () => {
-		const data = {
-			email,
-			password,
-			username
-		};
-		try {
-			const res = await api({ url: `api/register`, method: 'POST', data });
-			if (res && res.status === 400) {
-				error = res.body;
-				return;
-			}
-			goto('/auth/login');
-		} catch (e) {
-			error = e;
-		}
-	};
+	export let form;
 </script>
 
 <div class="container">
-	<form on:submit|preventDefault={() => submitForm()} class="form">
+	<form class="form" method="POST"  action="?/register">
 		<h1 class="header-title">User register</h1>
 		<div class="form">
 			<span class="field">
@@ -44,9 +23,9 @@
 			</span>
 			<button class="btn submit" disabled={!email}> Submit</button>
 		</div>
-		{#if error}
+		{#if form?.error}
 			<p class="error">
-				{error}
+				{ form.error}
 			</p>
 		{/if}
 	</form>

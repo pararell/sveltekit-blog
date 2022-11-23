@@ -1,5 +1,4 @@
 <script>
-	import ContactForm from '$lib/ContactForm.svelte';
 	import { api } from '$lib/api';
 	import { page } from '$app/stores';
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
@@ -74,9 +73,11 @@
 	{@html marked($page.data.pageToEdit.content)}
 
 	{#if data.paramsPage === 'contact'}
-		<div class="container">
-			<ContactForm />
-		</div>
+		{#await import('$lib/ContactForm.svelte') then ContactForm}
+			<div class="container">
+				<ContactForm.default />
+			</div>
+		{/await}
 	{/if}
 	{#if $page.data?.user?.email === ADMIN_EMAIL && $page.data?.pageToEdit.pathname !== '/'}
 		{#if showEdit}

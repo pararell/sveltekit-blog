@@ -100,7 +100,7 @@ databases.forEach((database) => {
 });
 
 const getLang = (req) => {
-	return req.cookies.lang
+	return ['en', 'sk'].includes(req.cookies.lang)
 		? req.cookies.lang
 		: req.headers['accept-language'] && req.headers['accept-language'].includes('sk')
 			? 'sk'
@@ -470,7 +470,7 @@ app.post('/api/register', async (req, res) => {
 			return res.status(400).json('Record already exists. Please login');
 		}
 	} catch (err) {
-		console.log(err);
+		return res.status(400).json('Problem to register user');
 	}
 });
 

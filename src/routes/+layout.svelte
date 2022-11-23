@@ -48,6 +48,8 @@
 		active={openHeader}
 		pages={$page.data?.pages}
 		blogs={$page.data?.blogs}
+		user={$page.data?.user}
+		url={$page.url}
 	/>
 </div>
 <main id="main">

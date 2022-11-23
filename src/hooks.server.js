@@ -1,5 +1,6 @@
 export async function handle({ event, resolve }) {
-	event.locals.lang = event.cookies.get('lang') || 'en';
+	const cookieLang = event.cookies.get('lang');
+	event.locals.lang = ['sk', 'en'].includes(cookieLang) ? cookieLang : 'en';
 	const response = await resolve(event);
 	return response;
 }

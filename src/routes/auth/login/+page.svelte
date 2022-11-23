@@ -1,29 +1,11 @@
 <script>
-	import { api } from '$lib/api';
-	import { goto, invalidateAll } from '$app/navigation';
-
 	let email = '';
 	let password = '';
-	let error = '';
-
-	const submitForm = async () => {
-		const data = {
-			email,
-			password
-		};
-		const res = await api({ url: `api/login`, method: 'POST', data });
-		if (res && res.status === 400) {
-			error = res.body;
-			return;
-		}
-		invalidateAll().then(() => {
-			goto('/');
-		});
-	};
+	export let form;
 </script>
 
 <div class="container">
-	<form on:submit|preventDefault={() => submitForm()} class="form">
+	<form class="form" method="POST"  action="?/login">
 		<h1 class="header-title">User login</h1>
 		<div class="form">
 			<span class="field">
@@ -36,9 +18,9 @@
 			</span>
 			<button class="btn submit" disabled={!email}> Submit</button>
 		</div>
-		{#if error}
+		{#if form?.error}
 			<p class="error">
-				{error}
+				{ form.error}
 			</p>
 		{/if}
 	</form>

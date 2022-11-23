@@ -1,9 +1,6 @@
 <script>
-	import { page } from '$app/stores';
-	import { api } from '$lib/api';
 	import { t, locale, locales } from '$lib/i18n';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { goto, invalidateAll } from '$app/navigation';
 	import { HEADER_LOGO, ADMIN_EMAIL } from './constants';
 
 	const dispatch = createEventDispatcher();
@@ -12,11 +9,13 @@
 	export let active = '';
 	export let pages;
 	export let blogs;
+	export let user;
+	export let url;
 
 	locale.subscribe((value) => {
 		selected = value;
 	});
-	
+
 	$: pagesInMenu = () => {
 		const basicPages = pages.filter((onePage) => onePage.url.split('/').length <= 1);
 		const subPages = pages.filter((onePage) => onePage.url.split('/').length > 1);
@@ -47,20 +46,6 @@
 		dispatch('toggle');
 	};
 
-	const logout = async () => {
-		const _res = api({ url: 'api/logout' });
-		handleChange();
-	};
-
-	const handleChange = async () => {
-		dispatch('toggle');
-		invalidateAll().then(() => {
-			goto('/');
-		});
-
-		return;
-	};
-
 	onMount(() => {
 		document.getElementById('main').addEventListener('click', () => {
 			dispatch('toggle', {
@@ -75,14 +60,14 @@
 		<div class="header-menu">
 			<a href="/" class="logo">{HEADER_LOGO}</a>
 			{#if blogs?.length}
-				<a class="menu-link" class:active={$page.url.pathname === '/blogs'} href="/blogs">Blog</a>
+				<a class="menu-link" class:active={url.pathname === '/blogs'} href="/blogs">Blog</a>
 			{/if}
 			{#each pagesInMenu() as pageToShow (pageToShow.id)}
 				{#if pageToShow.url !== '/' && !pageToShow.subpage}
 					<a
 						rel={pageToShow.description === 'reload' ? 'external' : ''}
 						class="menu-link"
-						class:active={$page.url.pathname === pageToShow.url}
+						class:active={url.pathname === pageToShow.url}
 						href="/{pageToShow.url}">{pageToShow.title}</a
 					>
 				{/if}
@@ -106,21 +91,21 @@
 			<div class="col">
 				<h4>MS</h4>
 				<ul>
-					<li class:active={$page.url.pathname === '/'}>
+					<li class:active={url.pathname === '/'}>
 						<a href="/">{$t('home')}</a>
 					</li>
 					{#if blogs?.length}
-						<li class:active={$page.url.pathname === '/blogs'}>
+						<li class:active={url.pathname === '/blogs'}>
 							<a href="/blogs">Blog</a>
 						</li>
 					{/if}
 					{#each pagesInMenu() as pageToShow (pageToShow.id)}
 						{#if pageToShow.url !== '/'}
-							<li class:active={$page.url.pathname === pageToShow.url}>
+							<li class:active={url.pathname === pageToShow.url}>
 								<a href="/{pageToShow.url}">{pageToShow.title}</a>
 								{#if pageToShow.subPages?.length}
 									{#each pageToShow.subPages as subpageToShow (subpageToShow.id)}
-										<li class:active={$page.url.pathname === subpageToShow.url}>
+										<li class:active={url.pathname === subpageToShow.url}>
 											<a href="/{subpageToShow.url}">{subpageToShow.title}</a>
 										</li>
 									{/each}
@@ -128,17 +113,17 @@
 							</li>
 						{/if}
 					{/each}
-					{#if $page.data?.user?.email}
-						<li>
-							<a href="/" on:click={logout}>Logout</a>
-						</li>
-					{/if}
-					{#if $page.data?.user?.email === ADMIN_EMAIL}
+					{#if user?.email === ADMIN_EMAIL}
 						<br />
 						<li><a href="/add">Add page</a></li>
 						<li><a href="/edit">Edit page</a></li>
 					{/if}
 				</ul>
+				{#if user?.email}
+				<form class="logout" method="POST" action="/auth/login?/logout">
+					<button type="submit">Logout</button>
+				</form>
+			{/if}
 			</div>
 			{#if blogs?.length}
 				<div class="col">
@@ -149,7 +134,7 @@
 								<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
 							{/each}
 						{/if}
-						{#if $page.data?.user?.email === ADMIN_EMAIL}
+						{#if user?.email === ADMIN_EMAIL}
 							<br />
 							<li><a href="/blogs/add">Add blog</a></li>
 							<li><a href="/blogs/edit">Edit blog</a></li>
@@ -261,6 +246,10 @@
 		cursor: inherit;
 		line-height: inherit;
 		text-transform: uppercase;
+	}
+
+	.logout {
+		text-align: center;
 	}
 
 	#header {

@@ -66,9 +66,8 @@ typings/
 # FuseBox cache
 .fusebox/
 
+# Svelte / project custom
 build/
 .svelte-kit
 database/
 connect-session-knex.sqlite
-en-blog.json
-sk-blog.json
