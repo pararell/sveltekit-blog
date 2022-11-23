@@ -1,6 +1,7 @@
 export const API_URL = import.meta.env.VITE_API_URL;
 export const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 export const HEADER_LOGO = import.meta.env.VITE_HEADER_LOGO;
+export const DISQUSSRC = import.meta.env.VITE_DISQUSSRC;
 
 export const inputTypes = ['text', 'password', 'tel', 'email', 'date'];
 

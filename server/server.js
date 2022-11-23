@@ -4,13 +4,15 @@ import bodyParser from 'body-parser';
 const { urlencoded, json } = bodyParser;
 import nodemailer from 'nodemailer';
 import * as path from 'path';
-import * as fs from 'fs';
+// import * as fs from 'fs';
 import knex from 'knex';
 import cors from 'cors';
 import session from 'express-session';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import cookieParser from 'cookie-parser';
+import { handler } from '../build/handler.js';
 dotenv.config();
 
 export const pageModel = {
@@ -57,9 +59,9 @@ const databases = [
 ];
 
 import connectKnexSession from 'connect-session-knex';
-const KnexSessionStore = connectKnexSession(session);
+export const KnexSessionStore = connectKnexSession(session);
 
-const connection = knex({
+export const connection = knex({
 	client: 'sqlite3',
 	connection: {
 		filename: path.join(process.cwd(), 'database/db.sqlite')
@@ -97,11 +99,17 @@ databases.forEach((database) => {
 		});
 });
 
-const { PORT } = process.env;
-const portServer = PORT || 4000;
+const getLang = (req) => {
+	return req.cookies.lang
+		? req.cookies.lang
+		: req.headers['accept-language'] && req.headers['accept-language'].includes('sk')
+			? 'sk'
+			: 'en';
+}
 
 const app = express();
 
+app.use(cookieParser());
 app.use(
 	session({
 		secret: process.env.cookieSecret,
@@ -133,36 +141,9 @@ app.get('/api/user', async (req, res) => {
 	}
 });
 
-app.get('/api/config', async (req, res) => {
-	const lang =
-		req.session && req.session.lang
-			? req.session.lang
-			: req.headers['accept-language'] && req.headers['accept-language'].includes('sk')
-			? 'sk'
-			: 'en';
-	try {
-		res.end(JSON.stringify({ disqusSrc: process.env.disqusSrc, lang }));
-	} catch (err) {
-		res.end(JSON.stringify({}));
-	}
-});
-
-app.post('/api/lang', async (req, res) => {
-	try {
-		const langFromRequest =
-			req.body.lang && ['en', 'sk'].includes(req.body.lang.toLowerCase())
-				? req.body.lang.toLowerCase()
-				: 'en';
-		req.session.lang = langFromRequest;
-		res.end(JSON.stringify({ lang: langFromRequest }));
-	} catch (err) {
-		res.end(JSON.stringify({ lang: 'en' }));
-	}
-});
-
 app.get('/api/blogs', async (req, res) => {
 	try {
-		const lang = req.session.lang || 'en';
+		const lang = getLang(req);
 		const blogs = await connection
 			.select('title', 'slug', 'description', 'image', 'author', 'date', 'categories', 'lang')
 			.from('blogs')
@@ -223,7 +204,7 @@ app.patch('/api/blogs/update', async (req, res) => {
 });
 
 app.get('/api/blogs/:slug', async (req, res) => {
-	const lang = req.session && req.session.lang ? req.session.lang : 'en';
+	const lang = getLang(req);
 	const defaultEmpty = {
 		...blogModel,
 		title: 'Blog',
@@ -268,7 +249,7 @@ app.delete('/api/blogs/delete/:id', async (req, res) => {
 
 app.get('/api/pages', async (req, res) => {
 	try {
-		const lang = req.session.lang || 'en';
+		const lang = getLang(req);
 		const pages = await connection('pages')
 			.where({ lang })
 			.select('id', 'title', 'metaTitle', 'url', 'slug', 'description', 'position', 'lang');
@@ -289,7 +270,7 @@ app.post('/api/pages/create', async (req, res) => {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const lang = req.session && req.session.lang ? req.session.lang : 'en';
+	const lang = getLang(req);
 	const ifExist = await connection('pages').where({ lang, slug: req.body.slug });
 	if (ifExist && !!ifExist.length) {
 		res.end(JSON.stringify({ message: `Page already exist` }));
@@ -328,7 +309,7 @@ app.patch('/api/pages/update', async (req, res) => {
 });
 
 app.get('/api/pages/:slug', async (req, res) => {
-	const lang = req.session && req.session.lang ? req.session.lang : 'en';
+	const lang = getLang(req);
 	let { slug } = req.params;
 
 	const defaultEmpty = {
@@ -364,7 +345,7 @@ app.get('/api/pages/:slug', async (req, res) => {
 });
 
 app.get('/api/pages/:slug/:subpage', async (req, res) => {
-	const lang = req.session && req.session.lang ? req.session.lang : 'en';
+	const lang = getLang(req);
 	let { slug } = req.params;
 	let { subpage } = req.params;
 
@@ -536,10 +517,15 @@ app.post('/api/contact', async (req, res) => {
 });
 
 const run = async () => {
-	if (fs.existsSync('../build/handler.js')) {
-		const { handler } = await import('../build/handler.js');
-		app.use(handler);
-	}
+	const { PORT } = process.env;
+	const portServer = PORT || 4000;
+
+	// if (fs.existsSync('../build/handler.js')) {
+	// 	const { handler } = await import('../build/handler.js');
+	// 	app.use(handler);
+	// }
+
+	app.use(handler);
 
 	app.listen(portServer, (err) => {
 		if (err) console.log('error', err);

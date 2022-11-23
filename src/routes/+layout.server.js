@@ -1,13 +1,8 @@
 import { api } from '$lib/api';
 
-export async function load({ fetch }) {
+export async function load({ fetch, locals }) {
 	const fetchUser = async () => {
 		const response = await api({ url: 'api/user', serverFetch: fetch });
-		return response.body;
-	};
-
-	const fetchConfig = async () => {
-		const response = await api({ url: 'api/config', serverFetch: fetch });
 		return response.body;
 	};
 
@@ -27,8 +22,8 @@ export async function load({ fetch }) {
 
 	return {
 		user: fetchUser(),
-		config: fetchConfig(),
 		pages: fetchPages(),
-		blogs: fetchBlogs()
+		blogs: fetchBlogs(),
+		lang: locals.lang
 	};
 }

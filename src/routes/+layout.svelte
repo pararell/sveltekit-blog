@@ -5,7 +5,6 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import { locale } from '$lib/i18n';
-	import { api } from '$lib/api';
 
 	let firstInit = false;
 	let openHeader = '';
@@ -14,10 +13,6 @@
 		const langFound =
 			browser && ['en', 'sk'].includes(navigator.language) ? navigator.language : 'en';
 		const foundLang = lang || langFound;
-
-		if (!lang) {
-			api({ url: 'api/lang', method: 'POST', data: { foundLang } });
-		}
 
 		locale.set(foundLang);
 	};
@@ -40,8 +35,8 @@
 	page.subscribe((p) => {
 		toggleMenu({ detail: { action: 'close' } });
 
-		if (p.data.config && !firstInit) {
-			checkLang(p.data.config.lang);
+		if (p.data.lang && !firstInit) {
+			checkLang(p.data.lang);
 			firstInit = true;
 		}
 	});

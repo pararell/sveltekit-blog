@@ -13,6 +13,10 @@
 	export let pages;
 	export let blogs;
 
+	locale.subscribe((value) => {
+		selected = value;
+	});
+	
 	$: pagesInMenu = () => {
 		const basicPages = pages.filter((onePage) => onePage.url.split('/').length <= 1);
 		const subPages = pages.filter((onePage) => onePage.url.split('/').length > 1);
@@ -30,14 +34,6 @@
 			});
 	};
 
-	locale.subscribe((value) => {
-		selected = value;
-	});
-
-	const toggleMenu = () => {
-		dispatch('toggle');
-	};
-
 	$: categories = () => {
 		if (!blogs) {
 			return [];
@@ -47,13 +43,8 @@
 		];
 	};
 
-	const handleLanguageChange = async () => {
-		const langSet = await api({ url: 'api/lang', method: 'POST', data: { lang: selected } });
-		if (langSet) {
-			locale.set(selected);
-			handleChange();
-			return;
-		}
+	const toggleMenu = () => {
+		dispatch('toggle');
 	};
 
 	const logout = async () => {
@@ -179,13 +170,16 @@
 			<div class="col">
 				<div class="switcher">
 					<!-- svelte-ignore a11y-no-onchange -->
-					<select bind:value={selected} on:change={handleLanguageChange}>
-						{#each locales as language}
-							<option value={language}>
-								{language}
-							</option>
-						{/each}
-					</select>
+					<form method="POST" action="/">
+						<select name="lang" bind:value={selected}>
+							{#each locales as language}
+								<option value={language}>
+									{language}
+								</option>
+							{/each}
+						</select>
+						<button type="submit">Switch lang</button>
+					</form>
 				</div>
 			</div>
 		</nav>
