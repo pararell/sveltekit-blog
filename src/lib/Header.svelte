@@ -120,10 +120,10 @@
 					{/if}
 				</ul>
 				{#if user?.email}
-				<form class="logout" method="POST" action="/auth/login?/logout">
-					<button type="submit">Logout</button>
-				</form>
-			{/if}
+					<form class="logout" method="POST" action="/auth/login?/logout">
+						<button type="submit">Logout</button>
+					</form>
+				{/if}
 			</div>
 			{#if blogs?.length}
 				<div class="col">
@@ -232,24 +232,41 @@
 
 	.switcher {
 		margin: auto;
-	}
 
-	.switcher select {
-		appearance: none;
-		background-color: transparent;
-		border: none;
-		padding: 0 1em 0 0;
-		margin: 0;
-		width: 100%;
-		font-family: inherit;
-		font-size: inherit;
-		cursor: inherit;
-		line-height: inherit;
-		text-transform: uppercase;
+		button {
+			all: unset;
+			cursor: pointer;
+			background: rgba(0, 0, 0, 0.05);
+			padding: 5px;
+			border-radius: 10px;
+			font-size: 14px;
+		}
+
+		select {
+			appearance: none;
+			background-color: transparent;
+			border: none;
+			padding: 0 1em 0 0;
+			margin: 0;
+			width: 100%;
+			font-family: inherit;
+			font-size: inherit;
+			cursor: inherit;
+			line-height: inherit;
+			text-transform: uppercase;
+		}
 	}
 
 	.logout {
 		text-align: center;
+
+		button {
+			all: unset;
+			cursor: pointer;
+			font-size: 0.8rem;
+			color: #b4b9ba;
+			text-transform: uppercase;
+		}
 	}
 
 	#header {
