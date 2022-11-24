@@ -24,6 +24,7 @@ export async function load({ fetch, locals }) {
 		user: fetchUser(),
 		pages: fetchPages(),
 		blogs: fetchBlogs(),
-		lang: locals.lang
+		lang: locals.lang,
+		mode: locals.mode
 	};
 }

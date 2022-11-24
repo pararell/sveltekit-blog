@@ -42,13 +42,14 @@
 	});
 </script>
 
-<div class="header-wrap">
+<div class="header-wrap {$page.data?.mode}">
 	<Header
 		on:toggle={toggleMenu}
 		active={openHeader}
 		pages={$page.data?.pages}
 		blogs={$page.data?.blogs}
 		user={$page.data?.user}
+		mode={$page.data?.mode}
 		url={$page.url}
 	/>
 </div>

@@ -11,6 +11,7 @@
 	export let blogs;
 	export let user;
 	export let url;
+	export let mode;
 
 	locale.subscribe((value) => {
 		selected = value;
@@ -85,7 +86,13 @@
 					<span class="hamburger-label">Menu</span>
 				</label>
 			</div>
-		</div>
+			<form class="light-switcher" method="POST" action="?/modeSwitch">
+				<input type="text" name="mode" bind:value={mode} class="hidden">
+				<button type="submit">
+					<svg xmlns="http://www.w3.org/2000/svg" class="light-switch" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+				</button>
+			</form>
+			</div>
 
 		<nav id="site-nav" class={active}>
 			<div class="col">
@@ -154,7 +161,7 @@
 			{/if}
 			<div class="col">
 				<div class="switcher">
-					<form method="POST" action="/">
+					<form method="POST" action="?/langSwitch">
 						<select name="lang" bind:value={selected}>
 							{#each locales as language}
 								<option value={language}>
@@ -172,7 +179,7 @@
 
 <style type="text/scss">
 	.logo {
-		color: #fff;
+		color: var(--text-color-header);
 		font-weight: 700;
 		font-size: calc(var(--header-height) - 10px);
 		line-height: 1;
@@ -268,20 +275,43 @@
 		}
 	}
 
+	.light-switcher {
+		display: flex;
+    align-items: center;
+		margin-left: 20px;
+
+		button {
+			all: unset;
+			cursor: pointer;
+			display: flex;
+		}
+
+		input {
+			display: none;
+		}
+
+		.light-switch {
+		width: 1.4rem;
+		color:var(--text-color-header);
+	}
+
+	}
+
+
 	#header {
 		position: relative;
 	}
 
 	#header:has(.hamburger-trigger:checked) {
 		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
-		background: #fff;
+		background: var(--text-color-header);
 		overflow: auto;
 		min-height: 500px;
 	}
 
 	#header.is-active {
 		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
-		background: #fff;
+		background: var(--text-color-header);
 		overflow: auto;
 		min-height: 500px;
 	}
@@ -302,7 +332,7 @@
 		top: 0;
 		width: 100%;
 		height: 100%;
-		background-color: #fff;
+		background-color: var(--text-color-header);
 		opacity: 0;
 		transition: opacity 0.3s ease;
 	}
@@ -349,7 +379,7 @@
 	.hamburger-inner::after {
 		width: 30px;
 		height: 2px;
-		background-color: #fff;
+		background-color: var(--text-color-header);
 		border-radius: 4px;
 		position: absolute;
 		transition-property: -webkit-transform;
@@ -425,7 +455,7 @@
 	}
 
 	.hamburger-label {
-		color: #fff;
+		color: var(--text-color-header);
 		display: inline-block;
 		font-weight: 700;
 		line-height: 1;
