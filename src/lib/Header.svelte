@@ -11,7 +11,12 @@
 	export let blogs;
 	export let user;
 	export let url;
+	export let lang;
 	export let mode;
+
+	if (lang) {
+		selected = lang;
+	}
 
 	locale.subscribe((value) => {
 		selected = value;
@@ -164,7 +169,7 @@
 					<form method="POST" action="?/langSwitch">
 						<select name="lang" bind:value={selected}>
 							{#each locales as language}
-								<option value={language}>
+								<option value={language} selected={language === selected ? true : false}>
 									{language}
 								</option>
 							{/each}
@@ -246,6 +251,7 @@
 			padding: 5px;
 			border-radius: 10px;
 			font-size: 14px;
+			color: var(--text-color-header);
 		}
 
 		select {
@@ -260,6 +266,7 @@
 			cursor: inherit;
 			line-height: inherit;
 			text-transform: uppercase;
+			color: var(--text-color-header);
 		}
 	}
 
@@ -304,14 +311,14 @@
 
 	#header:has(.hamburger-trigger:checked) {
 		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
-		background: var(--text-color-header);
+		background: var(--primary-color);
 		overflow: auto;
 		min-height: 500px;
 	}
 
 	#header.is-active {
 		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
-		background: var(--text-color-header);
+		background: var(--primary-color);
 		overflow: auto;
 		min-height: 500px;
 	}
@@ -332,7 +339,7 @@
 		top: 0;
 		width: 100%;
 		height: 100%;
-		background-color: var(--text-color-header);
+		background-color: var(--primary-color);
 		opacity: 0;
 		transition: opacity 0.3s ease;
 	}
@@ -392,13 +399,13 @@
 	#header:has(.hamburger-trigger:checked) .hamburger-inner,
 	#header:has(.hamburger-trigger:checked) .hamburger-inner::before,
 	#header:has(.hamburger-trigger:checked) .hamburger-inner::after {
-		background-color: #000;
+		background-color: var(--text-color-header);
 	}
 
 	#header.is-active .hamburger-inner,
 	#header.is-active .hamburger-inner::before,
 	#header.is-active .hamburger-inner::after {
-		background-color: #000;
+		background-color: var(--text-color-header);
 	}
 
 	.hamburger-inner::before,
@@ -465,11 +472,11 @@
 
 	#header:has(.hamburger-trigger:checked) .hamburger-label,
 	#header.is-active .hamburger-label {
-		color: #000;
+		color: var(--text-color-header);
 	}
 
 	#header.is-active .hamburger-label {
-		color: #000;
+		color: var(--text-color-header);
 	}
 
 	#site-nav {
@@ -527,6 +534,7 @@
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		text-align: center;
+		color: var(--text-color-header);
 	}
 
 	#site-nav ul {

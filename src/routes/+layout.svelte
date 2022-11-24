@@ -49,6 +49,7 @@
 		pages={$page.data?.pages}
 		blogs={$page.data?.blogs}
 		user={$page.data?.user}
+		lang={$page.data?.lang}
 		mode={$page.data?.mode}
 		url={$page.url}
 	/>
