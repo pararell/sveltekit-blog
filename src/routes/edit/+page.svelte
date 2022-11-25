@@ -65,7 +65,12 @@
 </svelte:head>
 {#if showEdit}
 	<form id="search">
-		<input type="search" name="edit" placeholder="Search pages&hellip;" class="draw" />
+		<input type="search" autocomplete="off" list="pages" name="edit" placeholder="Search pages&hellip;" class="draw" />
+		<datalist id="pages">
+			{#each $page.data?.pages as page}
+			<option>{page.slug}</option>
+			{/each}
+		</datalist>
 		<button class="btn" type="submit">Search</button>
 	</form>
 {/if}
