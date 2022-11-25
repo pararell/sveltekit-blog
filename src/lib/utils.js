@@ -1,4 +1,4 @@
-import { DISQUSSRC } from "./constants";
+import { DISQUSSRC } from './constants';
 
 export const setDisqus = (host, slug) => {
 	if (window.DISQUS) {

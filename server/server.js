@@ -103,9 +103,9 @@ const getLang = (req) => {
 	return ['en', 'sk'].includes(req.cookies.lang)
 		? req.cookies.lang
 		: req.headers['accept-language'] && req.headers['accept-language'].includes('sk')
-			? 'sk'
-			: 'en';
-}
+		? 'sk'
+		: 'en';
+};
 
 const app = express();
 

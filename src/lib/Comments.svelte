@@ -7,8 +7,7 @@
 
 	onMount(() => {
 		setDisqus(host, slug);
-	})
-
+	});
 </script>
 
 <div id="disqus_thread" />

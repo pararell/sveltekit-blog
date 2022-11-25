@@ -5,7 +5,7 @@ export const actions = {
 	register: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const email = data.get('email');
-    const username = data.get('username');
+		const username = data.get('username');
 		const password = data.get('password');
 		const res = await api({
 			url: `api/register`,

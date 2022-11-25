@@ -6,7 +6,7 @@
 </script>
 
 <div class="container">
-	<form class="form" method="POST"  action="?/register">
+	<form class="form" method="POST" action="?/register">
 		<h1 class="header-title">User register</h1>
 		<div class="form">
 			<span class="field">
@@ -25,7 +25,7 @@
 		</div>
 		{#if form?.error}
 			<p class="error">
-				{ form.error}
+				{form.error}
 			</p>
 		{/if}
 	</form>

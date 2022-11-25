@@ -6,8 +6,8 @@ const config = {
 	kit: {
 		adapter: node({ out: 'build' }),
 		csrf: {
-      checkOrigin: false,
-    },
+			checkOrigin: false
+		},
 		serviceWorker: {
 			register: false
 		}

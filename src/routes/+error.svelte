@@ -1,15 +1,10 @@
-<script context="module">
-	export function load({ error, status }) {
-		return {
-			props: {
-				title: `${status}: ${error.message}`
-			}
-		};
-	}
-</script>
-
 <script>
-	export let title;
+	import { page } from '$app/stores';
 </script>
 
-<h2>{title}</h2>
+
+<svelte:head>
+	<title>{$page.status}</title>
+</svelte:head>
+
+<h2>{$page.error?.message}</h2>
