@@ -126,7 +126,9 @@
 					{#each pagesInMenu() as pageToShow (pageToShow.id)}
 						{#if pageToShow.url !== '/'}
 							<li class:active={url.pathname === pageToShow.url}>
-								<a href="/{pageToShow.url}">{pageToShow.title}</a>
+								<a 
+									rel={pageToShow.description === 'reload' ? 'external' : ''}
+									href="/{pageToShow.url}">{pageToShow.title}</a>
 								{#if pageToShow.subPages?.length}
 									{#each pageToShow.subPages as subpageToShow (subpageToShow.id)}
 										<li class:active={url.pathname === subpageToShow.url}>
