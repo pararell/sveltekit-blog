@@ -23,8 +23,8 @@
 	});
 
 	$: pagesInMenu = () => {
-		const basicPages = pages.filter((onePage) => onePage.url.split('/').length <= 1);
-		const subPages = pages.filter((onePage) => onePage.url.split('/').length > 1);
+		const basicPages = pages.filter((onePage) => onePage.url.split('/').length <= 1 && onePage.hidden !== 'true');
+		const subPages = pages.filter((onePage) => onePage.url.split('/').length > 1 && onePage.hidden !== 'true');
 		return basicPages
 			.sort((a, b) => +a.position - +b.position)
 			.map((basicPage) => {

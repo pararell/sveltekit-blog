@@ -251,7 +251,7 @@ app.get('/api/pages', async (req, res) => {
 		const lang = getLang(req);
 		const pages = await connection('pages')
 			.where({ lang })
-			.select('id', 'title', 'metaTitle', 'url', 'slug', 'description', 'position', 'lang');
+			.select('id', 'title', 'metaTitle', 'url', 'slug', 'description', 'position', 'lang', 'hidden', 'onlyHTML');
 		res.end(JSON.stringify(pages));
 	} catch {
 		res.end(JSON.stringify([]));
