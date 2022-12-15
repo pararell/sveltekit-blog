@@ -3,7 +3,7 @@
 ## Svelte blog which using Markdown, FE Svelte - SvelteKit, BE Express + SQLite
 
 <br/>
-Pages and blogs are dynamically created with Markdown or Joddit and they are server-side rendered then - for SEO and client-side for interaction. Option for only HTML without Javascript was added - header will work but language switcher has to be updated still
+Pages and blogs are dynamically created with Markdown or Joddit and they are server-side rendered then - for SEO and client-side for interaction. Option for only HTML without Javascript was added - header will work with language switcher 
 <br/><br/>
 
 Set .env in main directory and in /server
