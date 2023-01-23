@@ -63,10 +63,17 @@
 </svelte:head>
 
 <form id="search">
-	<input type="search" autocomplete="off" list="blogs" name="edit" placeholder="Search pages&hellip;" class="draw" />
+	<input
+		type="search"
+		autocomplete="off"
+		list="blogs"
+		name="edit"
+		placeholder="Search pages&hellip;"
+		class="draw"
+	/>
 	<datalist id="blogs">
 		{#each $page.data?.blogs as blog}
-		<option>{blog.slug}</option>
+			<option>{blog.slug}</option>
 		{/each}
 	</datalist>
 	<button class="btn" type="submit">Search</button>

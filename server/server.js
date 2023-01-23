@@ -42,6 +42,17 @@ export const blogModel = {
 	comments: 'json'
 };
 
+export const expenseModel = {
+	title: 'string',
+	slug: 'string',
+	description: 'string',
+	value: 'integer',
+	repeat: 'string',
+	lastPayment: 'date',
+	currency: 'string',
+	categories: 'json'
+};
+
 export const userModel = {
 	username: 'string',
 	email: 'string',
@@ -55,6 +66,7 @@ export const userModel = {
 const databases = [
 	{ name: 'Pages', model: pageModel },
 	{ name: 'Blogs', model: blogModel },
+	{ name: 'Expenses', model: expenseModel },
 	{ name: 'Users', model: userModel }
 ];
 
@@ -251,7 +263,18 @@ app.get('/api/pages', async (req, res) => {
 		const lang = getLang(req);
 		const pages = await connection('pages')
 			.where({ lang })
-			.select('id', 'title', 'metaTitle', 'url', 'slug', 'description', 'position', 'lang', 'hidden', 'onlyHTML');
+			.select(
+				'id',
+				'title',
+				'metaTitle',
+				'url',
+				'slug',
+				'description',
+				'position',
+				'lang',
+				'hidden',
+				'onlyHTML'
+			);
 		res.end(JSON.stringify(pages));
 	} catch {
 		res.end(JSON.stringify([]));
@@ -391,6 +414,96 @@ app.delete('/api/pages/delete/:id', async (req, res) => {
 		res.end(JSON.stringify({}));
 	} catch {
 		res.end(JSON.stringify({ message: `There was an error retrieving pages` }));
+	}
+});
+
+app.get('/api/expenses', async (req, res) => {
+	try {
+		const expenses = await connection('expenses').select('*');
+		res.end(JSON.stringify(expenses));
+	} catch {
+		res.end(JSON.stringify([]));
+	}
+});
+
+app.post('/api/expenses/create', async (req, res) => {
+	if (!req.session.token) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const admin = userInfo && userInfo.email === process.env.adminEmail;
+	if (!admin) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+
+	const ifExist = await connection('expenses').where({ slug: req.body.slug });
+	if (ifExist && !!ifExist.length) {
+		res.end(JSON.stringify({ message: `Expense already exist` }));
+		return;
+	}
+	const expenses = await connection('expenses').insert({ ...req.body });
+	try {
+		res.end(JSON.stringify(expenses));
+	} catch (err) {
+		res.end(JSON.stringify({ message: `There was an error retrieving expenses: ${err}` }));
+	}
+});
+
+app.patch('/api/expenses/update', async (req, res) => {
+	if (!req.session.token) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const admin = userInfo && userInfo.email === process.env.adminEmail;
+	if (!admin) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const _expenses = await connection('expenses')
+		.where({ id: req.body.id })
+		.update({ ...req.body });
+
+	const page = await connection.select('*').from('expenses').where('id', req.body.id).first();
+
+	try {
+		res.end(JSON.stringify(page));
+	} catch (err) {
+		res.end(JSON.stringify({ message: `There was an error retrieving expenses: ${err}` }));
+	}
+});
+
+app.get('/api/expenses/:slug', async (req, res) => {
+	let { slug } = req.params;
+
+	try {
+		const expense = await connection.select('*').from('expenses').where({ slug }).first();
+
+		return expense ? res.end(JSON.stringify(expense)) : res.end(JSON.stringify({}));
+	} catch (e) {
+		res.end(JSON.stringify({}));
+	}
+});
+
+app.delete('/api/expenses/delete/:id', async (req, res) => {
+	if (!req.session.token) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const admin = userInfo && userInfo.email === process.env.adminEmail;
+	if (!admin) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const id = req.params['id'];
+	const _page = await connection('expenses').where('id', id).del();
+	try {
+		res.end(JSON.stringify({}));
+	} catch {
+		res.end(JSON.stringify({ message: `There was an error retrieving expenses` }));
 	}
 });
 

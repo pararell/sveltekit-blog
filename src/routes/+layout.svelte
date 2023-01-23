@@ -54,11 +54,11 @@
 		url={$page.url}
 	/>
 </div>
-<main id="main" class="{$page.data?.mode}">
+<main id="main" class={$page.data?.mode}>
 	<slot />
 </main>
 
-<footer class="{$page.data?.mode}">
+<footer class={$page.data?.mode}>
 	<p />
 </footer>
 

@@ -1,8 +1,8 @@
 import { API_URL } from './constants';
 const baseUrl = API_URL;
 
-export async function api({ url, method, data, serverFetch }) {
-	const res = await (serverFetch || fetch)(`${baseUrl}/${url}`, {
+export async function api({ url, method, data, serverFetch, apiURL = baseUrl }) {
+	const res = await (serverFetch || fetch)(`${apiURL}/${url}`, {
 		method: method || 'GET',
 		headers: {
 			'content-type': 'application/json',

@@ -70,3 +70,34 @@ export const blogModelForm = {
 		value: '# T'
 	}
 };
+
+export const expenseModelForm = {
+	title: {
+		type: 'text',
+		value: ''
+	},
+	value: {
+		type: 'text',
+		value: ''
+	},
+	description: {
+		type: 'text',
+		value: ''
+	},
+	categories: {
+		type: 'text',
+		value: ''
+	},
+	repeat: {
+		type: 'text',
+		value: ''
+	},
+	currency: {
+		type: 'text',
+		value: ''
+	},
+	lastPayment: {
+		type: 'date',
+		value: new Date().toISOString().substr(0, 10)
+	}
+};
