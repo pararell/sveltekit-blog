@@ -50,7 +50,8 @@ export const expenseModel = {
 	repeat: 'string',
 	lastPayment: 'date',
 	currency: 'string',
-	categories: 'json'
+	categories: 'json',
+	user: 'string'
 };
 
 export const userModel = {
@@ -418,8 +419,13 @@ app.delete('/api/pages/delete/:id', async (req, res) => {
 });
 
 app.get('/api/expenses', async (req, res) => {
+	if (!req.session.token) {
+		res.end(JSON.stringify(JSON.stringify([])));
+		return;
+	}
+	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
 	try {
-		const expenses = await connection('expenses').select('*');
+		const expenses = await connection('expenses').select('*').where('user', userInfo.email);
 		res.end(JSON.stringify(expenses));
 	} catch {
 		res.end(JSON.stringify([]));
@@ -432,8 +438,7 @@ app.post('/api/expenses/create', async (req, res) => {
 		return;
 	}
 	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.email === process.env.adminEmail;
-	if (!admin) {
+	if (!userInfo) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
@@ -443,7 +448,7 @@ app.post('/api/expenses/create', async (req, res) => {
 		res.end(JSON.stringify({ message: `Expense already exist` }));
 		return;
 	}
-	const expenses = await connection('expenses').insert({ ...req.body });
+	const expenses = await connection('expenses').insert({ ...req.body, user: userInfo.email  });
 	try {
 		res.end(JSON.stringify(expenses));
 	} catch (err) {
@@ -457,8 +462,8 @@ app.patch('/api/expenses/update', async (req, res) => {
 		return;
 	}
 	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.email === process.env.adminEmail;
-	if (!admin) {
+
+	if (!userInfo) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
@@ -466,7 +471,7 @@ app.patch('/api/expenses/update', async (req, res) => {
 		.where({ id: req.body.id })
 		.update({ ...req.body });
 
-	const page = await connection.select('*').from('expenses').where('id', req.body.id).first();
+	const page = await connection.select('*').from('expenses').where({id: req.body.id, user: userInfo.email}).first();
 
 	try {
 		res.end(JSON.stringify(page));
@@ -477,9 +482,18 @@ app.patch('/api/expenses/update', async (req, res) => {
 
 app.get('/api/expenses/:slug', async (req, res) => {
 	let { slug } = req.params;
+	if (!req.session.token) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
+	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
 
+	if (!userInfo) {
+		res.end(JSON.stringify({ message: `Authentification error` }));
+		return;
+	}
 	try {
-		const expense = await connection.select('*').from('expenses').where({ slug }).first();
+		const expense = await connection.select('*').from('expenses').where({ slug, user: userInfo.email  }).first();
 
 		return expense ? res.end(JSON.stringify(expense)) : res.end(JSON.stringify({}));
 	} catch (e) {
@@ -493,13 +507,14 @@ app.delete('/api/expenses/delete/:id', async (req, res) => {
 		return;
 	}
 	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.email === process.env.adminEmail;
-	if (!admin) {
+
+	if (!userInfo) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
 	const id = req.params['id'];
-	const _page = await connection('expenses').where('id', id).del();
+
+	const _expense = await connection('expenses').where({id, user: userInfo.email}).del();
 	try {
 		res.end(JSON.stringify({}));
 	} catch {
