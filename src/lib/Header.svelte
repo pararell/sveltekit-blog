@@ -72,10 +72,9 @@
 			{#if blogs?.length}
 				<a class="menu-link" class:active={url.pathname === '/blogs'} href="/blogs">Blog</a>
 			{/if}
-			{#if user?.email === ADMIN_EMAIL}
+			{#if user?.email}
 				<a class="menu-link" class:active={url.pathname === '/expenses'} href="/expenses"
-					>Expenses</a
-				>
+					>Expenses</a>
 			{/if}
 			{#each pagesInMenu() as pageToShow (pageToShow.id)}
 				{#if pageToShow.url !== '/' && !pageToShow.subpage}
