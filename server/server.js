@@ -127,7 +127,7 @@ app.use(
 	session({
 		secret: process.env.cookieSecret,
 		resave: false,
-		saveUninitialized: false,
+		saveUninitialized: true,
 		store: new KnexSessionStore(),
 		cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000, httpOnly: false }
 	})
