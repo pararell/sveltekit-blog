@@ -4,12 +4,12 @@ const baseUrl = API_URL;
 export async function api({ url, method, data, serverFetch, apiURL = baseUrl }) {
 	const res = await (serverFetch || fetch)(`${apiURL}/${url}`, {
 		method: method || 'GET',
-		headers: {
-			'content-type': 'application/json',
-			accept: 'application/json'
-		},
+		body: data && JSON.stringify(data),
 		credentials: 'include',
-		body: data && JSON.stringify(data)
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
 	});
 
 	return {

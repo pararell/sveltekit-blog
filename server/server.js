@@ -126,7 +126,6 @@ app.use(cookieParser());
 app.use(
 	session({
 		secret: process.env.cookieSecret,
-		name: process.env.cookieName,
 		resave: false,
 		saveUninitialized: false,
 		store: new KnexSessionStore(),
