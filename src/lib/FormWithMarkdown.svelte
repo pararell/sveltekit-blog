@@ -1,5 +1,4 @@
 <script>
-	import { ADMIN_EMAIL } from '$lib/constants';
 	import Markdown from '$lib/Markdown.svelte';
 	import { inputTypes } from './constants';
 	import { createEventDispatcher, onMount } from 'svelte';
@@ -86,7 +85,7 @@
 	};
 </script>
 
-{#if $page.data?.user?.email === ADMIN_EMAIL}
+{#if $page.data?.user?.email}
 	<form class="form" on:submit|preventDefault={handleSubmit}>
 		{#if form}
 			{#each form as [name, item]}

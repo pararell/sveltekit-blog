@@ -148,6 +148,10 @@
 							</li>
 						{/if}
 					{/each}
+					{#if user?.email}
+					<li><a class:active={url.pathname === '/expenses'} href="/expenses"
+							>Expenses</a></li>
+					{/if}
 					{#if user?.email === ADMIN_EMAIL}
 						<br />
 						<li><a href="/add">Add page</a></li>

@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { onDestroy } from 'svelte';
 	import { api } from '$lib/api';
-	import { expenseModelForm, ADMIN_EMAIL } from '$lib/constants';
+	import { expenseModelForm } from '$lib/constants';
 	import { goto, invalidateAll } from '$app/navigation';
 
 	let expenseNewForm = Object.entries(expenseModelForm);
@@ -171,7 +171,7 @@
 			Summary: {summary} eur
 		</span>
 
-		{#if $page.data?.user?.email === ADMIN_EMAIL}
+		{#if $page.data?.user?.email}
 			<div class="expenses-actions">
 				<button class="btn" on:click={() => (showAdd = true)}>Add</button>
 				<button class="btn" on:click={() => (showEdit = true)}>Edit</button>
@@ -209,7 +209,7 @@
 	<div class="modal-window">
 		<div class="modal-inside">
 			<button class="modal-close" on:click={() => (showAdd = false)}>x</button>
-			{#if $page.data?.user?.email === ADMIN_EMAIL}
+			{#if $page.data?.user?.email}
 				{#await import('$lib/FormWithMarkdown.svelte') then Form}
 					<div class="container">
 						<Form.default form={expenseNewForm} on:submitForm={addExpense} />
@@ -224,7 +224,7 @@
 	<div class="modal-window">
 		<div class="modal-inside">
 			<button class="modal-close" on:click={() => (showEdit = false)}>x</button>
-			{#if $page.data?.user?.email === ADMIN_EMAIL}
+			{#if $page.data?.user?.email}
 				<form id="search">
 					<input
 						type="search"
