@@ -447,7 +447,7 @@ app.post('/api/expenses/create', async (req, res) => {
 		res.end(JSON.stringify({ message: `Expense already exist` }));
 		return;
 	}
-	const expenses = await connection('expenses').insert({ ...req.body, user: userInfo.email  });
+	const expenses = await connection('expenses').insert({ ...req.body, user: userInfo.email });
 	try {
 		res.end(JSON.stringify(expenses));
 	} catch (err) {
@@ -470,7 +470,11 @@ app.patch('/api/expenses/update', async (req, res) => {
 		.where({ id: req.body.id })
 		.update({ ...req.body });
 
-	const page = await connection.select('*').from('expenses').where({id: req.body.id, user: userInfo.email}).first();
+	const page = await connection
+		.select('*')
+		.from('expenses')
+		.where({ id: req.body.id, user: userInfo.email })
+		.first();
 
 	try {
 		res.end(JSON.stringify(page));
@@ -492,7 +496,11 @@ app.get('/api/expenses/:slug', async (req, res) => {
 		return;
 	}
 	try {
-		const expense = await connection.select('*').from('expenses').where({ slug, user: userInfo.email  }).first();
+		const expense = await connection
+			.select('*')
+			.from('expenses')
+			.where({ slug, user: userInfo.email })
+			.first();
 
 		return expense ? res.end(JSON.stringify(expense)) : res.end(JSON.stringify({}));
 	} catch (e) {
@@ -513,7 +521,7 @@ app.delete('/api/expenses/delete/:id', async (req, res) => {
 	}
 	const id = req.params['id'];
 
-	const _expense = await connection('expenses').where({id, user: userInfo.email}).del();
+	const _expense = await connection('expenses').where({ id, user: userInfo.email }).del();
 	try {
 		res.end(JSON.stringify({}));
 	} catch {

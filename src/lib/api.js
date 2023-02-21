@@ -9,7 +9,7 @@ export async function api({ url, method, data, serverFetch, apiURL = baseUrl }) 
 		headers: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json'
-		},
+		}
 	});
 
 	return {

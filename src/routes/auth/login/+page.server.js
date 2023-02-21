@@ -20,7 +20,7 @@ export const actions = {
 			if (res.body.token) {
 				cookies.set('token', res.body.token);
 			}
-		
+
 			throw redirect(303, '/');
 		}
 	},
