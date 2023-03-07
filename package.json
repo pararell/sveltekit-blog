@@ -10,8 +10,8 @@
 		"format": "prettier --write --plugin-search-dir=. ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-node": "1.2.0",
-		"@sveltejs/kit": "1.8.3",
+		"@sveltejs/adapter-node": "1.2.1",
+		"@sveltejs/kit": "1.10.0",
 		"autoprefixer": "^10.4.13",
 		"postcss": "^8.4.21",
 		"postcss-load-config": "4.0.1",
@@ -22,7 +22,7 @@
 		"marked": "^4.2.12",
 		"prettier": "~2.8.4",
 		"prettier-plugin-svelte": "^2.9.0",
-		"sass": "^1.58.2",
+		"sass": "^1.58.3",
 		"svelte": "^3.55.1",
 		"svelte-preprocess": "^5.0.1"
 	},
