@@ -1,3 +1,4 @@
+export const prerender = false;
 import { api } from '$lib/api';
 import { redirect } from '@sveltejs/kit';
 
