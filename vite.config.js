@@ -1,7 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import dotenv from 'dotenv';
-dotenv.config();
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 const file = fileURLToPath(new URL('package.json', import.meta.url));
@@ -17,6 +15,7 @@ export default defineConfig(({ command }) => {
 					}
 			  }
 			: {};
+
 	return {
 		logLevel: 'info',
 		plugins: [sveltekit()],
