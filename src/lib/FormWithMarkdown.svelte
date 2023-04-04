@@ -19,7 +19,7 @@
 
 	onMount(async () => {
 		try {
-			await import('https://cdnjs.cloudflare.com/ajax/libs/jodit/3.18.9/jodit.es2018.min.js');
+			await import('https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.7/jodit.es2018.min.js');
 
 			if (Jodit) {
 				editor = Jodit.make('#editor', {
@@ -149,7 +149,7 @@
 {/if}
 
 <style>
-	@import 'https://cdnjs.cloudflare.com/ajax/libs/jodit/3.18.9/jodit.es2018.min.css';
+	@import 'https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.7/jodit.min.css';
 
 	.field {
 		max-width: 400px;

@@ -51,3 +51,10 @@ export const preparePageForm = (pageForm, page) => {
 		return keyval;
 	});
 };
+
+export const minifyHTML = (html) => {
+	return html
+		.replace(/\>[\r]+\</g, "><")
+		.replace(/(<.*?>)|\s+/g, (m, $1) => $1 ? $1 : ' ')
+		.trim();
+};

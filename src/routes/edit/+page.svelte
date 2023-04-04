@@ -4,7 +4,7 @@
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { onDestroy } from 'svelte';
-	import { preparePageForm } from '$lib/utils';
+	import { minifyHTML, preparePageForm } from '$lib/utils';
 	import { marked } from 'marked';
 
 	let pageForm = Object.entries(pageModelForm);
@@ -82,7 +82,7 @@
 	</form>
 {/if}
 {#if $page.data?.pageToEdit}
-	{@html marked($page.data.pageToEdit.content)}
+	{@html marked(minifyHTML($page.data.pageToEdit.content))}
 
 	{#if data.paramsPage === 'contact'}
 		{#await import('$lib/ContactForm.svelte') then ContactForm}
