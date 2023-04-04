@@ -160,6 +160,7 @@
 
 	.label {
 		text-transform: capitalize;
+		color: var(--text-color);
 	}
 
 	input {

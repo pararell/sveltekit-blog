@@ -2,6 +2,7 @@ import { api } from '$lib/api';
 import { marked } from 'marked';
 import { redirect } from '@sveltejs/kit';
 
+export const prerender = false;;
 export let csr = true;
 
 export const load = async ({ fetch, params, depends }) => {

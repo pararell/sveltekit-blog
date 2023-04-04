@@ -5,13 +5,15 @@
 	--text-color: #444444;
 	--text-color-header: #000;
 	--header-height: 35px;
+	--box-shadow: 1px 1px 20px 0px rgb(0 0 0 / 15%);
 }
 
 .dark {
 	font-family: 'Nunito', sans-serif;
 	--primary-color: #000;
 	--secondary-color: #b1bbbc;
-	--text-color: #444444;
+	--text-color: #ccc;
 	--text-color-header: #fff;
 	--header-height: 35px;
+	--box-shadow: 1px 1px 30px 30px rgb(220 220 220 / 10%);
 }

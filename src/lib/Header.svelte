@@ -418,9 +418,7 @@
 		background-color: var(--text-color-header);
 		border-radius: 4px;
 		position: absolute;
-		transition-property: -webkit-transform;
 		transition-property: transform;
-		transition-property: transform, -webkit-transform;
 		transition-duration: 0.15s;
 		transition-timing-function: ease;
 	}

@@ -264,7 +264,9 @@
 
 <style lang="scss">
 	.expenses-wrap {
-		margin: 0 auto;
+		margin: 20px auto;
+		background: #fff;
+		border-radius: 12px;
 	}
 	.expenses {
 		display: flex;
@@ -371,7 +373,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 50px 50px 30px 50px;
+		padding: 30px 50px 30px 50px;
 	}
 
 	.summary {

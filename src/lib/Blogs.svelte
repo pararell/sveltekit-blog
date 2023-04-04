@@ -39,8 +39,8 @@
 		flex-wrap: wrap;
 		width: 100%;
 		margin: 80px auto;
-		background-color: #fff;
-		box-shadow: 1px 1px 20px 0px rgb(0 0 0 / 15%);
+		background-color: var(--primary-color);
+		box-shadow: var(--box-shadow);
 		cursor: pointer;
 	}
 
@@ -50,7 +50,7 @@
 		top: -30px;
 		height: 320px;
 		overflow: hidden;
-		box-shadow: 1px 1px 20px 0px rgb(0 0 0 / 15%);
+		box-shadow: var(--box-shadow);
 		transition: all 0.1s ease-out;
 	}
 

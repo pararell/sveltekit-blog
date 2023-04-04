@@ -72,6 +72,7 @@
 		box-sizing: border-box;
 		margin-top: var(--header-height);
 		min-height: calc(85vh - var(--header-height));
+		background: var(--primary-color);
 	}
 
 	footer {
