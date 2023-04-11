@@ -4,6 +4,7 @@
 	import { api } from '$lib/api';
 	import { expenseModelForm } from '$lib/constants';
 	import { goto, invalidateAll } from '$app/navigation';
+	import { preparePageForm, prepareSlug } from '$lib/utils';
 
 	let expenseNewForm = Object.entries(expenseModelForm);
 	let expenseForm = Object.entries(expenseModelForm);
@@ -29,19 +30,6 @@
 		'#112d4b'
 	];
 
-	const prepareForm = (formToFill, values) => {
-		const keys = Object.keys(values);
-		return [...formToFill].map((keyval) => {
-			const found = keys.includes(keyval[0]);
-			if (found) {
-				keyval[1].value = values[keyval[0]];
-				return keyval;
-			}
-
-			return keyval;
-		});
-	};
-
 	let unsubscribe = page.subscribe((pageVal) => {
 		if (pageVal.data?.expenses) {
 			expenses = pageVal.data.expenses;
@@ -52,7 +40,7 @@
 		if (pageVal.data.expenseToEdit) {
 			const expenseToEdit = pageVal.data.expenseToEdit;
 			id = expenseToEdit.id;
-			expenseForm = prepareForm(expenseForm, expenseToEdit);
+			expenseForm = preparePageForm(expenseForm, expenseToEdit);
 		}
 	});
 
@@ -103,11 +91,7 @@
 			const data = {
 				id: parseFloat(id),
 				...formData,
-				slug: formData.title
-					.toLowerCase()
-					.normalize('NFD')
-					.replace(/[\u0300-\u036f]/g, '')
-					.replace(/[^\w]/gi, '-')
+				slug: prepareSlug(formData.title)
 			};
 
 			const res = await api({ url: `api/expenses/update`, method: 'PATCH', data });
@@ -123,11 +107,7 @@
 		if (formData.title) {
 			const data = {
 				...formData,
-				slug: formData.title
-					.toLowerCase()
-					.normalize('NFD')
-					.replace(/[\u0300-\u036f]/g, '')
-					.replace(/[^\w]/gi, '-')
+				slug: prepareSlug(formData.title)
 			};
 
 			const res = await api({ url: `api/expenses/create`, method: 'POST', data });

@@ -41,7 +41,7 @@ export const resetDisqus = (host, slug) => {
 
 export const preparePageForm = (pageForm, page) => {
 	const pageKeys = Object.keys(page);
-	return pageForm.map((keyval) => {
+	return [...pageForm].map((keyval) => {
 		const found = pageKeys.includes(keyval[0]);
 		if (found) {
 			keyval[1].value = page[keyval[0]];
@@ -52,9 +52,17 @@ export const preparePageForm = (pageForm, page) => {
 	});
 };
 
+export const prepareSlug = (slug) => {
+	return slug
+		.toLowerCase()
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^\w]/gi, '-');
+};
+
 export const minifyHTML = (html) => {
 	return html
-		.replace(/\>[\r]+\</g, "><")
-		.replace(/(<.*?>)|\s+/g, (m, $1) => $1 ? $1 : ' ')
+		.replace(/\>[\r]+\</g, '><')
+		.replace(/(<.*?>)|\s+/g, (m, $1) => ($1 ? $1 : ' '))
 		.trim();
 };

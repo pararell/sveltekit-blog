@@ -4,6 +4,7 @@
 	import { ADMIN_EMAIL, blogModelForm } from '$lib/constants';
 	import { locale } from '$lib/i18n';
 	import { page } from '$app/stores';
+	import { prepareSlug } from '$lib/utils.js';
 
 	let blogForm = Object.entries(blogModelForm);
 	export let data;
@@ -20,11 +21,7 @@
 		if (formData.title) {
 			const data = {
 				...formData,
-				slug: formData.title
-					.toLowerCase()
-					.normalize('NFD')
-					.replace(/[\u0300-\u036f]/g, '')
-					.replace(/[^\w]/gi, '-'),
+				slug: prepareSlug(formData.title),
 				categories: formData.categories ? formData.categories.split(',') : [],
 				author: user.email,
 				lang: $locale,

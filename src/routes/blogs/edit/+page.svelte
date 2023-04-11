@@ -4,7 +4,7 @@
 	import { blogModelForm, ADMIN_EMAIL } from '$lib/constants';
 	import { page } from '$app/stores';
 	import { onDestroy } from 'svelte';
-	import { preparePageForm } from '$lib/utils';
+	import { preparePageForm, prepareSlug } from '$lib/utils';
 	import { marked } from 'marked';
 
 	let id = '';
@@ -26,11 +26,7 @@
 			const data = {
 				...formData,
 				id: parseFloat(id),
-				slug: formData.title
-					.toLowerCase()
-					.normalize('NFD')
-					.replace(/[\u0300-\u036f]/g, '')
-					.replace(/[^\w]/gi, '-'),
+				slug: prepareSlug(formData.title),
 				categories: formData.categories ? formData.categories.split(',') : []
 			};
 			const res = await api({ url: `api/blogs/update`, method: 'PATCH', data });

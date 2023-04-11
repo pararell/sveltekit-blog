@@ -4,7 +4,7 @@
 	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { onDestroy } from 'svelte';
-	import { minifyHTML, preparePageForm } from '$lib/utils';
+	import { minifyHTML, preparePageForm, prepareSlug } from '$lib/utils';
 	import { marked } from 'marked';
 
 	let pageForm = Object.entries(pageModelForm);
@@ -29,11 +29,7 @@
 			const data = {
 				id: parseFloat(id),
 				...formData,
-				slug: formData.title
-					.toLowerCase()
-					.normalize('NFD')
-					.replace(/[\u0300-\u036f]/g, '')
-					.replace(/[^\w]/gi, '-')
+				slug: prepareSlug(formData.title)
 			};
 
 			const res = await api({ url: `api/pages/update`, method: 'PATCH', data });
