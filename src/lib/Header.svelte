@@ -100,7 +100,7 @@
 					<span class="hamburger-label">Menu</span>
 				</label>
 			</div>
-			<form class="light-switcher" method="POST" action="/?/modeSwitch">
+			<form class="light-switcher" method="POST" action="/header?/modeSwitch">
 				<input type="text" name="mode" bind:value={mode} class="hidden" />
 				<button type="submit" aria-label="LightSwitch">
 					<svg
@@ -192,7 +192,7 @@
 			{/if}
 			<div class="col">
 				<div class="switcher">
-					<form method="POST" action="/?/langSwitch">
+					<form method="POST" action="/header?/langSwitch">
 						<select name="lang" bind:value={selected}>
 							{#each locales as language}
 								<option value={language} selected={language === selected ? true : false}>
