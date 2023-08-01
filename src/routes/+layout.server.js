@@ -1,4 +1,4 @@
-export const prerender = true;
+export const prerender = false;
 import { api } from '$lib/api';
 
 export async function load({ fetch, locals }) {

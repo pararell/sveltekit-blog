@@ -94,7 +94,7 @@
 					type="checkbox"
 					aria-label="open the navigation"
 				/>
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
 				<label class="hamburger-box" for="hamburger-trigger" on:click={toggleMenu}>
 					<span class="hamburger-inner" />
 					<span class="hamburger-label">Menu</span>
