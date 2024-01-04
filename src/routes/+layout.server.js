@@ -22,9 +22,9 @@ export async function load({ fetch, locals }) {
 	// })
 
 	return {
-		user: fetchUser(),
-		pages: fetchPages(),
-		blogs: fetchBlogs(),
+		user: await fetchUser(),
+		pages: await fetchPages(),
+		blogs: await fetchBlogs(),
 		lang: locals.lang,
 		mode: locals.mode
 	};

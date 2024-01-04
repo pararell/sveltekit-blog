@@ -19,7 +19,7 @@ export const actions = {
 			if (res.status === 400) {
 				return { error: res.body };
 			}
-			throw redirect(303, '/auth/login');
+			redirect(303, '/auth/login');
 		}
 	}
 };

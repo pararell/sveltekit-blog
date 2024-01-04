@@ -16,6 +16,7 @@ const config = {
 		csrf: {
 			checkOrigin: false
 		},
+		embedded: true,
 		serviceWorker: {
 			register: false
 		}

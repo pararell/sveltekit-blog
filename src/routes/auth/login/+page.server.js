@@ -19,16 +19,16 @@ export const actions = {
 				return { error: res.body };
 			}
 			if (res.body.token) {
-				cookies.set('token', res.body.token);
+				 cookies.set('token', res.body.token, {path: '/'});
 			}
 
-			throw redirect(303, '/');
+			redirect(303, '/');
 		}
 	},
 	logout: async ({ fetch }) => {
 		const _res = await api({ url: 'api/logout', serverFetch: fetch });
 		if (_res) {
-			throw redirect(303, '/');
+			redirect(303, '/');
 		}
 	}
 };

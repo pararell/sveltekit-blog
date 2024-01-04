@@ -10,7 +10,7 @@ export const load = async ({ fetch, params, url }) => {
 	};
 
 	return {
-		blog: loadBlog(),
+		blog: await loadBlog(),
 		host: url.host,
 		params
 	};

@@ -9,7 +9,7 @@ export const load = async ({ fetch, params, url }) => {
 	};
 
 	return {
-		pageToEdit: loadPage(),
+		pageToEdit: await loadPage(),
 		pathname: url.pathname,
 		paramsPage: params.page
 	};

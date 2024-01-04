@@ -12,7 +12,7 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import cookieParser from 'cookie-parser';
-// import { handler } from '../build/handler.js';
+import { handler } from '../build/handler.js';
 dotenv.config();
 
 export const pageModel = {
@@ -654,12 +654,12 @@ const run = async () => {
 	const { PORT } = process.env;
 	const portServer = PORT || 4000;
 
-	if (fs.existsSync('../build/handler.js')) {
-		const { handler } = await import('../build/handler.js');
-		app.use(handler);
-	}
+	// if (fs.existsSync('../build/handler.js')) {
+	// 	const { handler } = await import('../build/handler.js');
+	// 	app.use(handler);
+	// }
 
-	// app.use(handler);
+	app.use(handler);
 
 	app.listen(portServer, (err) => {
 		if (err) console.log('error', err);

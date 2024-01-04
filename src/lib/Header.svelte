@@ -7,7 +7,7 @@
 
 	let selected;
 	export let active = '';
-	export let pages;
+	export let pages = [];
 	export let blogs;
 	export let user;
 	export let url;
@@ -23,6 +23,7 @@
 	});
 
 	$: pagesInMenu = () => {
+		console.log(pages, 'pages')
 		const basicPages = pages.filter(
 			(onePage) => onePage.url.split('/').length <= 1 && onePage.hidden !== 'true'
 		);

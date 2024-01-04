@@ -2,6 +2,7 @@ import { API_URL } from './constants';
 const baseUrl = API_URL;
 
 export async function api({ url, method, data, serverFetch, apiURL = baseUrl }) {
+	console.log(url, method, data, serverFetch, apiURL)
 	const res = await (serverFetch || fetch)(`${apiURL}/${url}`, {
 		method: method || 'GET',
 		body: data && JSON.stringify(data),

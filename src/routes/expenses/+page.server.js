@@ -28,9 +28,9 @@ export const load = async ({ fetch, params, url }) => {
 	};
 
 	return {
-		expenses: fetchExpanses(),
-		expenseToEdit: loadExpense(),
-		eurToCurrencies: loadExhangeRate(),
+		expenses: await fetchExpanses(),
+		expenseToEdit: await loadExpense(),
+		eurToCurrencies: await loadExhangeRate(),
 		pathname: url.pathname,
 		paramsPage: params.page
 	};

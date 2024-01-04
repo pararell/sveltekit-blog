@@ -5,18 +5,24 @@ import { marked } from 'marked';
 export let csr = true;
 
 export const load = async ({ fetch, params, url }) => {
-	const loadSubPage = async () => {
-		const resPage = await api({
+
+	if (params.page && params.page.includes('api')) {
+		return;
+	}
+
+        const resPage = await api({
 			url: `api/pages/${params.page}/${params.sub}`,
 			serverFetch: fetch
 		});
 		csr = resPage.body.onlyHTML !== 'true';
-		return { ...resPage.body, content: marked(resPage.body.content) };
-	};
 
 	return {
-		subPageWithContent: loadSubPage(),
+		subPageWithContent: updatePage(resPage),
 		pathname: url.pathname,
-		params
+		params: params
 	};
+
+	function updatePage(resPage) {
+		return { ...resPage.body, content: marked(resPage.body.content) };
+	}
 };
