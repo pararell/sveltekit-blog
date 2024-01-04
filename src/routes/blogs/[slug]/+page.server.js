@@ -7,7 +7,7 @@ export let csr = true;
 
 export const load = async ({ fetch, params, url }) => {
 
-	const resBlog = await api({ url: `api/blogs/${params.slug}`, serverFetch: fetch });
+	const resBlog = await api({ url: `api/v1/blogs/${params.slug}`, serverFetch: fetch });
 	csr = resBlog.body.onlyHTML !== 'true';
 
 	return {

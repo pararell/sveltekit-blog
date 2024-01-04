@@ -23,7 +23,7 @@
 				lang: $locale
 			};
 
-			const res = await api({ url: `api/pages/create`, method: 'POST', data });
+			const res = await api({ url: `api/v1/pages/create`, method: 'POST', data });
 
 			if (res) {
 				handleRedirect();

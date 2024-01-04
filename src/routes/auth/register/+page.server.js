@@ -9,7 +9,7 @@ export const actions = {
 		const username = data.get('username');
 		const password = data.get('password');
 		const res = await api({
-			url: `api/register`,
+			url: `api/v1/register`,
 			method: 'POST',
 			data: { email, username, password },
 			serverFetch: fetch

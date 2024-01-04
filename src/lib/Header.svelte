@@ -23,7 +23,6 @@
 	});
 
 	$: pagesInMenu = () => {
-		console.log(pages, 'pages')
 		const basicPages = pages.filter(
 			(onePage) => onePage.url.split('/').length <= 1 && onePage.hidden !== 'true'
 		);

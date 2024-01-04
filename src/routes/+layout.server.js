@@ -3,17 +3,17 @@ import { api } from '$lib/api';
 
 export async function load({ fetch, locals }) {
 	const fetchUser = async () => {
-		const response = await api({ url: 'api/user', serverFetch: fetch });
+		const response = await api({ url: 'api/v1/user', serverFetch: fetch });
 		return response.body;
 	};
 
 	const fetchPages = async () => {
-		const response = await api({ url: 'api/pages', serverFetch: fetch });
+		const response = await api({ url: 'api/v1/pages', serverFetch: fetch });
 		return response.body;
 	};
 
 	const fetchBlogs = async () => {
-		const response = await api({ url: 'api/blogs', serverFetch: fetch });
+		const response = await api({ url: 'api/v1/blogs', serverFetch: fetch });
 		return response.body;
 	};
 

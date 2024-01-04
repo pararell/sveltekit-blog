@@ -29,7 +29,7 @@
 				slug: prepareSlug(formData.title),
 				categories: formData.categories ? formData.categories.split(',') : []
 			};
-			const res = await api({ url: `api/blogs/update`, method: 'PATCH', data });
+			const res = await api({ url: `api/v1/blogs/update`, method: 'PATCH', data });
 
 			if (res) {
 				invalidateAll();
@@ -39,10 +39,10 @@
 
 	const removeBlog = async () => {
 		if (id) {
-			const res = await api({ url: `api/blogs/delete/` + id, method: 'DELETE' });
+			const res = await api({ url: `api/v1/blogs/delete/` + id, method: 'DELETE' });
 
 			if (res) {
-				const resBlogs = await api({ url: `api/blogs/` });
+				const resBlogs = await api({ url: `api/v1/blogs/` });
 
 				if (resBlogs) {
 					invalidateAll().then(() => {

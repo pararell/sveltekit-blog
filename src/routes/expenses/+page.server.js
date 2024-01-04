@@ -3,14 +3,14 @@ import { api } from '$lib/api';
 
 export const load = async ({ fetch, params, url }) => {
 	const fetchExpanses = async () => {
-		const response = await api({ url: 'api/expenses', serverFetch: fetch });
+		const response = await api({ url: 'api/v1/expenses', serverFetch: fetch });
 		return response.body;
 	};
 
 	const loadExpense = async () => {
 		let pageQuery = url.searchParams.get('edit');
 		if (pageQuery) {
-			const response = await api({ url: `api/expenses/${pageQuery}`, serverFetch: fetch });
+			const response = await api({ url: `api/v1/expenses/${pageQuery}`, serverFetch: fetch });
 			if (!response?.body) {
 				return {};
 			}

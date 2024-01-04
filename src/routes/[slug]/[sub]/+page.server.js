@@ -5,13 +5,8 @@ import { marked } from 'marked';
 export let csr = true;
 
 export const load = async ({ fetch, params, url }) => {
-
-	if (params.page && params.page.includes('api')) {
-		return;
-	}
-
         const resPage = await api({
-			url: `api/pages/${params.page}/${params.sub}`,
+			url: `api/v1/pages/${params.slug}/${params.sub}`,
 			serverFetch: fetch
 		});
 		csr = resPage.body.onlyHTML !== 'true';

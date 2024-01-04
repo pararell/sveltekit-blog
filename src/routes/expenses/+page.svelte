@@ -94,7 +94,7 @@
 				slug: prepareSlug(formData.title)
 			};
 
-			const res = await api({ url: `api/expenses/update`, method: 'PATCH', data });
+			const res = await api({ url: `api/v1/expenses/update`, method: 'PATCH', data });
 			if (res) {
 				invalidateAll();
 				showEdit = false;
@@ -110,7 +110,7 @@
 				slug: prepareSlug(formData.title)
 			};
 
-			const res = await api({ url: `api/expenses/create`, method: 'POST', data });
+			const res = await api({ url: `api/v1/expenses/create`, method: 'POST', data });
 
 			if (res) {
 				goto('/');
@@ -122,10 +122,10 @@
 
 	const removeExpense = async () => {
 		if (id) {
-			const res = await api({ url: `api/expenses/delete/` + id, method: 'DELETE' });
+			const res = await api({ url: `api/v1/expenses/delete/` + id, method: 'DELETE' });
 
 			if (res) {
-				const resPages = await api({ url: `api/expenses/` });
+				const resPages = await api({ url: `api/v1/expenses/` });
 				if (resPages) {
 					const url = new URLSearchParams();
 					url.delete('edit');

@@ -8,7 +8,7 @@ export const actions = {
 		const email = data.get('email');
 		const password = data.get('password');
 		const res = await api({
-			url: `api/login`,
+			url: `api/v1/login`,
 			method: 'POST',
 			data: { email, password },
 			serverFetch: fetch
@@ -26,7 +26,7 @@ export const actions = {
 		}
 	},
 	logout: async ({ fetch }) => {
-		const _res = await api({ url: 'api/logout', serverFetch: fetch });
+		const _res = await api({ url: 'api/v1/logout', serverFetch: fetch });
 		if (_res) {
 			redirect(303, '/');
 		}

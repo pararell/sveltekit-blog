@@ -122,6 +122,16 @@ const getLang = (req) => {
 
 const app = express();
 
+const addHandler = async () => {
+	if (fs.existsSync('../build/handler.js')) {
+		console.log('handler.js exist');
+		const { handler } = await import('../build/handler.js');
+		app.use(handler);
+	}
+}
+addHandler()
+
+
 app.use(cookieParser());
 app.use(
 	session({
@@ -143,7 +153,9 @@ app.use(
 app.use(json({ limit: '10mb' }));
 app.use(compression());
 
-app.get('/api/user', async (req, res) => {
+const apiPrefix = '/api/v1/';
+
+app.get(apiPrefix + 'user', async (req, res) => {
 	try {
 		const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
 		res.end(JSON.stringify(userInfo));
@@ -152,7 +164,7 @@ app.get('/api/user', async (req, res) => {
 	}
 });
 
-app.get('/api/blogs', async (req, res) => {
+app.get(apiPrefix + 'blogs', async (req, res) => {
 	try {
 		const lang = getLang(req);
 		const blogs = await connection
@@ -166,7 +178,7 @@ app.get('/api/blogs', async (req, res) => {
 	}
 });
 
-app.post('/api/blogs/create', async (req, res) => {
+app.post(apiPrefix + 'blogs/create', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -190,7 +202,7 @@ app.post('/api/blogs/create', async (req, res) => {
 	}
 });
 
-app.patch('/api/blogs/update', async (req, res) => {
+app.patch(apiPrefix + 'blogs/update', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -214,7 +226,7 @@ app.patch('/api/blogs/update', async (req, res) => {
 	}
 });
 
-app.get('/api/blogs/:slug', async (req, res) => {
+app.get(apiPrefix + 'blogs/:slug', async (req, res) => {
 	const lang = getLang(req);
 	const defaultEmpty = {
 		...blogModel,
@@ -238,7 +250,7 @@ app.get('/api/blogs/:slug', async (req, res) => {
 	}
 });
 
-app.delete('/api/blogs/delete/:id', async (req, res) => {
+app.delete(apiPrefix + 'blogs/delete/:id', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -258,7 +270,7 @@ app.delete('/api/blogs/delete/:id', async (req, res) => {
 	}
 });
 
-app.get('/api/pages', async (req, res) => {
+app.get(apiPrefix + 'pages', async (req, res) => {
 	try {
 		const lang = getLang(req);
 		const pages = await connection('pages')
@@ -281,7 +293,7 @@ app.get('/api/pages', async (req, res) => {
 	}
 });
 
-app.post('/api/pages/create', async (req, res) => {
+app.post(apiPrefix + 'pages/create', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -306,7 +318,7 @@ app.post('/api/pages/create', async (req, res) => {
 	}
 });
 
-app.patch('/api/pages/update', async (req, res) => {
+app.patch(apiPrefix + 'pages/update', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -330,7 +342,7 @@ app.patch('/api/pages/update', async (req, res) => {
 	}
 });
 
-app.get('/api/pages/:slug', async (req, res) => {
+app.get(apiPrefix + 'pages/:slug', async (req, res) => {
 	const lang = getLang(req);
 	let { slug } = req.params;
 
@@ -366,7 +378,7 @@ app.get('/api/pages/:slug', async (req, res) => {
 	}
 });
 
-app.get('/api/pages/:slug/:subpage', async (req, res) => {
+app.get(apiPrefix + 'pages/:slug/:subpage', async (req, res) => {
 	const lang = getLang(req);
 	let { slug } = req.params;
 	let { subpage } = req.params;
@@ -397,7 +409,7 @@ app.get('/api/pages/:slug/:subpage', async (req, res) => {
 	}
 });
 
-app.delete('/api/pages/delete/:id', async (req, res) => {
+app.delete(apiPrefix +'pages/delete/:id', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -417,7 +429,7 @@ app.delete('/api/pages/delete/:id', async (req, res) => {
 	}
 });
 
-app.get('/api/expenses', async (req, res) => {
+app.get(apiPrefix +'expenses', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify(JSON.stringify([])));
 		return;
@@ -431,7 +443,7 @@ app.get('/api/expenses', async (req, res) => {
 	}
 });
 
-app.post('/api/expenses/create', async (req, res) => {
+app.post(apiPrefix +'expenses/create', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -455,7 +467,7 @@ app.post('/api/expenses/create', async (req, res) => {
 	}
 });
 
-app.patch('/api/expenses/update', async (req, res) => {
+app.patch(apiPrefix +'expenses/update', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -483,7 +495,7 @@ app.patch('/api/expenses/update', async (req, res) => {
 	}
 });
 
-app.get('/api/expenses/:slug', async (req, res) => {
+app.get(apiPrefix + 'expenses/:slug', async (req, res) => {
 	let { slug } = req.params;
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
@@ -508,7 +520,7 @@ app.get('/api/expenses/:slug', async (req, res) => {
 	}
 });
 
-app.delete('/api/expenses/delete/:id', async (req, res) => {
+app.delete(apiPrefix + 'expenses/delete/:id', async (req, res) => {
 	if (!req.session.token) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -529,7 +541,7 @@ app.delete('/api/expenses/delete/:id', async (req, res) => {
 	}
 });
 
-app.post('/api/login', async (req, res) => {
+app.post(apiPrefix + 'login', async (req, res) => {
 	try {
 		const { email, password } = req.body;
 
@@ -567,7 +579,7 @@ app.post('/api/login', async (req, res) => {
 	}
 });
 
-app.post('/api/register', async (req, res) => {
+app.post(apiPrefix + 'register', async (req, res) => {
 	var errors = [];
 	try {
 		const { username, email, password } = req.body;
@@ -608,12 +620,12 @@ app.post('/api/register', async (req, res) => {
 	}
 });
 
-app.get('/api/logout', async (req, res) => {
+app.get(apiPrefix + 'logout', async (req, res) => {
 	req.session.token = '';
 	res.end(JSON.stringify({ message: `Success logout` }));
 });
 
-app.post('/api/contact', async (req, res) => {
+app.post(apiPrefix + 'contact', async (req, res) => {
 	let mailTransport = nodemailer.createTransport({
 		host: process.env.emailHost,
 		port: 587,
@@ -650,11 +662,13 @@ app.post('/api/contact', async (req, res) => {
 	}
 });
 
+
 const run = async () => {
 	const { PORT } = process.env;
 	const portServer = PORT || 4000;
 
 	// if (fs.existsSync('../build/handler.js')) {
+	// 	console.log('handler.js exist');
 	// 	const { handler } = await import('../build/handler.js');
 	// 	app.use(handler);
 	// }
@@ -666,4 +680,7 @@ const run = async () => {
 	});
 };
 
-run();
+	run();
+
+
+

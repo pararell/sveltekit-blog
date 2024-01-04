@@ -28,7 +28,7 @@
 				comments: []
 			};
 
-			const res = await api({ url: `api/blogs/create`, method: 'POST', data });
+			const res = await api({ url: `api/v1/blogs/create`, method: 'POST', data });
 			if (res) {
 				handleRedirect();
 			}

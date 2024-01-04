@@ -32,7 +32,7 @@
 				slug: prepareSlug(formData.title)
 			};
 
-			const res = await api({ url: `api/pages/update`, method: 'PATCH', data });
+			const res = await api({ url: `api/v1/pages/update`, method: 'PATCH', data });
 			if (res) {
 				invalidateAll();
 			}
@@ -41,10 +41,10 @@
 
 	const removePage = async () => {
 		if (id) {
-			const res = await api({ url: `api/pages/delete/` + id, method: 'DELETE' });
+			const res = await api({ url: `api/v1/pages/delete/` + id, method: 'DELETE' });
 
 			if (res) {
-				const resPages = await api({ url: `api/pages/` });
+				const resPages = await api({ url: `api/v1/pages/` });
 
 				if (resPages) {
 					invalidateAll().then(() => {

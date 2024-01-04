@@ -4,7 +4,7 @@ import { api } from '$lib/api';
 export const load = async ({ fetch, params, url }) => {
 	const loadPage = async () => {
 		let pageQuery = url.searchParams.get('edit') || 'home';
-		const resPage = await api({ url: `api/pages/${pageQuery}`, serverFetch: fetch });
+		const resPage = await api({ url: `api/v1/pages/${pageQuery}`, serverFetch: fetch });
 		return resPage.body;
 	};
 

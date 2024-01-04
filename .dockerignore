@@ -6,6 +6,7 @@
 .eslinttrc
 .svgorc
 .vscode
+.env
 CHANGELOG.md
 README.md
 builds
@@ -17,5 +18,9 @@ raml
 build/
 .svelte-kit
 database/
-connect-session-knex.sqlite
+server/database
+server/.env
+server/node_modules
+./database
+server/connect-session-knex.sqlite
 server/node_modules
