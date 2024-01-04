@@ -122,16 +122,6 @@ const getLang = (req) => {
 
 const app = express();
 
-const addHandler = async () => {
-	if (fs.existsSync('../build/handler.js')) {
-		console.log('handler.js exist');
-		const { handler } = await import('../build/handler.js');
-		app.use(handler);
-	}
-}
-addHandler()
-
-
 app.use(cookieParser());
 app.use(
 	session({
