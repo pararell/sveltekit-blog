@@ -12,7 +12,9 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import cookieParser from 'cookie-parser';
-import { handler } from '../build/handler.js';
+import { Router } from 'express'
+const routes = Router()
+// import { handler } from '../build/handler.js';
 dotenv.config();
 
 export const pageModel = {
@@ -77,7 +79,8 @@ export const KnexSessionStore = connectKnexSession(session);
 export const connection = knex({
 	client: 'sqlite3',
 	connection: {
-		filename: path.join(process.cwd(), 'database/db.sqlite')
+		filename: path.join(process.cwd(), 'database/db.sqlite'),
+		ssl: false
 	},
 	useNullAsDefault: true
 });
@@ -122,14 +125,15 @@ const getLang = (req) => {
 
 const app = express();
 
-app.use(cookieParser());
+app.set('trust proxy', true);
+
 app.use(
 	session({
 		secret: process.env.cookieSecret,
 		resave: false,
 		saveUninitialized: true,
 		store: new KnexSessionStore(),
-		cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000, httpOnly: false }
+		cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000, httpOnly: true, secure: true, sameSite: 'none', }
 	})
 );
 
@@ -143,18 +147,20 @@ app.use(
 app.use(json({ limit: '10mb' }));
 app.use(compression());
 
-const apiPrefix = '/api/v1/';
+app.use(cookieParser());
 
-app.get(apiPrefix + 'user', async (req, res) => {
+routes.get('/user', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
 	try {
-		const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+		const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
+		console.log(userInfo, 'useringo');
 		res.end(JSON.stringify(userInfo));
 	} catch (err) {
 		res.end(JSON.stringify({}));
 	}
 });
 
-app.get(apiPrefix + 'blogs', async (req, res) => {
+routes.get('/blogs', async (req, res) => {
 	try {
 		const lang = getLang(req);
 		const blogs = await connection
@@ -168,12 +174,13 @@ app.get(apiPrefix + 'blogs', async (req, res) => {
 	}
 });
 
-app.post(apiPrefix + 'blogs/create', async (req, res) => {
-	if (!req.session.token) {
+routes.post('/blogs/create', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
+	if (!userToken) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
@@ -192,12 +199,13 @@ app.post(apiPrefix + 'blogs/create', async (req, res) => {
 	}
 });
 
-app.patch(apiPrefix + 'blogs/update', async (req, res) => {
-	if (!req.session.token) {
+routes.patch('/blogs/update', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
+	if (!userToken) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
@@ -216,7 +224,7 @@ app.patch(apiPrefix + 'blogs/update', async (req, res) => {
 	}
 });
 
-app.get(apiPrefix + 'blogs/:slug', async (req, res) => {
+routes.get('/blogs/:slug', async (req, res) => {
 	const lang = getLang(req);
 	const defaultEmpty = {
 		...blogModel,
@@ -240,12 +248,13 @@ app.get(apiPrefix + 'blogs/:slug', async (req, res) => {
 	}
 });
 
-app.delete(apiPrefix + 'blogs/delete/:id', async (req, res) => {
-	if (!req.session.token) {
+routes.delete('/blogs/delete/:id', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
+	if (!userToken) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
@@ -260,7 +269,7 @@ app.delete(apiPrefix + 'blogs/delete/:id', async (req, res) => {
 	}
 });
 
-app.get(apiPrefix + 'pages', async (req, res) => {
+routes.get('/pages', async (req, res) => {
 	try {
 		const lang = getLang(req);
 		const pages = await connection('pages')
@@ -283,12 +292,13 @@ app.get(apiPrefix + 'pages', async (req, res) => {
 	}
 });
 
-app.post(apiPrefix + 'pages/create', async (req, res) => {
-	if (!req.session.token) {
+routes.post('/pages/create', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
+	if (!userToken) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
@@ -308,12 +318,13 @@ app.post(apiPrefix + 'pages/create', async (req, res) => {
 	}
 });
 
-app.patch(apiPrefix + 'pages/update', async (req, res) => {
-	if (!req.session.token) {
+routes.patch('/pages/update', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
+	if (!userToken) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
@@ -332,7 +343,7 @@ app.patch(apiPrefix + 'pages/update', async (req, res) => {
 	}
 });
 
-app.get(apiPrefix + 'pages/:slug', async (req, res) => {
+routes.get('/pages/:slug', async (req, res) => {
 	const lang = getLang(req);
 	let { slug } = req.params;
 
@@ -368,7 +379,7 @@ app.get(apiPrefix + 'pages/:slug', async (req, res) => {
 	}
 });
 
-app.get(apiPrefix + 'pages/:slug/:subpage', async (req, res) => {
+routes.get('/pages/:slug/:subpage', async (req, res) => {
 	const lang = getLang(req);
 	let { slug } = req.params;
 	let { subpage } = req.params;
@@ -399,12 +410,13 @@ app.get(apiPrefix + 'pages/:slug/:subpage', async (req, res) => {
 	}
 });
 
-app.delete(apiPrefix +'pages/delete/:id', async (req, res) => {
-	if (!req.session.token) {
+routes.delete('/pages/delete/:id', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
+	if (!userToken) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 	const admin = userInfo && userInfo.email === process.env.adminEmail;
 	if (!admin) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
@@ -419,12 +431,13 @@ app.delete(apiPrefix +'pages/delete/:id', async (req, res) => {
 	}
 });
 
-app.get(apiPrefix +'expenses', async (req, res) => {
-	if (!req.session.token) {
+routes.get('/expenses', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
+	if (!userToken) {
 		res.end(JSON.stringify(JSON.stringify([])));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 	try {
 		const expenses = await connection('expenses').select('*').where('user', userInfo.email);
 		res.end(JSON.stringify(expenses));
@@ -433,12 +446,13 @@ app.get(apiPrefix +'expenses', async (req, res) => {
 	}
 });
 
-app.post(apiPrefix +'expenses/create', async (req, res) => {
-	if (!req.session.token) {
+routes.post('/expenses/create', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
+	if (!userToken) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 	if (!userInfo) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
@@ -457,12 +471,13 @@ app.post(apiPrefix +'expenses/create', async (req, res) => {
 	}
 });
 
-app.patch(apiPrefix +'expenses/update', async (req, res) => {
-	if (!req.session.token) {
+routes.patch('/expenses/update', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
+	if (!userToken) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 
 	if (!userInfo) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
@@ -485,13 +500,14 @@ app.patch(apiPrefix +'expenses/update', async (req, res) => {
 	}
 });
 
-app.get(apiPrefix + 'expenses/:slug', async (req, res) => {
+routes.get('/expenses/:slug', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
 	let { slug } = req.params;
-	if (!req.session.token) {
+	if (!userToken) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 
 	if (!userInfo) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
@@ -510,12 +526,13 @@ app.get(apiPrefix + 'expenses/:slug', async (req, res) => {
 	}
 });
 
-app.delete(apiPrefix + 'expenses/delete/:id', async (req, res) => {
-	if (!req.session.token) {
+routes.delete('/expenses/delete/:id', async (req, res) => {
+	const userToken = req.session.token || req.headers.authorization;
+	if (!userToken) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
-	const userInfo = jwt.verify(req.session.token, process.env.TOKEN_KEY);
+	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
 
 	if (!userInfo) {
 		res.end(JSON.stringify({ message: `Authentification error` }));
@@ -531,7 +548,7 @@ app.delete(apiPrefix + 'expenses/delete/:id', async (req, res) => {
 	}
 });
 
-app.post(apiPrefix + 'login', async (req, res) => {
+routes.post('/login', async (req, res) => {
 	try {
 		const { email, password } = req.body;
 
@@ -539,6 +556,7 @@ app.post(apiPrefix + 'login', async (req, res) => {
 		if (!(email && password)) {
 			res.status(400).json('All input is required');
 		}
+
 
 		const user = await connection('users').where({ email }).first();
 		if (user) {
@@ -553,10 +571,9 @@ app.post(apiPrefix + 'login', async (req, res) => {
 						expiresIn: '1000d'
 					}
 				);
-
+			
 				user.token = token;
 				req.session.token = token;
-
 				res.end(JSON.stringify(user));
 			} else {
 				return res.status(400).json('No Match');
@@ -569,7 +586,7 @@ app.post(apiPrefix + 'login', async (req, res) => {
 	}
 });
 
-app.post(apiPrefix + 'register', async (req, res) => {
+routes.post('/register', async (req, res) => {
 	var errors = [];
 	try {
 		const { username, email, password } = req.body;
@@ -610,12 +627,12 @@ app.post(apiPrefix + 'register', async (req, res) => {
 	}
 });
 
-app.get(apiPrefix + 'logout', async (req, res) => {
+routes.get('/logout', async (req, res) => {
 	req.session.token = '';
 	res.end(JSON.stringify({ message: `Success logout` }));
 });
 
-app.post(apiPrefix + 'contact', async (req, res) => {
+routes.post('/contact', async (req, res) => {
 	let mailTransport = nodemailer.createTransport({
 		host: process.env.emailHost,
 		port: 587,
@@ -652,18 +669,20 @@ app.post(apiPrefix + 'contact', async (req, res) => {
 	}
 });
 
+app.use('/api/v1', routes);
 
 const run = async () => {
 	const { PORT } = process.env;
 	const portServer = PORT || 4000;
 
-	// if (fs.existsSync('../build/handler.js')) {
-	// 	console.log('handler.js exist');
-	// 	const { handler } = await import('../build/handler.js');
-	// 	app.use(handler);
-	// }
 
-	app.use(handler);
+	if (fs.existsSync('../build/handler.js')) {
+		console.log('handler.js exist');
+		const { handler } = await import('../build/handler.js');
+		app.use(handler);
+	}
+
+	// app.use(handler);
 
 	app.listen(portServer, (err) => {
 		if (err) console.log('error', err);

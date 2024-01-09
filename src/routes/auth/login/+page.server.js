@@ -25,8 +25,9 @@ export const actions = {
 			redirect(303, '/');
 		}
 	},
-	logout: async ({ fetch }) => {
+	logout: async ({ fetch, cookies }) => {
 		const _res = await api({ url: 'api/v1/logout', serverFetch: fetch });
+		cookies.set('token', '', {path: '/'});
 		if (_res) {
 			redirect(303, '/');
 		}

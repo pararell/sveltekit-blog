@@ -12,6 +12,7 @@
 	let showEdit = false;
 	let showAdd = false;
 	let expenses = [];
+	let authorization = {};
 	let eurToCurrencies;
 	let showCategories = 'all';
 	let colorsPallete = [
@@ -42,6 +43,7 @@
 			id = expenseToEdit.id;
 			expenseForm = preparePageForm(expenseForm, expenseToEdit);
 		}
+		authorization = pageVal.data?.token ? { authorization: pageVal.data.token } : {};
 	});
 
 	$: categories = expenses.reduce(
@@ -93,8 +95,7 @@
 				...formData,
 				slug: prepareSlug(formData.title)
 			};
-
-			const res = await api({ url: `api/v1/expenses/update`, method: 'PATCH', data });
+			const res = await api({ url: `api/v1/expenses/update`, method: 'PATCH', data, authorization });
 			if (res) {
 				invalidateAll();
 				showEdit = false;
@@ -109,8 +110,7 @@
 				...formData,
 				slug: prepareSlug(formData.title)
 			};
-
-			const res = await api({ url: `api/v1/expenses/create`, method: 'POST', data });
+			const res = await api({ url: `api/v1/expenses/create`, method: 'POST', data, authorization });
 
 			if (res) {
 				goto('/');
@@ -122,10 +122,10 @@
 
 	const removeExpense = async () => {
 		if (id) {
-			const res = await api({ url: `api/v1/expenses/delete/` + id, method: 'DELETE' });
+			const res = await api({ url: `api/v1/expenses/delete/` + id, method: 'DELETE', authorization });
 
 			if (res) {
-				const resPages = await api({ url: `api/v1/expenses/` });
+				const resPages = await api({ url: `api/v1/expenses/` , authorization});
 				if (resPages) {
 					const url = new URLSearchParams();
 					url.delete('edit');

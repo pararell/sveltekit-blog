@@ -1,16 +1,18 @@
 export const prerender = false;
 import { api } from '$lib/api';
 
-export const load = async ({ fetch, params, url }) => {
+export const load = async ({ fetch, params, url, locals }) => {
+	const authorization = locals.token ? { authorization: locals.token } : {};
+
 	const fetchExpanses = async () => {
-		const response = await api({ url: 'api/v1/expenses', serverFetch: fetch });
+		const response = await api({ url: 'api/v1/expenses', serverFetch: fetch, authorization });
 		return response.body;
 	};
 
 	const loadExpense = async () => {
 		let pageQuery = url.searchParams.get('edit');
 		if (pageQuery) {
-			const response = await api({ url: `api/v1/expenses/${pageQuery}`, serverFetch: fetch });
+			const response = await api({ url: `api/v1/expenses/${pageQuery}`, serverFetch: fetch, authorization });
 			if (!response?.body) {
 				return {};
 			}

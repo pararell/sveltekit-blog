@@ -10,6 +10,7 @@
 	let pageForm = Object.entries(pageModelForm);
 	let id = '';
 	let showEdit = true;
+	let authorization = {}
 	export let data;
 
 	let unsubscribe = page.subscribe((pageVal) => {
@@ -18,6 +19,7 @@
 			id = pageToEdit.id;
 			pageForm = preparePageForm(pageForm, pageToEdit);
 		}
+		authorization = pageVal.data?.token ? { authorization: pageVal.data.token } : {};
 	});
 
 	onDestroy(() => unsubscribe());
@@ -31,8 +33,7 @@
 				...formData,
 				slug: prepareSlug(formData.title)
 			};
-
-			const res = await api({ url: `api/v1/pages/update`, method: 'PATCH', data });
+			const res = await api({ url: `api/v1/pages/update`, method: 'PATCH', data, authorization });
 			if (res) {
 				invalidateAll();
 			}
@@ -41,10 +42,10 @@
 
 	const removePage = async () => {
 		if (id) {
-			const res = await api({ url: `api/v1/pages/delete/` + id, method: 'DELETE' });
+			const res = await api({ url: `api/v1/pages/delete/` + id, method: 'DELETE', authorization });
 
 			if (res) {
-				const resPages = await api({ url: `api/v1/pages/` });
+				const resPages = await api({ url: `api/v1/pages/`, authorization });
 
 				if (resPages) {
 					invalidateAll().then(() => {

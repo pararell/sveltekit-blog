@@ -3,7 +3,8 @@ import { api } from '$lib/api';
 
 export async function load({ fetch, locals }) {
 	const fetchUser = async () => {
-		const response = await api({ url: 'api/v1/user', serverFetch: fetch });
+		const authorization = locals.token ? { authorization: locals.token } : {};
+		const response = await api({ url: 'api/v1/user', serverFetch: fetch, authorization });
 		return response.body;
 	};
 
@@ -17,15 +18,13 @@ export async function load({ fetch, locals }) {
 		return response.body;
 	};
 
-	// setHeaders({
-	//   'cache-control': 'public, max-age=60'
-	// })
 
 	return {
 		user: await fetchUser(),
 		pages: await fetchPages(),
 		blogs: await fetchBlogs(),
 		lang: locals.lang,
-		mode: locals.mode
+		mode: locals.mode,
+		token: locals.token
 	};
 }

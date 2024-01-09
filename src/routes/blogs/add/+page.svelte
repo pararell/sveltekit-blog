@@ -5,10 +5,17 @@
 	import { locale } from '$lib/i18n';
 	import { page } from '$app/stores';
 	import { prepareSlug } from '$lib/utils.js';
+	import { onDestroy } from 'svelte';
 
 	let blogForm = Object.entries(blogModelForm);
 	export let data;
+	export let authorization = {};
 	const { user } = data;
+
+
+	let unsubscribe = page.subscribe((pageVal) => {
+	  authorization = pageVal.data?.token ? { authorization: pageVal.data.token } : {};
+	});
 
 	const handleRedirect = async () => {
 		invalidateAll().then(() => {
@@ -28,12 +35,14 @@
 				comments: []
 			};
 
-			const res = await api({ url: `api/v1/blogs/create`, method: 'POST', data });
+			const res = await api({ url: `api/v1/blogs/create`, method: 'POST', data, authorization });
 			if (res) {
 				handleRedirect();
 			}
 		}
 	};
+
+	onDestroy(() => unsubscribe());
 </script>
 
 <div class="page">

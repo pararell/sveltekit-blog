@@ -5,8 +5,14 @@
 	import { ADMIN_EMAIL, pageModelForm } from '$lib/constants';
 	import { locale } from '$lib/i18n';
 	import { prepareSlug } from '$lib/utils';
+	import { onDestroy } from 'svelte';
 
 	let pageForm = Object.entries(pageModelForm);
+	export let authorization = {};
+
+	let unsubscribe = page.subscribe((pageVal) => {
+		authorization = pageVal.data?.token ? { authorization: pageVal.data.token } : {};
+	});
 
 	const handleRedirect = async () => {
 		invalidateAll().then(() => {
@@ -23,13 +29,16 @@
 				lang: $locale
 			};
 
-			const res = await api({ url: `api/v1/pages/create`, method: 'POST', data });
+			const res = await api({ url: `api/v1/pages/create`, method: 'POST', data, authorization });
 
 			if (res) {
 				handleRedirect();
 			}
 		}
 	};
+
+
+	onDestroy(() => unsubscribe());
 </script>
 
 <div class="page">

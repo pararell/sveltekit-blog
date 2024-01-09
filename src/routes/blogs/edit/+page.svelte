@@ -8,6 +8,7 @@
 	import { marked } from 'marked';
 
 	let id = '';
+	let authorization = {};
 	let blogForm = Object.entries(blogModelForm);
 
 	let unsubscribe = page.subscribe((pageVal) => {
@@ -16,6 +17,7 @@
 			id = blog.id;
 			blogForm = preparePageForm(blogForm, blog);
 		}
+	  authorization = pageVal.data?.token ? { authorization: pageVal.data.token } : {};
 	});
 
 	onDestroy(() => unsubscribe());
@@ -29,7 +31,7 @@
 				slug: prepareSlug(formData.title),
 				categories: formData.categories ? formData.categories.split(',') : []
 			};
-			const res = await api({ url: `api/v1/blogs/update`, method: 'PATCH', data });
+			const res = await api({ url: `api/v1/blogs/update`, method: 'PATCH', data, authorization });
 
 			if (res) {
 				invalidateAll();
@@ -39,10 +41,10 @@
 
 	const removeBlog = async () => {
 		if (id) {
-			const res = await api({ url: `api/v1/blogs/delete/` + id, method: 'DELETE' });
+			const res = await api({ url: `api/v1/blogs/delete/` + id, method: 'DELETE', authorization });
 
 			if (res) {
-				const resBlogs = await api({ url: `api/v1/blogs/` });
+				const resBlogs = await api({ url: `api/v1/blogs/`, authorization });
 
 				if (resBlogs) {
 					invalidateAll().then(() => {

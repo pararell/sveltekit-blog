@@ -8,8 +8,6 @@ export let csr = true;
 
 export const load = async ({ fetch, params, url }) => {
 
-	console.log('params', params);
-
 	const resPage = await api({ url: `api/v1/pages/${params.slug}`, serverFetch: fetch });
     csr = resPage.body.onlyHTML !== 'true';
 
