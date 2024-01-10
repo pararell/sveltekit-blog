@@ -634,15 +634,13 @@ routes.get('/logout', async (req, res) => {
 
 routes.post('/contact', async (req, res) => {
 	let mailTransport = nodemailer.createTransport({
+		service: "Gmail",
 		host: process.env.emailHost,
-		port: 587,
-		secure: false, // true for 465, false for other ports
+		port: 465,
+		secure: true, // true for 465, false for other ports
 		auth: {
 			user: process.env.emailAuth,
 			pass: process.env.emailPassword
-		},
-		tls: {
-			rejectUnauthorized: false
 		}
 	});
 
