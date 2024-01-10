@@ -12,8 +12,8 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import cookieParser from 'cookie-parser';
-import { Router } from 'express'
-const routes = Router()
+import { Router } from 'express';
+const routes = Router();
 // import { handler } from '../build/handler.js';
 dotenv.config();
 
@@ -119,8 +119,8 @@ const getLang = (req) => {
 	return ['en', 'sk'].includes(req.cookies.lang)
 		? req.cookies.lang
 		: req.headers['accept-language'] && req.headers['accept-language'].includes('sk')
-		? 'sk'
-		: 'en';
+			? 'sk'
+			: 'en';
 };
 
 const app = express();
@@ -557,7 +557,6 @@ routes.post('/login', async (req, res) => {
 			res.status(400).json('All input is required');
 		}
 
-
 		const user = await connection('users').where({ email }).first();
 		if (user) {
 			const PHash = bcrypt.hashSync(password, user.salt);
@@ -571,7 +570,7 @@ routes.post('/login', async (req, res) => {
 						expiresIn: '1000d'
 					}
 				);
-			
+
 				user.token = token;
 				req.session.token = token;
 				res.end(JSON.stringify(user));
@@ -634,7 +633,7 @@ routes.get('/logout', async (req, res) => {
 
 routes.post('/contact', async (req, res) => {
 	let mailTransport = nodemailer.createTransport({
-		service: "Gmail",
+		service: 'Gmail',
 		host: process.env.emailHost,
 		port: 465,
 		secure: true, // true for 465, false for other ports
@@ -673,7 +672,6 @@ const run = async () => {
 	const { PORT } = process.env;
 	const portServer = PORT || 4000;
 
-
 	if (fs.existsSync('../build/handler.js')) {
 		console.log('handler.js exist');
 		const { handler } = await import('../build/handler.js');
@@ -687,7 +685,4 @@ const run = async () => {
 	});
 };
 
-	run();
-
-
-
+run();

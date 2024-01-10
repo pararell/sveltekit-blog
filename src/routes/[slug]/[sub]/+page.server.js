@@ -5,11 +5,11 @@ import { marked } from 'marked';
 export let csr = true;
 
 export const load = async ({ fetch, params, url }) => {
-        const resPage = await api({
-			url: `api/v1/pages/${params.slug}/${params.sub}`,
-			serverFetch: fetch
-		});
-		csr = resPage.body.onlyHTML !== 'true';
+	const resPage = await api({
+		url: `api/v1/pages/${params.slug}/${params.sub}`,
+		serverFetch: fetch
+	});
+	csr = resPage.body.onlyHTML !== 'true';
 
 	return {
 		subPageWithContent: updatePage(resPage),

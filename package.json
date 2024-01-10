@@ -6,8 +6,8 @@
 		"build": "vite build",
 		"start": "PORT=3000 node ./build/index.js",
 		"preview": "vite preview",
-		"lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
-		"format": "prettier --write --plugin-search-dir=. ."
+		"lint": "prettier --check . && eslint --ignore-path .gitignore .",
+		"format": "prettier --write ."
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^2.0.2",
@@ -17,6 +17,7 @@
 		"autoprefixer": "^10.4.16",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-svelte": "^2.35.1",
 		"marked": "^11.1.0",
 		"postcss": "^8.4.32",
 		"postcss-load-config": "5.0.2",

@@ -13,7 +13,7 @@ export default defineConfig(({ command }) => {
 					ssr: {
 						noExternal: Object.keys(pkg.dependencies || {})
 					}
-			  }
+				}
 			: {};
 
 	return {

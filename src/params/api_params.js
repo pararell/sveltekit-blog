@@ -1,4 +1,3 @@
-
 export const match = (param) => {
-  return param && !param.includes('api');
+	return param && !param.includes('api');
 };

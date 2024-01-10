@@ -19,7 +19,7 @@ export const actions = {
 				return { error: res.body };
 			}
 			if (res.body.token) {
-				 cookies.set('token', res.body.token, {path: '/'});
+				cookies.set('token', res.body.token, { path: '/' });
 			}
 
 			redirect(303, '/');
@@ -27,7 +27,7 @@ export const actions = {
 	},
 	logout: async ({ fetch, cookies }) => {
 		const _res = await api({ url: 'api/v1/logout', serverFetch: fetch });
-		cookies.set('token', '', {path: '/'});
+		cookies.set('token', '', { path: '/' });
 		if (_res) {
 			redirect(303, '/');
 		}

@@ -1,10 +1,11 @@
 module.exports = {
 	root: true,
-	extends: ['eslint:recommended', 'prettier'],
-	plugins: ['svelte3'],
-	overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
+	extends: ['eslint:recommended', 'prettier', 'plugin:svelte/recommended'],
 	rules: {
-		'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }]
+		'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+		'svelte/no-at-html-tags': 0,
+		'no-undef': 0,
+		'no-useless-escape': 0
 	},
 	parserOptions: {
 		sourceType: 'module',
@@ -12,7 +13,7 @@ module.exports = {
 	},
 	env: {
 		browser: true,
-		es2017: true,
+		es2020: true,
 		node: true
 	}
 };

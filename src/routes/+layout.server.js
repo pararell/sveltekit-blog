@@ -18,7 +18,6 @@ export async function load({ fetch, locals }) {
 		return response.body;
 	};
 
-
 	return {
 		user: await fetchUser(),
 		pages: await fetchPages(),

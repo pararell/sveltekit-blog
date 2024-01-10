@@ -5,7 +5,11 @@ export const load = async ({ fetch, params, url, locals }) => {
 	const authorization = locals.token ? { authorization: locals.token } : {};
 	const loadBlog = async () => {
 		let blogQuery = url.searchParams.get('edit');
-		const resBlog = await api({ url: `api/v1/blogs/${blogQuery}`, serverFetch: fetch, authorization });
+		const resBlog = await api({
+			url: `api/v1/blogs/${blogQuery}`,
+			serverFetch: fetch,
+			authorization
+		});
 
 		return resBlog.body;
 	};

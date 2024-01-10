@@ -12,7 +12,11 @@ export const load = async ({ fetch, params, url, locals }) => {
 	const loadExpense = async () => {
 		let pageQuery = url.searchParams.get('edit');
 		if (pageQuery) {
-			const response = await api({ url: `api/v1/expenses/${pageQuery}`, serverFetch: fetch, authorization });
+			const response = await api({
+				url: `api/v1/expenses/${pageQuery}`,
+				serverFetch: fetch,
+				authorization
+			});
 			if (!response?.body) {
 				return {};
 			}

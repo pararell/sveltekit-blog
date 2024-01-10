@@ -12,7 +12,7 @@ Set .env in main directory and in /server
 - disqusSrc - optional to have comments from disqus
 - cookieSecret, cookieName, TOKEN_KEY - random string
 
-- works with Node.js v.16+
+- works with Node.js v.18+
 
 <code>npm run build</code>
 <br/><br/>
@@ -28,7 +28,7 @@ Server and Client run on the same port - it should check if the build exist and 
 - Pages and Blogs creation with **marked**
   <br>
 
-  test login - https://playscript.sk/auth/login - test@playscript.sk : test
+  test - privatelibrary.eu
   <br>
 
   <img width="400" src="https://res.cloudinary.com/dnpgh1vhi/image/upload/v1669123043/screenshot_2022-11-22_o_14.16.09_fofgol.png">
