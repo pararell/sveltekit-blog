@@ -133,7 +133,7 @@ app.use(
 		resave: false,
 		saveUninitialized: true,
 		store: new KnexSessionStore(),
-		cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000, httpOnly: true, secure: true, sameSite: 'none', }
+		cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000, httpOnly: false }
 	})
 );
 
@@ -153,7 +153,6 @@ routes.get('/user', async (req, res) => {
 	const userToken = req.session.token || req.headers.authorization;
 	try {
 		const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-		console.log(userInfo, 'useringo');
 		res.end(JSON.stringify(userInfo));
 	} catch (err) {
 		res.end(JSON.stringify({}));
@@ -211,6 +210,7 @@ routes.patch('/blogs/update', async (req, res) => {
 		res.end(JSON.stringify({ message: `Authentification error` }));
 		return;
 	}
+
 	const _blogs = await connection('blogs')
 		.where({ id: req.body.id })
 		.update({ ...req.body });

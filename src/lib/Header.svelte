@@ -48,7 +48,7 @@
 			return [];
 		}
 		return [
-			...new Set(blogs.map((blog) => blog.categories.split(',').map((cat) => cat.trim())).flat())
+			...new Set(blogs.map((blog) => (blog.categories || '').split(',').map((cat) => cat.trim())).flat())
 		];
 	};
 

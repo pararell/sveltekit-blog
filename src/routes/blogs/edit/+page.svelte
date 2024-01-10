@@ -29,7 +29,7 @@
 				...formData,
 				id: parseFloat(id),
 				slug: prepareSlug(formData.title),
-				categories: formData.categories ? formData.categories.split(',') : []
+				categories: formData.categories ? formData.categories : null
 			};
 			const res = await api({ url: `api/v1/blogs/update`, method: 'PATCH', data, authorization });
 

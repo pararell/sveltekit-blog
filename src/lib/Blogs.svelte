@@ -1,8 +1,9 @@
 <script>
 	export let blogs = [];
 	export let category;
+
 	$: blogsToShow = blogs
-		.filter((blog) => (category ? blog.categories.includes(category) : true))
+		.filter((blog) => (category ? (blog.categories ? blog.categories.split(',') : []).includes(category) : true))
 		.sort((a, b) => new Date(b.Created) - new Date(a.Created));
 </script>
 
