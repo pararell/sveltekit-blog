@@ -29,6 +29,11 @@ Server and Client run on the same port - it should check if the build exist and 
   <br>
 
   test - privatelibrary.eu
-  <br>
+  <br/><br/>
+
+  ## With Docker
+   <br>
+  - docker pull pararel/sveltekit-blog:0.5.1
+  - docker run -it -d -v $PWD/server/database:/usr/src/app/server/database --env-file $PWD/.env --network=host pararel/sveltekit-blog:0.5.5
 
   <img width="400" src="https://res.cloudinary.com/dnpgh1vhi/image/upload/v1669123043/screenshot_2022-11-22_o_14.16.09_fofgol.png">

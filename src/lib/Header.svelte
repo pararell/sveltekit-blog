@@ -1,7 +1,7 @@
 <script>
 	import { t, locale, locales } from '$lib/i18n';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import { HEADER_LOGO, ADMIN_EMAIL } from './constants';
+
 
 	const dispatch = createEventDispatcher();
 
@@ -13,6 +13,7 @@
 	export let url;
 	export let lang;
 	export let mode;
+	export let headerLogo;
 
 	if (lang) {
 		selected = lang;
@@ -68,7 +69,7 @@
 <header id="header" class={active}>
 	<div class="container">
 		<div class="header-menu">
-			<a href="/" class="logo">{HEADER_LOGO}</a>
+			<a href="/" class="logo">{headerLogo}</a>
 			{#if blogs?.length}
 				<a class="menu-link" class:active={url.pathname === '/blogs'} href="/blogs">Blog</a>
 			{/if}
@@ -152,7 +153,7 @@
 					{#if user?.email}
 						<li><a class:active={url.pathname === '/expenses'} href="/expenses">Expenses</a></li>
 					{/if}
-					{#if user?.email === ADMIN_EMAIL}
+					{#if user?.isAdmin}
 						<br />
 						<li><a href="/add">Add page</a></li>
 						<li><a href="/edit">Edit page</a></li>
@@ -173,7 +174,7 @@
 								<li><a href="/blogs/{blog.slug}">{blog.title}</a></li>
 							{/each}
 						{/if}
-						{#if user?.email === ADMIN_EMAIL}
+						{#if user?.isAdmin}
 							<li><a href="/blogs/add">Add blog</a></li>
 							<li><a href="/blogs/edit">Edit blog</a></li>
 						{/if}

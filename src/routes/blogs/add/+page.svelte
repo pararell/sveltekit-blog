@@ -1,7 +1,7 @@
 <script>
 	import { api } from '$lib/api';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { ADMIN_EMAIL, blogModelForm } from '$lib/constants';
+	import { blogModelForm } from '$lib/constants';
 	import { locale } from '$lib/i18n';
 	import { page } from '$app/stores';
 	import { prepareSlug } from '$lib/utils.js';
@@ -46,7 +46,7 @@
 </script>
 
 <div class="page">
-	{#if $page.data?.user?.email === ADMIN_EMAIL}
+	{#if $page.data?.user?.isAdmin}
 		{#await import('$lib/FormWithMarkdown.svelte') then FormWithMarkdown}
 			<div class="container">
 				<FormWithMarkdown.default form={blogForm} on:submitForm={submitForm} />

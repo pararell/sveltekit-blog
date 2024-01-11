@@ -1,5 +1,5 @@
-import { API_URL } from './constants';
-const baseUrl = API_URL;
+import { env } from '$env/dynamic/public';
+const baseUrl = env.PUBLIC_API_URL;
 
 export async function api({
 	url,

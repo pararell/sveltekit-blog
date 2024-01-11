@@ -1,7 +1,7 @@
 <script>
 	import { api } from '$lib/api';
 	import { page } from '$app/stores';
-	import { pageModelForm, ADMIN_EMAIL } from '$lib/constants';
+	import { pageModelForm } from '$lib/constants';
 	import { goto, invalidateAll } from '$app/navigation';
 	import { onDestroy } from 'svelte';
 	import { minifyHTML, preparePageForm, prepareSlug } from '$lib/utils';
@@ -88,7 +88,7 @@
 			</div>
 		{/await}
 	{/if}
-	{#if $page.data?.user?.email === ADMIN_EMAIL && $page.data?.pageToEdit.pathname !== '/'}
+	{#if $page.data?.user?.isAdmin && $page.data?.pageToEdit.pathname !== '/'}
 		{#if showEdit}
 			<div class="edit-wrap">
 				<div class="container">

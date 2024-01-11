@@ -51,6 +51,7 @@
 		user={$page.data?.user}
 		lang={$page.data?.lang}
 		mode={$page.data?.mode}
+		headerLogo={$page.data?.pageEnv?.HEADER_LOGO}
 		url={$page.url}
 	/>
 </div>

@@ -1,13 +1,11 @@
-import { DISQUSSRC } from './constants';
-
-export const setDisqus = (host, slug) => {
+export const setDisqus = (host, slug, disqusUrl) => {
 	if (window.DISQUS) {
 		resetDisqus(host, slug);
 		return;
 	}
 	const dsq = document.createElement('script');
 	dsq.type = 'text/javascript';
-	dsq.src = DISQUSSRC;
+	dsq.src = disqusUrl;
 	dsq.async = true;
 
 	dsq.setAttribute('data-timestamp', +new Date());

@@ -2,7 +2,7 @@
 	import { api } from '$lib/api';
 	import { page } from '$app/stores';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { ADMIN_EMAIL, pageModelForm } from '$lib/constants';
+	import { pageModelForm } from '$lib/constants';
 	import { locale } from '$lib/i18n';
 	import { prepareSlug } from '$lib/utils';
 	import { onDestroy } from 'svelte';
@@ -42,7 +42,7 @@
 </script>
 
 <div class="page">
-	{#if $page.data?.user?.email === ADMIN_EMAIL}
+	{#if $page.data?.user?.isAdmin}
 		{#await import('$lib/FormWithMarkdown.svelte') then FormWithMarkdown}
 			<div class="container">
 				<FormWithMarkdown.default form={pageForm} on:submitForm={submitForm} />

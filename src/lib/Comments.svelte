@@ -4,9 +4,10 @@
 
 	export let host;
 	export let slug;
+	export let disqusUrl;
 
 	onMount(() => {
-		setDisqus(host, slug);
+		setDisqus(host, slug, disqusUrl);
 	});
 </script>
 

@@ -1,7 +1,7 @@
 <script>
 	import { api } from '$lib/api';
 	import { goto, invalidateAll } from '$app/navigation';
-	import { blogModelForm, ADMIN_EMAIL } from '$lib/constants';
+	import { blogModelForm } from '$lib/constants';
 	import { page } from '$app/stores';
 	import { onDestroy } from 'svelte';
 	import { preparePageForm, prepareSlug } from '$lib/utils';
@@ -87,7 +87,7 @@
 
 		<span class="date">{new Date($page.data?.blog.date).toLocaleDateString()}</span>
 
-		{#if $page.data?.user?.email === ADMIN_EMAIL}
+		{#if $page.data?.user?.isAdmin}
 			{#await import('$lib/FormWithMarkdown.svelte') then FormWithMarkdown}
 				<FormWithMarkdown.default
 					form={blogForm}

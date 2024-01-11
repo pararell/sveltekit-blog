@@ -1,10 +1,17 @@
-FROM node:18.16.0-alpine AS buildContainer
+FROM node:20.10.0-alpine AS buildContainer
 
-WORKDIR /usr/app
-COPY ./ ./
-RUN npm install
+WORKDIR /usr/src/app
+RUN mkdir -p /usr/src/app/code
+COPY ./ /usr/src/app/code
+
+RUN cd code \
+  && npm i \
+  && npm run build \
+  && mv build server package.json ../ \
+  && cd ../ \
+  && rm -rf code
+
 RUN cd server \
-    && npm install \
-      && cd ..
+    && npm i 
 
-CMD ["/bin/sh" , "-c" , "npm run build && cd ./server && npm run start"]
+CMD ["/bin/sh" , "-c" , "cd ./server && npm run start"]
