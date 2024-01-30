@@ -1,7 +1,7 @@
 export const prerender = false;
 import { api } from '$lib/api';
 
-export const load = async ({ fetch, params, url, locals }) => {
+export const load = async ({ fetch, url, locals }) => {
 	const authorization = locals.token ? { authorization: locals.token } : {};
 	const loadBlog = async () => {
 		let blogQuery = url.searchParams.get('edit');
@@ -17,6 +17,5 @@ export const load = async ({ fetch, params, url, locals }) => {
 	return {
 		blog: await loadBlog(),
 		host: url.host,
-		params
 	};
 };

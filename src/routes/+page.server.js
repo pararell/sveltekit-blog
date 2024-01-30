@@ -5,14 +5,13 @@ import { marked } from 'marked';
 
 export let csr = true;
 
-export const load = async ({ fetch, params, depends }) => {
+export const load = async ({ fetch, depends }) => {
 	const resPage = await api({ url: 'api/v1/pages/home', serverFetch: fetch });
 	csr = resPage.body.onlyHTML !== 'true';
 
 	depends('app:home');
 
 	return {
-		params,
 		home: updatePage(resPage)
 	};
 

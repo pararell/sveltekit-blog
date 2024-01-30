@@ -96,4 +96,3 @@ export const expenseModelForm = {
 		value: new Date().toISOString().substr(0, 10)
 	}
 };
-

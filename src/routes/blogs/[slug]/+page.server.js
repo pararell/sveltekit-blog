@@ -12,7 +12,7 @@ export const load = async ({ fetch, params, url }) => {
 	return {
 		blog: updatePage(resBlog),
 		host: url.host,
-		params: params
+		paramsBlog: params.slug
 	};
 
 	function updatePage(resPage) {

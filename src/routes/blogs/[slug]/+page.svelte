@@ -19,7 +19,7 @@
 		<span class="date">{new Date($page.data?.blog.date).toLocaleDateString()}</span>
 
 		{#if browser}
-			<Comments host={$page.data?.host} slug={$page.data?.params.slug} disqusUrl={$page.data?.pageEnv?.DISQUSSRC} />
+			<Comments host={$page.data?.host} slug={$page.data?.paramsBlog} disqusUrl={$page.data?.pageEnv?.DISQUSSRC} />
 		{/if}
 	</div>
 {/if}

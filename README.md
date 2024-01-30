@@ -32,6 +32,7 @@ Server and Client run on the same port - it should check if the build exist and 
   <br/><br/>
 
   ## With Docker
+
    <br>
    
   - build docker: docker build -t sveltekit-blog:0.5.1 . (docker build --platform linux/amd64 -t sveltekit-blog:0.5.1 .)

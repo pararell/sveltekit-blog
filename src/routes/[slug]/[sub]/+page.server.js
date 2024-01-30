@@ -13,8 +13,7 @@ export const load = async ({ fetch, params, url }) => {
 
 	return {
 		subPageWithContent: updatePage(resPage),
-		pathname: url.pathname,
-		params: params
+		pathname: url.pathname
 	};
 
 	function updatePage(resPage) {

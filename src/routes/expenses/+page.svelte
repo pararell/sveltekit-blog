@@ -242,133 +242,120 @@
 	</div>
 {/if}
 
-<style lang="scss">
-	.expenses-wrap {
-		margin: 20px auto;
-		background: #fff;
-		border-radius: 12px;
-	}
-	.expenses {
-		display: flex;
-		flex-flow: column;
-		padding: 10px 20px;
-	}
-
-	.expense {
-		display: grid;
-		grid-auto-flow: column;
-		grid-auto-columns: 1fr;
-		box-shadow: 0px 0px 2px rgb(0 0 0 / 20%);
-
-		span {
-			padding: 5px;
-		}
-
-		&.expense-titles {
-			padding-bottom: 10px;
-			font-weight: bold;
-			box-shadow: none;
-		}
-	}
-
-	.btn-delete {
-		display: block;
-		max-width: 200px;
-		margin: 30px auto;
-	}
-
-	.edit-wrap {
-		position: relative;
-		background: #fff;
-		overflow: visible;
-		width: 100%;
-		z-index: 100;
-	}
-
-	#search {
-		display: flex;
-		margin: 20px auto;
-		padding: 5px;
-		z-index: 100;
-	}
-
-	#search input {
-		background: transparent;
-		border-color: #fff;
-		color: #fff;
-		border-style: solid;
-		border-width: 1px;
-		border-radius: 50px;
-		width: 100%;
-		padding: 0.5em 1em 0.4em 1em;
-		transition: border-color 0.3s ease;
-		line-height: 1;
-		font-size: 14px;
-		border-color: #b4b9ba;
-		color: #000;
-		max-width: 300px;
-	}
-
-	#search button {
-		max-width: 100px;
-		padding: 5px;
-		margin: 0 10px;
-	}
-
-	.modal-window {
-		position: fixed;
-		background-color: rgba(0, 0, 0, 0.25);
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 999;
-		transition: all 0.3s;
-
-		.modal-inside {
-			min-width: 300px;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			padding: 2em;
-			background: white;
-			border-radius: 10px;
-			max-height: 95vh;
-			overflow: auto;
-		}
-
-		.modal-close {
-			all: unset;
-			cursor: pointer;
-			position: absolute;
-			top: 15px;
-			right: 15px;
-			font-size: 18px;
-			font-weight: bold;
-		}
-	}
-
-	.top {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 30px 50px 30px 50px;
-	}
-
-	.summary {
-		font-size: 20px;
-		line-height: 1.2;
-		font-weight: bold;
-	}
-
-	.expenses-actions {
-		display: flex;
-		max-width: 50%;
-		button {
-			display: inline-flex;
-			margin: 0 10px;
-			padding: 2px 5px;
-		}
-	}
+<style>
+.expenses-wrap {
+	 margin: 20px auto;
+	 background: #fff;
+	 border-radius: 12px;
+}
+ .expenses {
+	 display: flex;
+	 flex-flow: column;
+	 padding: 10px 20px;
+}
+ .expense {
+	 display: grid;
+	 grid-auto-flow: column;
+	 grid-auto-columns: 1fr;
+	 box-shadow: 0px 0px 2px #000;
+}
+ .expense span {
+	 padding: 5px;
+}
+ .expense.expense-titles {
+	 padding-bottom: 10px;
+	 font-weight: bold;
+	 box-shadow: none;
+}
+ .btn-delete {
+	 display: block;
+	 max-width: 200px;
+	 margin: 30px auto;
+}
+ .edit-wrap {
+	 position: relative;
+	 background: #fff;
+	 overflow: visible;
+	 width: 100%;
+	 z-index: 100;
+}
+ #search {
+	 display: flex;
+	 margin: 20px auto;
+	 padding: 5px;
+	 z-index: 100;
+}
+ #search input {
+	 background: transparent;
+	 border-color: #fff;
+	 color: #fff;
+	 border-style: solid;
+	 border-width: 1px;
+	 border-radius: 50px;
+	 width: 100%;
+	 padding: 0.5em 1em 0.4em 1em;
+	 transition: border-color 0.3s ease;
+	 line-height: 1;
+	 font-size: 14px;
+	 border-color: #b4b9ba;
+	 color: #000;
+	 max-width: 300px;
+}
+ #search button {
+	 max-width: 100px;
+	 padding: 5px;
+	 margin: 0 10px;
+}
+ .modal-window {
+	 position: fixed;
+	 background-color: rgba(0, 0, 0, 0.25);
+	 top: 0;
+	 right: 0;
+	 bottom: 0;
+	 left: 0;
+	 z-index: 999;
+	 transition: all 0.3s;
+}
+ .modal-window .modal-inside {
+	 min-width: 300px;
+	 position: absolute;
+	 top: 50%;
+	 left: 50%;
+	 transform: translate(-50%, -50%);
+	 padding: 2em;
+	 background: white;
+	 border-radius: 10px;
+	 max-height: 95vh;
+	 overflow: auto;
+}
+ .modal-window .modal-close {
+	 all: unset;
+	 cursor: pointer;
+	 position: absolute;
+	 top: 15px;
+	 right: 15px;
+	 font-size: 18px;
+	 font-weight: bold;
+}
+ .top {
+	 display: flex;
+	 justify-content: space-between;
+	 align-items: center;
+	 padding: 30px 50px 30px 50px;
+}
+ .summary {
+	 font-size: 20px;
+	 line-height: 1.2;
+	 font-weight: bold;
+}
+ .expenses-actions {
+	 display: flex;
+	 max-width: 50%;
+}
+ .expenses-actions button {
+	 display: inline-flex;
+	 margin: 0 10px;
+	 padding: 2px 5px;
+}
+ 
 </style>
