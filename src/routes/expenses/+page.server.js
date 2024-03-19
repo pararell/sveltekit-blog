@@ -24,10 +24,11 @@ export const load = async ({ fetch, params, url, locals }) => {
 		}
 	};
 
+	// https://github.com/fawazahmed0/exchange-api for more info
 	const loadExhangeRate = async () => {
 		const response = await api({
 			apiURL: 'https://cdn.jsdelivr.net',
-			url: `gh/fawazahmed0/currency-api@1/latest/currencies/eur.json`,
+			url: `npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json`,
 			serverFetch: fetch
 		});
 		return response.body;
