@@ -66,10 +66,24 @@ export const userModel = {
 	datecreated: 'date'
 };
 
+export const notesModel = {
+	title: 'string',
+	slug: 'string',
+	content: 'string',
+	image: 'string',
+	position: 'string',
+	hidden: 'string',
+	datecreated: 'date',
+	categories: 'json',
+	user: 'string',
+	date: 'date'
+}
+
 const databases = [
 	{ name: 'Pages', model: pageModel },
 	{ name: 'Blogs', model: blogModel },
 	{ name: 'Expenses', model: expenseModel },
+	{ name: 'Notes', model: notesModel },
 	{ name: 'Users', model: userModel }
 ];
 
@@ -149,6 +163,48 @@ app.use(compression());
 
 app.use(cookieParser());
 
+const authenticateUser = (req, res, next) => {
+    const userToken = req.session.token || req.headers.authorization;
+    if (!userToken) {
+        res.status(401).json({ message: `Authentication error` });
+        return;
+    }
+    
+    try {
+        const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
+        if (!userInfo) {
+            res.status(401).json({ message: `Authentication error` });
+            return;
+        }
+        req.user = userInfo;
+        next();
+    } catch (err) {
+        res.status(401).json({ message: `Authentication error: ${err.message}` });
+    }
+};
+
+const authenticateAdmin = (req, res, next) => {
+    const userToken = req.session.token || req.headers.authorization;
+    if (!userToken) {
+        res.status(401).json({ message: `Authentication error` });
+        return;
+    }
+    
+    try {
+        const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
+		const admin = userInfo && userInfo.email === process.env.adminEmail;
+		if (!admin) {
+			res.status(JSON.json({ message: `Authentification error` }));
+			return;
+		}
+        req.user = userInfo;
+        next();
+    } catch (err) {
+        res.status(401).json({ message: `Authentication error: ${err.message}` });
+    }
+};
+
+
 routes.get('/user', async (req, res) => {
 	const userToken = req.session.token || req.headers.authorization;
 	try {
@@ -173,18 +229,7 @@ routes.get('/blogs', async (req, res) => {
 	}
 });
 
-routes.post('/blogs/create', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
-	if (!userToken) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.email === process.env.adminEmail;
-	if (!admin) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
+routes.post('/blogs/create', authenticateAdmin, async (req, res) => {
 	const ifExist = await connection('blogs').where({ slug: req.body.slug });
 	if (ifExist && !!ifExist.length) {
 		res.end(JSON.stringify({ message: `Blog already exist` }));
@@ -198,19 +243,7 @@ routes.post('/blogs/create', async (req, res) => {
 	}
 });
 
-routes.patch('/blogs/update', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
-	if (!userToken) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.email === process.env.adminEmail;
-	if (!admin) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-
+routes.patch('/blogs/update', authenticateAdmin, async (req, res) => {
 	const _blogs = await connection('blogs')
 		.where({ id: req.body.id })
 		.update({ ...req.body });
@@ -248,18 +281,7 @@ routes.get('/blogs/:slug', async (req, res) => {
 	}
 });
 
-routes.delete('/blogs/delete/:id', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
-	if (!userToken) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.email === process.env.adminEmail;
-	if (!admin) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
+routes.delete('/blogs/delete/:id', authenticateAdmin, async (req, res) => {
 	const id = req.params['id'];
 	const _blogs = await connection('blogs').where('id', id).del();
 	try {
@@ -292,18 +314,7 @@ routes.get('/pages', async (req, res) => {
 	}
 });
 
-routes.post('/pages/create', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
-	if (!userToken) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.email === process.env.adminEmail;
-	if (!admin) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
+routes.post('/pages/create', authenticateAdmin, async (req, res) => {
 	const lang = getLang(req);
 	const ifExist = await connection('pages').where({ lang, slug: req.body.slug });
 	if (ifExist && !!ifExist.length) {
@@ -318,18 +329,7 @@ routes.post('/pages/create', async (req, res) => {
 	}
 });
 
-routes.patch('/pages/update', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
-	if (!userToken) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.email === process.env.adminEmail;
-	if (!admin) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
+routes.patch('/pages/update', authenticateAdmin, async (req, res) => {
 	const _pages = await connection('pages')
 		.where({ id: req.body.id })
 		.update({ ...req.body });
@@ -410,18 +410,7 @@ routes.get('/pages/:slug/:subpage', async (req, res) => {
 	}
 });
 
-routes.delete('/pages/delete/:id', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
-	if (!userToken) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-	const admin = userInfo && userInfo.email === process.env.adminEmail;
-	if (!admin) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
+routes.delete('/pages/delete/:id',authenticateAdmin, async (req, res) => {
 	const id = req.params['id'];
 	const _page = await connection('pages').where('id', id).del();
 	try {
@@ -431,39 +420,22 @@ routes.delete('/pages/delete/:id', async (req, res) => {
 	}
 });
 
-routes.get('/expenses', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
-	if (!userToken) {
-		res.end(JSON.stringify(JSON.stringify([])));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
+routes.get('/expenses',authenticateUser, async (req, res) => {
 	try {
-		const expenses = await connection('expenses').select('*').where('user', userInfo.email);
+		const expenses = await connection('expenses').select('*').where('user', req.user.email);
 		res.end(JSON.stringify(expenses));
 	} catch {
 		res.end(JSON.stringify([]));
 	}
 });
 
-routes.post('/expenses/create', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
-	if (!userToken) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-	if (!userInfo) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-
+routes.post('/expenses/create', authenticateUser, async (req, res) => {
 	const ifExist = await connection('expenses').where({ slug: req.body.slug });
 	if (ifExist && !!ifExist.length) {
 		res.end(JSON.stringify({ message: `Expense already exist` }));
 		return;
 	}
-	const expenses = await connection('expenses').insert({ ...req.body, user: userInfo.email });
+	const expenses = await connection('expenses').insert({ ...req.body, user: req.user.email });
 	try {
 		res.end(JSON.stringify(expenses));
 	} catch (err) {
@@ -471,18 +443,7 @@ routes.post('/expenses/create', async (req, res) => {
 	}
 });
 
-routes.patch('/expenses/update', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
-	if (!userToken) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-
-	if (!userInfo) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
+routes.patch('/expenses/update', authenticateUser, async (req, res) => {
 	const _expenses = await connection('expenses')
 		.where({ id: req.body.id })
 		.update({ ...req.body });
@@ -490,7 +451,7 @@ routes.patch('/expenses/update', async (req, res) => {
 	const page = await connection
 		.select('*')
 		.from('expenses')
-		.where({ id: req.body.id, user: userInfo.email })
+		.where({ id: req.body.id, user: req.user.email })
 		.first();
 
 	try {
@@ -500,24 +461,13 @@ routes.patch('/expenses/update', async (req, res) => {
 	}
 });
 
-routes.get('/expenses/:slug', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
+routes.get('/expenses/:slug', authenticateUser, async (req, res) => {
 	let { slug } = req.params;
-	if (!userToken) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-
-	if (!userInfo) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
 	try {
 		const expense = await connection
 			.select('*')
 			.from('expenses')
-			.where({ slug, user: userInfo.email })
+			.where({ slug, user: req.user.email })
 			.first();
 
 		return expense ? res.end(JSON.stringify(expense)) : res.end(JSON.stringify({}));
@@ -526,25 +476,82 @@ routes.get('/expenses/:slug', async (req, res) => {
 	}
 });
 
-routes.delete('/expenses/delete/:id', async (req, res) => {
-	const userToken = req.session.token || req.headers.authorization;
-	if (!userToken) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
-	const userInfo = jwt.verify(userToken, process.env.TOKEN_KEY);
-
-	if (!userInfo) {
-		res.end(JSON.stringify({ message: `Authentification error` }));
-		return;
-	}
+routes.delete('/expenses/delete/:id', authenticateUser, async (req, res) => {
 	const id = req.params['id'];
 
-	const _expense = await connection('expenses').where({ id, user: userInfo.email }).del();
+	const _expense = await connection('expenses').where({ id, user: req.user.email }).del();
 	try {
 		res.end(JSON.stringify({}));
 	} catch {
 		res.end(JSON.stringify({ message: `There was an error retrieving expenses` }));
+	}
+});
+
+
+routes.get('/notes',authenticateUser, async (req, res) => {
+	try {
+		const expenses = await connection('notes').select('*').where('user', req.user.email);
+		res.end(JSON.stringify(expenses));
+	} catch {
+		res.end(JSON.stringify([]));
+	}
+});
+
+routes.post('/notes/create', authenticateUser, async (req, res) => {
+	const ifExist = await connection('notes').where({ slug: req.body.slug });
+	if (ifExist && !!ifExist.length) {
+		res.end(JSON.stringify({ message: `Notes already exist` }));
+		return;
+	}
+	const notes = await connection('notes').insert({ ...req.body, user: req.user.email });
+	try {
+		res.end(JSON.stringify(notes));
+	} catch (err) {
+		res.end(JSON.stringify({ message: `There was an error retrieving notes: ${err}` }));
+	}
+});
+
+routes.patch('/notes/update', authenticateUser, async (req, res) => {
+	const _notes = await connection('notes')
+		.where({ id: req.body.id })
+		.update({ ...req.body });
+
+	const page = await connection
+		.select('*')
+		.from('notes')
+		.where({ id: req.body.id, user: req.user.email })
+		.first();
+
+	try {
+		res.end(JSON.stringify(page));
+	} catch (err) {
+		res.end(JSON.stringify({ message: `There was an error retrieving notes: ${err}` }));
+	}
+});
+
+routes.get('/notes/:slug', authenticateUser, async (req, res) => {
+	let { slug } = req.params;
+	try {
+		const expense = await connection
+			.select('*')
+			.from('notes')
+			.where({ slug, user: req.user.email })
+			.first();
+
+		return expense ? res.end(JSON.stringify(expense)) : res.end(JSON.stringify({}));
+	} catch (e) {
+		res.end(JSON.stringify({}));
+	}
+});
+
+routes.delete('/notes/delete/:id', authenticateUser, async (req, res) => {
+	const id = req.params['id'];
+
+	const _expense = await connection('notes').where({ id, user: req.user.email }).del();
+	try {
+		res.end(JSON.stringify({}));
+	} catch {
+		res.end(JSON.stringify({ message: `There was an error retrieving notes` }));
 	}
 });
 

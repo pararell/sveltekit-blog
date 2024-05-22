@@ -78,6 +78,9 @@
 				<a class="menu-link" class:active={url.pathname === '/expenses'} href="/expenses"
 					>Expenses</a
 				>
+				<a class="menu-link" class:active={url.pathname === '/notes'} href="/notes"
+				>Notes</a
+			>
 			{/if}
 			{#each pagesInMenu() as pageToShow (pageToShow.id)}
 				{#if pageToShow.url !== '/' && !pageToShow.subpage}

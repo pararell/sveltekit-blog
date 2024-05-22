@@ -96,3 +96,33 @@ export const expenseModelForm = {
 		value: new Date().toISOString().substr(0, 10)
 	}
 };
+
+export const notesModelForm = {
+	title: {
+		type: 'text',
+		value: ''
+	},
+	content: {
+		type: 'textarea',
+		value: ''
+	},
+	categories: {
+		type: 'text',
+		value: ''
+	},
+	position: {
+		type: 'text',
+		value: ''
+	},
+	hidden: {
+		type: 'text',
+		value: ''
+	},
+	date: {
+		type: 'date',
+		value: new Date().toISOString().substr(0, 10)
+	}
+};
+
+
+

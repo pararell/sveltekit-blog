@@ -6,6 +6,11 @@ export const load = async ({ fetch, params, url, locals }) => {
 
 	const fetchExpanses = async () => {
 		const response = await api({ url: 'api/v1/expenses', serverFetch: fetch, authorization });
+
+		if (response.status === 401) {
+			return [];
+		}
+
 		return response.body;
 	};
 
@@ -17,6 +22,7 @@ export const load = async ({ fetch, params, url, locals }) => {
 				serverFetch: fetch,
 				authorization
 			});
+
 			if (!response?.body) {
 				return {};
 			}

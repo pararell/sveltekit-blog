@@ -64,3 +64,26 @@ export const minifyHTML = (html) => {
 		.replace(/(<.*?>)|\s+/g, (m, $1) => ($1 ? $1 : ' '))
 		.trim();
 };
+
+
+export const createCalendar = () => {
+    const dateStartDt = new Date(); 
+
+    const monthsArr = Array(13).fill(0);
+
+    return monthsArr
+      .map((_monthNum, i) => i + dateStartDt.getMonth() + 1)
+      .map(monthNum => (monthNum <= 12 ? monthNum : monthNum - 12))
+      .map((month, index) => {
+        const year = month < dateStartDt.getMonth() + 1 || index > 11 ? dateStartDt.getFullYear() + 1 : dateStartDt.getFullYear();
+		const monthYearDt = new Date(year, month, 0);
+
+        return {
+          month,
+          year,
+          days: Array(monthYearDt.getDate())
+            .fill(0)
+            .map((_val, i) => ({value: i + 1}))
+        };
+      });
+  };
