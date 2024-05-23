@@ -36,22 +36,30 @@
 	let unsubscribe = page.subscribe((pageVal) => {
 		if (pageVal.data?.notes) {
 			notes = pageVal.data.notes;
-            calendars = calendars.map((calendar) => {
-                const dateNotes = notes.filter((note) => note.date.includes(`${calendar.year}-${calendar.monthTwoDigits}`));
-                const today = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) === `${calendar.year}-${calendar.month}`;
-                return {
-                    ...calendar,
-                    days: calendar.days.map((day) => {
-                        return {
-                            ...day,
-                            note: dateNotes.length
-                                ? dateNotes.filter((note) => note.date === `${calendar.year}-${calendar.monthTwoDigits}-${day.valueTwoDigits}`)
-                                : [],
-                            today: today && new Date().getDate() === day.value,
-                        };
-                    })
-                };
-            });
+			calendars = calendars.map((calendar) => {
+				const dateNotes = notes.filter((note) =>
+					note.date.includes(`${calendar.year}-${calendar.monthTwoDigits}`)
+				);
+				const today =
+					new Date().getFullYear() + '-' + (new Date().getMonth() + 1) ===
+					`${calendar.year}-${calendar.month}`;
+				return {
+					...calendar,
+					days: calendar.days.map((day) => {
+						return {
+							...day,
+							hasNote: dateNotes.length
+								? !!dateNotes.find(
+										(note) =>
+											note.date ===
+											`${calendar.year}-${calendar.monthTwoDigits}-${day.valueTwoDigits}`
+									)
+								: false,
+							today: today && new Date().getDate() === day.value
+						};
+					})
+				};
+			});
 		}
 		if (pageVal.data.noteToEdit) {
 			const noteToEdit = pageVal.data.noteToEdit;
@@ -139,6 +147,16 @@
 		}
 	};
 
+	const openCalendarNote = (day, calendar) => {
+		const date = `${calendar.year}-${calendar.monthTwoDigits}-${day.valueTwoDigits}`;
+		const note = notes.find((note) => note.date === date);
+		if (note) {
+            id = note.id;
+			noteForm = preparePageForm(noteForm, note);
+			showEdit = true;
+		} 
+	};
+
 	onDestroy(() => unsubscribe());
 </script>
 
@@ -168,11 +186,15 @@
 				{/each}
 
 				{#each calendar['days'] as day}
-					<div class="calendar-day" style="background:{day['today'] ? '#ec1' : '#fff'}">
-						{#if day}
-							<div class="day" style="color:{day['note'].length ? 'red' : '#000'}">{day['value']}</div>
-						{/if}
-					</div>
+					<button
+						on:click={openCalendarNote(day, calendar)}
+						class="calendar-day"
+						style="background:{day['today'] ? '#ec1' : '#fff'}"
+					>
+						<span class="day" style="color:{day['hasNote'] ? 'red' : '#000'}">
+							{day['value']}
+						</span>
+					</button>
 				{/each}
 			</div>
 		</div>
@@ -296,7 +318,7 @@
 	.note span {
 		padding: 5px;
 		text-align: center;
-        color: var(--text-color);
+		color: var(--text-color);
 	}
 	.note.note-titles {
 		padding-bottom: 10px;
@@ -399,7 +421,7 @@
 	.calendar-month {
 		padding-top: 20px;
 		min-width: 400px;
-        padding: 20px 12px 0 12px;
+		padding: 20px 12px 0 12px;
 	}
 	.calendar-month h2.calendar-dates-month {
 		margin: 0;
@@ -451,6 +473,7 @@
 		overflow: hidden;
 		justify-content: center;
 		align-items: center;
+		cursor: pointer;
 	}
 	.calendar-month .calendar-days-wrap .calendar-day .day {
 		font-size: 12px;
