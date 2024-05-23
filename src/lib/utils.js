@@ -77,13 +77,15 @@ export const createCalendar = () => {
       .map((month, index) => {
         const year = month < dateStartDt.getMonth() + 1 || index > 11 ? dateStartDt.getFullYear() + 1 : dateStartDt.getFullYear();
 		const monthYearDt = new Date(year, month, 0);
-
+		const firstDay = new Date(year, monthYearDt.getMonth(), 1).getDay();
         return {
           month,
+		  monthTwoDigits: month < 10 ? `0${month}` : month.toString(),
           year,
+		  placeholders: Array(firstDay === 0 ? 6 : firstDay - 1).fill(0),
           days: Array(monthYearDt.getDate())
             .fill(0)
-            .map((_val, i) => ({value: i + 1}))
+            .map((_val, i) => ({value: i + 1, valueTwoDigits: i + 1 < 10 ? `0${i + 1}` : (i + 1).toString()}))
         };
       });
   };
