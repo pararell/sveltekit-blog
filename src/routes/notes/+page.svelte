@@ -10,6 +10,8 @@
 	let noteForm = Object.entries(notesModelForm);
 	let id = '';
 	let showEdit = false;
+    let showCalendarNotes = false;
+    let calendarNotes = [];
 	let showAdd = false;
 	let notes = [];
 	let authorization = {};
@@ -147,13 +149,20 @@
 		}
 	};
 
+    const openEditNote = async (slug) => {
+        const url = new URLSearchParams();
+        url.set('edit', slug);
+        await goto(`?${url}`);
+        showCalendarNotes = false;
+        showEdit = true;
+    };
+
 	const openCalendarNote = (day, calendar) => {
 		const date = `${calendar.year}-${calendar.monthTwoDigits}-${day.valueTwoDigits}`;
-		const note = notes.find((note) => note.date === date);
-		if (note) {
-            id = note.id;
-			noteForm = preparePageForm(noteForm, note);
-			showEdit = true;
+		const foundNotes = notes.filter((note) => note.date === date);
+		if (foundNotes.length) {
+            calendarNotes = foundNotes;
+			showCalendarNotes = true;
 		} 
 	};
 
@@ -226,12 +235,12 @@
 		</div>
 		<div class="notes">
 			{#each sortedNotes as note}
-				<div class="note" style="color:{note.color}">
+				<button class="note" style="color:{note.color}" on:click={openEditNote(note.slug)}>
 					<span>{note.title}</span>
 					<span>{note.date}</span>
 					<span>{@html note.content}</span>
 					<span>{note.categories}</span>
-				</div>
+				</button>
 			{/each}
 		</div>
 	{/if}
@@ -296,6 +305,24 @@
 	</div>
 {/if}
 
+{#if showCalendarNotes}
+	<div class="modal-window">
+		<div class="modal-inside">
+			<button class="modal-close" on:click={() => (showCalendarNotes = false)}>x</button>
+            <div class="notes">
+                {#each calendarNotes as note}
+                    <button class="note" style="color:{note.color}" on:click={openEditNote(note.slug)}>
+                        <span>{note.title}</span>
+                        <span>{note.date}</span>
+                        <span>{@html note.content}</span>
+                        <span>{note.categories}</span>
+                    </button>
+                {/each}
+            </div>
+		</div>
+	</div>
+{/if}
+
 <style>
 	.notes-wrap {
 		margin: 20px auto;
@@ -314,6 +341,9 @@
 		flex: 1;
 		box-shadow: 0px 0px 2px var(--opposite-color);
 		min-width: 250px;
+        border: none;
+        background: var(--primary-color);
+        cursor: pointer;
 	}
 	.note span {
 		padding: 5px;
