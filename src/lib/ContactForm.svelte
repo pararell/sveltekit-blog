@@ -1,8 +1,8 @@
 <script>
-	let subject = '',
-		note = '',
-		email = '',
-		result = '';
+	let subject = $state(''),
+		note = $state(''),
+		email = $state(''),
+		result = $state('');
 	import { api } from '$lib/api';
 	import { t } from '$lib/i18n';
 
@@ -24,7 +24,11 @@
 
 <div class="flex">
 	<div class="col">
-		<form class="content" on:submit|preventDefault={handleSubmit}>
+		<form class="content" onsubmit={(event) => {
+			event.preventDefault();
+
+			handleSubmit?.(event);
+}}>
 			<span class="field">
 				<label for="subject">{$t('subject')}</label>
 				<input id="subject" name="subject" type="text" bind:value={subject} />
@@ -35,7 +39,7 @@
 			</span>
 			<span class="field">
 				<label for="note">{$t('note')}</label>
-				<textarea id="note" name="note" bind:value={note} />
+				<textarea id="note" name="note" bind:value={note} ></textarea>
 			</span>
 			<button disabled={!email || !note || !subject} type="submit" class="btn">{$t('send')}</button>
 		</form>

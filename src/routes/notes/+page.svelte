@@ -8,15 +8,15 @@
 	import Calendar from '$lib/Calendar.svelte';
 
 	let noteNewForm = Object.entries(notesModelForm);
-	let noteForm = Object.entries(notesModelForm);
-	let id = '';
-	let showEdit = false;
-    let showCalendarNotes = false;
-    let calendarNotes = [];
-	let showAdd = false;
-	let notes = [];
+	let noteForm = $state(Object.entries(notesModelForm));
+	let id = $state('');
+	let showEdit = $state(false);
+    let showCalendarNotes = $state(false);
+    let calendarNotes = $state([]);
+	let showAdd = $state(false);
+	let notes = $state([]);
 	let authorization = {};
-	let showCategories = 'all';
+	let showCategories = $state('all');
 	let colorsPallete = [
 		'teal',
 		'olive',
@@ -33,7 +33,7 @@
 		'#112d4b'
 	];
 
-	let calendars = createCalendar();
+	let calendars = $state(createCalendar());
 
 	let unsubscribe = page.subscribe((pageVal) => {
 		if (pageVal.data?.notes) {
@@ -71,12 +71,12 @@
 		authorization = pageVal.data?.token ? { authorization: pageVal.data.token } : {};
 	});
 
-	$: categories = notes.reduce(
+	let categories = $derived(notes.reduce(
 		(prev, curr) => [...new Set([...prev, ...(curr.categories ? curr.categories.split(',') : [])])],
 		['all']
-	);
+	));
 
-	$: sortedNotes = notes
+	let sortedNotes = $derived(notes
 		.filter((note) => {
 			if (showCategories === 'all') {
 				return true;
@@ -93,13 +93,11 @@
 
 			return note;
 		})
-		.sort((a, b) => parseFloat(a.position) - parseFloat(b.position));
+		.sort((a, b) => parseFloat(a.position) - parseFloat(b.position)));
 
 	onDestroy(() => unsubscribe());
 
-	const editNote = async (event) => {
-		const formData = event.detail;
-
+	const editNote = async (formData) => {
 		if (formData.title && id) {
 			const data = {
 				id: parseFloat(id),
@@ -114,8 +112,7 @@
 		}
 	};
 
-	const addNote = async (event) => {
-		const formData = event.detail;
+	const addNote = async (formData) => {
 		if (formData.title) {
 			const data = {
 				...formData,
@@ -157,8 +154,7 @@
         showEdit = true;
     };
 
-	const openCalendarNote = ({detail}) => {
-		const { day, calendar } = detail;
+	const openCalendarNote = (day, calendar) => {
 		const date = `${calendar.year}-${calendar.monthTwoDigits}-${day.valueTwoDigits}`;
 		const foundNotes = notes.filter((note) => note.date === date);
 		if (foundNotes.length) {
@@ -175,7 +171,7 @@
 </svelte:head>
 
 
-<Calendar calendars={calendars} on:openCalendarNote={openCalendarNote} />
+<Calendar calendars={calendars} openCalendarNote={openCalendarNote} />
 
 
 
@@ -184,8 +180,8 @@
 		<h1>Notes</h1>
 		{#if $page.data?.user?.email}
 			<div class="notes-actions">
-				<button class="btn" on:click={() => (showAdd = true)}>Add</button>
-				<button class="btn" on:click={() => (showEdit = true)}>Edit</button>
+				<button class="btn" onclick={() => (showAdd = true)}>Add</button>
+				<button class="btn" onclick={() => (showEdit = true)}>Edit</button>
 			</div>
 		{/if}
 	</div>
@@ -204,7 +200,7 @@
 		</div>
 		<div class="notes">
 			{#each sortedNotes as note}
-				<button class="note" style="color:{note.color};display:{note.hidden == 'true' ? 'none' : 'flex'}" on:click={openEditNote(note.slug)}>
+				<button class="note" style="color:{note.color};display:{note.hidden == 'true' ? 'none' : 'flex'}" onclick={() => openEditNote(note.slug)}>
 					<span>{note.title}</span>
 					<span>{note.date}</span>
 					<span>{@html note.content}</span>
@@ -218,11 +214,11 @@
 {#if showAdd}
 	<div class="modal-window">
 		<div class="modal-inside">
-			<button class="modal-close" on:click={() => (showAdd = false)}>x</button>
+			<button class="modal-close" onclick={() => (showAdd = false)}>x</button>
 			{#if $page.data?.user?.email}
 				{#await import('$lib/FormWithMarkdown.svelte') then Form}
 					<div class="container">
-						<Form.default form={noteNewForm} on:submitForm={addNote} />
+						<Form.default form={noteNewForm} submitForm={addNote} />
 					</div>
 				{/await}
 			{/if}
@@ -233,7 +229,7 @@
 {#if showEdit}
 	<div class="modal-window">
 		<div class="modal-inside">
-			<button class="modal-close" on:click={() => (showEdit = false)}>x</button>
+			<button class="modal-close" onclick={() => (showEdit = false)}>x</button>
 			{#if $page.data?.user?.email}
 				<form id="search">
 					<input
@@ -258,11 +254,15 @@
 								<Form.default
 									form={noteForm}
 									content={$page.data.noteToEdit.content}
-									on:submitForm={editNote}
+									submitForm={editNote}
 								/>
 							{/await}
 
-							<form on:submit|preventDefault={removeNote}>
+							<form onsubmit={(event) => {
+								event.preventDefault();
+
+								removeNote?.(event);
+}}>
 								<input type="hidden" name="id" value={id} />
 								<button class="btn delete btn-delete" aria-label="Delete Note"> Delete Note</button>
 							</form>
@@ -277,10 +277,10 @@
 {#if showCalendarNotes}
 	<div class="modal-window">
 		<div class="modal-inside">
-			<button class="modal-close" on:click={() => (showCalendarNotes = false)}>x</button>
+			<button class="modal-close" onclick={() => (showCalendarNotes = false)}>x</button>
             <div class="notes">
                 {#each calendarNotes as note}
-                    <button class="note" style="color:{note.color};" on:click={openEditNote(note.slug)}>
+                    <button class="note" style="color:{note.color};" onclick={openEditNote(note.slug)}>
                         <span>{note.title}</span>
                         <span>{note.date}</span>
                         <span>{@html note.content}</span>

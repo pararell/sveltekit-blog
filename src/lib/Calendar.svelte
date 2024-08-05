@@ -1,12 +1,6 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
-	export let calendars = [];
+	let { calendars = [], openCalendarNote } = $props();
 	let weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-	const dispatch = createEventDispatcher();
-
-    const openCalendarNote = (day, calendar) => {
-        dispatch('openCalendarNote', { day, calendar });
-    };
 </script>
 
 <div class="calendars-wrap">
@@ -32,7 +26,7 @@
 
 				{#each calendar['days'] as day}
 					<button
-						on:click={openCalendarNote(day, calendar)}
+						onclick={() => openCalendarNote(day, calendar)}
 						class="calendar-day"
 						style="background:{day['today'] ? '#ec1' : '#fff'}"
 					>

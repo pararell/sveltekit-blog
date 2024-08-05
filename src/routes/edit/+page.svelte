@@ -7,11 +7,11 @@
 	import { minifyHTML, preparePageForm, prepareSlug } from '$lib/utils';
 	import { marked } from 'marked';
 
-	let pageForm = Object.entries(pageModelForm);
-	let id = '';
-	let showEdit = true;
+	let pageForm = $state(Object.entries(pageModelForm));
+	let id = $state('');
+	let showEdit = $state(true);
 	let authorization = {}
-	export let data;
+	let { data } = $props();
 
 	let unsubscribe = page.subscribe((pageVal) => {
 		if (pageVal.data.pageToEdit) {
@@ -24,9 +24,7 @@
 
 	onDestroy(() => unsubscribe());
 
-	const submitForm = async (event) => {
-		const formData = event.detail;
-
+	const submitForm = async (formData) => {
 		if (formData.title && id) {
 			const data = {
 				id: parseFloat(id),
@@ -96,18 +94,22 @@
 						<FormWithMarkdown.default
 							form={pageForm}
 							content={$page.data?.pageToEdit.content}
-							on:submitForm={submitForm}
+							submitForm={submitForm}
 						/>
 					{/await}
 
-					<form on:submit|preventDefault={removePage}>
+					<form onsubmit={(event) => {
+						event.preventDefault();
+
+						removePage?.(event);
+}}>
 						<input type="hidden" name="id" value={id} />
 						<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
 					</form>
 				</div>
 			</div>
 		{/if}
-		<button class="btn btn-edit" on:click={() => (showEdit = !showEdit)}>Toggle Edit</button>
+		<button class="btn btn-edit" onclick={() => (showEdit = !showEdit)}>Toggle Edit</button>
 	{/if}
 {/if}
 

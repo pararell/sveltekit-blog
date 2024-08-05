@@ -8,7 +8,7 @@
 	import { onDestroy } from 'svelte';
 
 	let pageForm = Object.entries(pageModelForm);
-	export let authorization = {};
+	let { authorization = $bindable({}) } = $props();
 
 	let unsubscribe = page.subscribe((pageVal) => {
 		authorization = pageVal.data?.token ? { authorization: pageVal.data.token } : {};
@@ -20,8 +20,7 @@
 		});
 	};
 
-	const submitForm = async (event) => {
-		const formData = event.detail;
+	const submitForm = async (formData) => {
 		if (formData.title) {
 			const data = {
 				...formData,
@@ -45,7 +44,7 @@
 	{#if $page.data?.user?.isAdmin}
 		{#await import('$lib/FormWithMarkdown.svelte') then FormWithMarkdown}
 			<div class="container">
-				<FormWithMarkdown.default form={pageForm} on:submitForm={submitForm} />
+				<FormWithMarkdown.default form={pageForm} submitForm={submitForm} />
 			</div>
 		{/await}
 	{/if}

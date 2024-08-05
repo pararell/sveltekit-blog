@@ -1,10 +1,9 @@
 <script>
-	export let blogs = [];
-	export let category;
+	let { blogs = [], category } = $props();
 
-	$: blogsToShow = blogs
+	let blogsToShow = $derived(blogs
 		.filter((blog) => (category ? (blog.categories ? blog.categories.split(',') : []).includes(category) : true))
-		.sort((a, b) => new Date(b.Created) - new Date(a.Created));
+		.sort((a, b) => new Date(b.Created) - new Date(a.Created)));
 </script>
 
 {#if blogsToShow}
@@ -23,7 +22,7 @@
 
 			<div class="card-right">
 				<h2>{blog.title}</h2>
-				<div class="separator" />
+				<div class="separator" ></div>
 				<p>
 					{blog.description}
 				</p>

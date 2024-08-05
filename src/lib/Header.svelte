@@ -1,18 +1,19 @@
 <script>
 	import { t, locale, locales } from '$lib/i18n';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	const dispatch = createEventDispatcher();
-
-	let selected;
-	export let active = '';
-	export let pages = [];
-	export let blogs;
-	export let user;
-	export let url;
-	export let lang;
-	export let mode;
-	export let headerLogo;
+	let selected = $state();
+	let {
+		active = '',
+		pages = [],
+		blogs,
+		user,
+		url,
+		lang,
+		mode = $bindable(),
+		headerLogo,
+		toggle
+	} = $props();
 
 	if (lang) {
 		selected = lang;
@@ -22,7 +23,7 @@
 		selected = value;
 	});
 
-	$: pagesInMenu = () => {
+	let pagesInMenu = $derived(() => {
 		const basicPages = pages.filter(
 			(onePage) => onePage.url.split('/').length <= 1 && onePage.hidden !== 'true'
 		);
@@ -41,9 +42,9 @@
 				}
 				return basicPage;
 			});
-	};
+	});
 
-	$: categories = () => {
+	let categories = $derived(() => {
 		if (!blogs) {
 			return [];
 		}
@@ -52,17 +53,11 @@
 				blogs.map((blog) => (blog.categories || '').split(',').map((cat) => cat.trim())).flat()
 			)
 		];
-	};
-
-	const toggleMenu = () => {
-		dispatch('toggle');
-	};
+	});
 
 	onMount(() => {
 		document.getElementById('main').addEventListener('click', () => {
-			dispatch('toggle', {
-				action: 'close'
-			});
+			toggle('close');
 		});
 	});
 </script>
@@ -99,9 +94,9 @@
 					type="checkbox"
 					aria-label="open the navigation"
 				/>
-				<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-				<label class="hamburger-box" for="hamburger-trigger" on:click={toggleMenu}>
-					<span class="hamburger-inner" />
+				<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
+				<label class="hamburger-box" for="hamburger-trigger" onclick={() => toggle('toggle')}>
+					<span class="hamburger-inner"></span>
 					<span class="hamburger-label">Menu</span>
 				</label>
 			</div>
@@ -146,9 +141,9 @@
 								>
 								{#if pageToShow.subPages?.length}
 									{#each pageToShow.subPages as subpageToShow (subpageToShow.id)}
-										<li class:active={url.pathname === subpageToShow.url}>
+										<span class:active={url.pathname === subpageToShow.url}>
 											<a href="/{subpageToShow.url}">{subpageToShow.title}</a>
-										</li>
+										</span>
 									{/each}
 								{/if}
 							</li>
@@ -519,9 +514,6 @@
 	}
 	#site-nav li {
 		margin-bottom: 0.3125em;
-	}
-	#site-nav li li {
-		padding-left: 20px;
 	}
 	#site-nav li a:hover,
 	#site-nav li a:focus {

@@ -1,8 +1,8 @@
 <script>
-	let email = '';
-	let username = '';
-	let password = '';
-	export let form;
+	let email = $state('');
+	let username = $state('');
+	let password = $state('');
+	let { form } = $props();
 </script>
 
 <div class="container">

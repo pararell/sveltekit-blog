@@ -1,9 +1,9 @@
 <script>
 	import { marked } from 'marked';
 
-	export let content = '# Subtitle';
+	let { content = $bindable('# Subtitle') } = $props();
 
-	$: markdown = marked(content);
+	let markdown = $derived(marked(content));
 </script>
 
 <div class="markdown-editor">
@@ -11,7 +11,7 @@
 		<div class="markdown-editor__output">{@html markdown}</div>
 	</div>
 	<div class="markdown-editor__right-panel">
-		<textarea name="content" bind:value={content} class="markdown-editor__source" />
+		<textarea name="content" bind:value={content} class="markdown-editor__source" ></textarea>
 	</div>
 </div>
 

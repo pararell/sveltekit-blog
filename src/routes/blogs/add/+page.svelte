@@ -8,8 +8,8 @@
 	import { onDestroy } from 'svelte';
 
 	let blogForm = Object.entries(blogModelForm);
-	export let data;
-	export let authorization = {};
+	/** @type {{data: any, authorization?: any}} */
+	let { data, authorization = $bindable({}) } = $props();
 	const { user } = data;
 
 
@@ -23,8 +23,7 @@
 		});
 	};
 
-	const submitForm = async (event) => {
-		const formData = event.detail;
+	const submitForm = async (formData) => {
 		if (formData.title) {
 			const data = {
 				...formData,
@@ -49,7 +48,7 @@
 	{#if $page.data?.user?.isAdmin}
 		{#await import('$lib/FormWithMarkdown.svelte') then FormWithMarkdown}
 			<div class="container">
-				<FormWithMarkdown.default form={blogForm} on:submitForm={submitForm} />
+				<FormWithMarkdown.default form={blogForm} submitForm={submitForm} />
 			</div>
 		{/await}
 	{/if}

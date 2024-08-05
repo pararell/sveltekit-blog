@@ -7,14 +7,14 @@
 	import { preparePageForm, prepareSlug } from '$lib/utils';
 
 	let expenseNewForm = Object.entries(expenseModelForm);
-	let expenseForm = Object.entries(expenseModelForm);
-	let id = '';
-	let showEdit = false;
-	let showAdd = false;
-	let expenses = [];
+	let expenseForm = $state(Object.entries(expenseModelForm));
+	let id = $state('');
+	let showEdit = $state(false);
+	let showAdd = $state(false);
+	let expenses = $state([]);
 	let authorization = {};
-	let eurToCurrencies;
-	let showCategories = 'all';
+	let eurToCurrencies = $state();
+	let showCategories = $state('all');
 	let colorsPallete = [
 		'teal',
 		'olive',
@@ -46,12 +46,12 @@
 		authorization = pageVal.data?.token ? { authorization: pageVal.data.token } : {};
 	});
 
-	$: categories = expenses.reduce(
+	let categories = $derived(expenses.reduce(
 		(prev, curr) => [...new Set([...prev, ...(curr.categories ? curr.categories.split(',') : [])])],
 		['all']
-	);
+	));
 
-	$: sortedExpenses = expenses
+	let sortedExpenses = $derived(expenses
 		.filter((expense) => {
 			if (showCategories === 'all') {
 				return true;
@@ -80,15 +80,13 @@
 				  }
 				: { ...expense, value: parseFloat(expense.value).toFixed(2) }
 		)
-		.sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
+		.sort((a, b) => parseFloat(b.value) - parseFloat(a.value)));
 
-	$: summary = sortedExpenses.reduce((prev, curr) => prev + parseFloat(curr.value), 0).toFixed(2);
+	let summary = $derived(sortedExpenses.reduce((prev, curr) => prev + parseFloat(curr.value), 0).toFixed(2));
 
 	onDestroy(() => unsubscribe());
 
-	const editExpense = async (event) => {
-		const formData = event.detail;
-
+	const editExpense = async (formData) => {
 		if (formData.title && id) {
 			const data = {
 				id: parseFloat(id),
@@ -103,8 +101,7 @@
 		}
 	};
 
-	const addExpense = async (event) => {
-		const formData = event.detail;
+	const addExpense = async (formData) => {
 		if (formData.title) {
 			const data = {
 				...formData,
@@ -153,8 +150,8 @@
 
 		{#if $page.data?.user?.email}
 			<div class="expenses-actions">
-				<button class="btn" on:click={() => (showAdd = true)}>Add</button>
-				<button class="btn" on:click={() => (showEdit = true)}>Edit</button>
+				<button class="btn" onclick={() => (showAdd = true)}>Add</button>
+				<button class="btn" onclick={() => (showEdit = true)}>Edit</button>
 			</div>
 		{/if}
 	</div>
@@ -188,11 +185,11 @@
 {#if showAdd}
 	<div class="modal-window">
 		<div class="modal-inside">
-			<button class="modal-close" on:click={() => (showAdd = false)}>x</button>
+			<button class="modal-close" onclick={() => (showAdd = false)}>x</button>
 			{#if $page.data?.user?.email}
 				{#await import('$lib/FormWithMarkdown.svelte') then Form}
 					<div class="container">
-						<Form.default form={expenseNewForm} on:submitForm={addExpense} />
+						<Form.default form={expenseNewForm} submitForm={addExpense} />
 					</div>
 				{/await}
 			{/if}
@@ -203,7 +200,7 @@
 {#if showEdit}
 	<div class="modal-window">
 		<div class="modal-inside">
-			<button class="modal-close" on:click={() => (showEdit = false)}>x</button>
+			<button class="modal-close" onclick={() => (showEdit = false)}>x</button>
 			{#if $page.data?.user?.email}
 				<form id="search">
 					<input
@@ -225,10 +222,14 @@
 					<div class="edit-wrap">
 						<div class="container">
 							{#await import('$lib/FormWithMarkdown.svelte') then Form}
-								<Form.default form={expenseForm} on:submitForm={editExpense} />
+								<Form.default form={expenseForm} submitForm={editExpense} />
 							{/await}
 
-							<form on:submit|preventDefault={removeExpense}>
+							<form onsubmit={(event) => {
+								event.preventDefault();
+
+								removeExpense?.(event);
+}}>
 								<input type="hidden" name="id" value={id} />
 								<button class="btn delete btn-delete" aria-label="Delete Expense">
 									Delete Expense</button

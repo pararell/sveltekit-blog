@@ -7,9 +7,9 @@
 	import { preparePageForm, prepareSlug } from '$lib/utils';
 	import { marked } from 'marked';
 
-	let id = '';
+	let id = $state('');
 	let authorization = {};
-	let blogForm = Object.entries(blogModelForm);
+	let blogForm = $state(Object.entries(blogModelForm));
 
 	let unsubscribe = page.subscribe((pageVal) => {
 		if (pageVal.data.blog) {
@@ -22,8 +22,7 @@
 
 	onDestroy(() => unsubscribe());
 
-	const submitForm = async (event) => {
-		const formData = event.detail;
+	const submitForm = async (formData) => {
 		if (id && formData.title) {
 			const data = {
 				...formData,
@@ -92,10 +91,14 @@
 				<FormWithMarkdown.default
 					form={blogForm}
 					content={$page.data?.blog.content}
-					on:submitForm={submitForm}
+					submitForm={submitForm}
 				/>
 			{/await}
-			<form on:submit|preventDefault={removeBlog}>
+			<form onsubmit={(event) => {
+				event.preventDefault();
+
+				removeBlog?.(event);
+}}>
 				<input type="hidden" name="id" value={id} />
 				<button class="btn delete btn-delete" aria-label="Delete blog"> Delete Page</button>
 			</form>

@@ -5,9 +5,10 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import { locale } from '$lib/i18n';
+	let { children } = $props();
 
 	let firstInit = false;
-	let openHeader = '';
+	let openHeader = $state('');
 
 	const checkLang = (lang) => {
 		const langFound =
@@ -17,11 +18,11 @@
 		locale.set(foundLang);
 	};
 
-	const toggleMenu = (event) => {
+	const toggleMenu = (action) => {
 		if (browser) {
 			const menu = document.getElementById('hamburger-trigger');
 			if (menu) {
-				if (event?.detail?.action === 'close') {
+				if (action === 'close') {
 					menu.checked = false;
 					openHeader = '';
 				} else {
@@ -33,7 +34,7 @@
 	};
 
 	page.subscribe((p) => {
-		toggleMenu({ detail: { action: 'close' } });
+		toggleMenu('close');
 
 		if (p.data.lang && !firstInit) {
 			checkLang(p.data.lang);
@@ -44,7 +45,7 @@
 
 <div class="header-wrap {$page.data?.mode}">
 	<Header
-		on:toggle={toggleMenu}
+	    toggle={toggleMenu}
 		active={openHeader}
 		pages={$page.data?.pages}
 		blogs={$page.data?.blogs}
@@ -56,11 +57,11 @@
 	/>
 </div>
 <main id="main" class={$page.data?.mode}>
-	<slot />
+	{@render children?.()}
 </main>
 
 <footer class={$page.data?.mode}>
-	<p />
+	<p></p> 
 </footer>
 
 <style>

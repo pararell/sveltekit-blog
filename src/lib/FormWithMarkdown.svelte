@@ -1,21 +1,20 @@
 <script>
 	import Markdown from '$lib/Markdown.svelte';
 	import { inputTypes } from './constants';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 
-	export let form;
-	export let content = '';
-	let editor;
+	let { form = $bindable(), content = '', submitForm } = $props();
+	let editor = $state();
 	let error = '';
-	let showMarkdown = false;
-	let showEditor = false;
+	let showMarkdown = $state(false);
+	let showEditor = $state(false);
 
-	$: {
+	$effect.pre(() => {
 		if (editor) {
 			editor.value = content;
 		}
-	}
+	});
 
 	onMount(async () => {
 		try {
@@ -37,8 +36,6 @@
 		}
 	});
 
-	const dispatch = createEventDispatcher();
-
 	const prettifyHTML = async () => {
 		if (content) {
 			const { default: prettier } = await import(
@@ -58,7 +55,7 @@
 	};
 
 	const handleSubmit = () => {
-		dispatch('submitForm', {
+		submitForm({
 			...form.reduce((prev, curr) => {
 				const name = curr[0];
 				const item = curr[1];
@@ -86,7 +83,11 @@
 </script>
 
 {#if $page.data?.user?.email}
-	<form class="form" on:submit|preventDefault={handleSubmit}>
+	<form class="form" onsubmit={(event) => {
+		event.preventDefault();
+
+		handleSubmit?.(event);
+}}>
 		{#if form}
 			{#each form as [name, item]}
 				{#if inputTypes.includes(item.type)}
@@ -115,11 +116,11 @@
 				{#if item.type === 'textarea'}
 					<span class="field">
 						<label class="label" for={name}>{name}</label>
-						<textarea {name} id="" cols="30" rows="10" bind:value={item.value} placeholder={name} />
+						<textarea {name} id="" cols="30" rows="10" bind:value={item.value} placeholder={name} ></textarea>
 					</span>
 				{/if}
 				{#if item.type === 'markdown'}
-					<button class="btn" type="button" on:click={() => (showMarkdown = !showMarkdown)}>
+					<button class="btn" type="button" onclick={() => (showMarkdown = !showMarkdown)}>
 						Markdown toggle</button
 					>
 					<div class:hidden={showMarkdown === false}>
@@ -137,15 +138,18 @@
 		<button class="btn submit" type="submit"> Save</button>
 	</form>
 
-	<button class="btn" type="button" on:click|preventDefault={() => (showEditor = !showEditor)}>
+	<button class="btn" type="button" onclick={(event) => {
+		event.preventDefault();
+		showEditor = !showEditor
+	}}>
 		Editor toggle</button
 	>
 	<div class:hidden={showEditor === false}>
-		<textarea id="editor" />
+		<textarea id="editor" ></textarea>
 	</div>
-	<button class="btn submit" on:click={saveWithEditor}> Save with editor</button>
+	<button class="btn submit" onclick={saveWithEditor}> Save with editor</button>
 
-	<button class="btn" type="button" on:click={prettifyHTML}> Prettify HTML</button>
+	<button class="btn" type="button" onclick={prettifyHTML}> Prettify HTML</button>
 {/if}
 
 <style>
