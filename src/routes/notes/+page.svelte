@@ -240,11 +240,14 @@
 						placeholder="Search notes&hellip;"
 						class="draw"
 					/>
+					{#if $page.data?.notes}
+					{@const notesVar = $page.data?.notes}
 					<datalist id="notes">
-						{#each $page.data?.notes as page}
+						{#each notesVar as page}
 							<option>{page.slug}</option>
 						{/each}
 					</datalist>
+					{/if}
 					<button class="btn" type="submit">Search</button>
 				</form>
 				{#if $page.data?.noteToEdit}

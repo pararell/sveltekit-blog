@@ -211,11 +211,14 @@
 						placeholder="Search expenses&hellip;"
 						class="draw"
 					/>
+					{#if $page.data?.expenses}
+					{@const expensesVar = $page.data?.expenses}
 					<datalist id="expenses">
-						{#each $page.data?.expenses as page}
+						{#each expensesVar as page}
 							<option>{page.slug}</option>
 						{/each}
 					</datalist>
+					{/if}
 					<button class="btn" type="submit">Search</button>
 				</form>
 				{#if $page.data?.expenseToEdit}

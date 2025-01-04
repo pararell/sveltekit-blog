@@ -68,11 +68,14 @@
 			placeholder="Search pages&hellip;"
 			class="draw"
 		/>
+		{#if $page.data?.pages}
+		{@const pagesVar = $page.data?.pages}
 		<datalist id="pages">
-			{#each $page.data?.pages as page}
+			{#each pagesVar as page}
 				<option>{page.slug}</option>
 			{/each}
 		</datalist>
+		{/if}
 		<button class="btn" type="submit">Search</button>
 	</form>
 {/if}
