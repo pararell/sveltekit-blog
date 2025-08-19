@@ -1,25 +1,25 @@
 <script>
 	import Comments from '$lib/Comments.svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { browser } from '$app/environment';
 </script>
 
 <svelte:head>
-	<title>{$page.data?.blog?.title}</title>
+	<title>{page.data?.blog?.title}</title>
 </svelte:head>
 
-{#if $page.data?.blog}
+{#if page.data?.blog}
 	<div class="container">
-		<h1>{$page.data?.blog.title}</h1>
+		<h1>{page.data?.blog.title}</h1>
 
 		<div class="content">
-			{@html $page.data?.blog.content}
+			{@html page.data?.blog.content}
 		</div>
 
-		<span class="date">{new Date($page.data?.blog.date).toLocaleDateString()}</span>
+		<span class="date">{new Date(page.data?.blog.date).toLocaleDateString()}</span>
 
 		{#if browser}
-			<Comments host={$page.data?.host} slug={$page.data?.paramsBlog} disqusUrl={$page.data?.pageEnv?.DISQUSSRC} />
+			<Comments host={page.data?.host} slug={page.data?.paramsBlog} disqusUrl={page.data?.pageEnv?.DISQUSSRC} />
 		{/if}
 	</div>
 {/if}

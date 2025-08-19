@@ -6,6 +6,7 @@ import nodemailer from 'nodemailer';
 import * as path from 'path';
 import * as fs from 'fs';
 import knex from 'knex';
+import knexConstructor from 'knex';
 import cors from 'cors';
 import session from 'express-session';
 import dotenv from 'dotenv';
@@ -87,8 +88,18 @@ const databases = [
 	{ name: 'Users', model: userModel }
 ];
 
-import connectKnexSession from 'connect-session-knex';
-export const KnexSessionStore = connectKnexSession(session);
+import { ConnectSessionKnexStore } from 'connect-session-knex';
+
+const sessionStore = new ConnectSessionKnexStore({
+  knex: knexConstructor({
+    client: "sqlite",
+    // connection: ":memory:",
+    connection: {
+      filename: "connect-session-knex.sqlite",
+    },
+  }),
+  cleanupInterval: 0, // disable session cleanup
+});
 
 export const connection = knex({
 	client: 'sqlite3',
@@ -146,7 +157,7 @@ app.use(
 		secret: process.env.cookieSecret,
 		resave: false,
 		saveUninitialized: true,
-		store: new KnexSessionStore(),
+		store: sessionStore,
 		cookie: { maxAge: 7 * 24 * 60 * 60 * 1000000, httpOnly: false }
 	})
 );

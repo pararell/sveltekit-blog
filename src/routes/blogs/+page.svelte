@@ -1,18 +1,18 @@
 <script>
 	import Blogs from '$lib/Blogs.svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 </script>
 
 <svelte:head>
 	<title>Blog</title>
 </svelte:head>
 
-{#if $page.data?.blogs}
+{#if page.data?.blogs}
 	<section>
 		<div class="container">
 			<h1>Blog</h1>
 
-			<Blogs blogs={$page.data.blogs} />
+			<Blogs blogs={page.data.blogs} />
 		</div>
 	</section>
 {/if}

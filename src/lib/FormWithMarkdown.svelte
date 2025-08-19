@@ -2,7 +2,7 @@
 	import Markdown from '$lib/Markdown.svelte';
 	import { inputTypes } from './constants';
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	let { form = $bindable(), content = '', submitForm } = $props();
 	let editor = $state();
@@ -82,7 +82,7 @@
 	};
 </script>
 
-{#if $page.data?.user?.email}
+{#if page.data?.user?.email}
 	<form class="form" onsubmit={(event) => {
 		event.preventDefault();
 

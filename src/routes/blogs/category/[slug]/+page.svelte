@@ -1,16 +1,16 @@
 <script>
 	import Blogs from '$lib/Blogs.svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 </script>
 
 <svelte:head>
-	<title>{$page?.params?.slug}</title>
+	<title>{page?.params?.slug}</title>
 </svelte:head>
 
 <section>
 	<div class="container">
-		<h1>{$page?.params?.slug}</h1>
-		<Blogs category={$page?.params?.slug} blogs={$page.data?.blogs} />
+		<h1>{page?.params?.slug}</h1>
+		<Blogs category={page?.params?.slug} blogs={page.data?.blogs} />
 	</div>
 </section>
 

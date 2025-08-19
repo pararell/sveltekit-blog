@@ -1,5 +1,5 @@
 <script>
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	import { afterNavigate } from '$app/navigation';
 
@@ -16,9 +16,9 @@
 </script>
 
 <svelte:head>
-	<title>{$page.data?.subPageWithContent?.metaTitle}</title>
+	<title>{page.data?.subPageWithContent?.metaTitle}</title>
 </svelte:head>
 
-{#if $page.data?.subPageWithContent}
-	{@html $page.data.subPageWithContent.content}
+{#if page.data?.subPageWithContent}
+	{@html page.data.subPageWithContent.content}
 {/if}
